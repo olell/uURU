@@ -34,7 +34,14 @@ class ExtensionCreate(BaseModel):
         regex=f"^\d{{{settings.EXTENSION_DIGITS}}}$",
     )
     name: str
+    info: str
     public: bool
+
+
+class ExtensionUpdate(BaseModel):
+    name: Optional[str]
+    info: Optional[str]
+    public: Optional[bool]
 
 
 class TemporaryExtensions(SQLModel, table=True):

@@ -5,6 +5,8 @@ from pydantic import AnyUrl, BeforeValidator, PostgresDsn, computed_field
 from pydantic_core import MultiHostUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+import string
+
 
 def parse_cors(v: Any) -> list[str] | str:
     if isinstance(v, str) and not v.startswith("["):
@@ -82,6 +84,15 @@ class Settings(BaseSettings):
 
     ENVIRONMENT: Literal["local", "production"] = "local"
     LIFESPAN_DROP_DB: bool = False
+
+    ## TELEPHONE
+
+    EXTENSION_DIGITS: int = 4
+    EXTENSION_PASSWORD_LENGTH: int = 20
+    EXTENSION_PASSWORD_CHARS: str = string.digits
+
+    EXTENSION_TOKEN_PREFIX: str = "01990"
+    EXTENSION_TOKEN_LENGTH: int = 8
 
 
 settings = Settings()

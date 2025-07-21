@@ -8,6 +8,8 @@ import uuid
 if TYPE_CHECKING:
     from app.models.user import User
 
+from app.core.config import settings
+
 
 class ExtensionBase(SQLModel):
     extension: str = Field(unique=True, primary_key=True)
@@ -23,6 +25,16 @@ class Extension(ExtensionBase, table=True):
 
     user_id: Optional[uuid.UUID] = Field(default=None, foreign_key="user.id")
     user: Optional["User"] = Relationship(back_populates="extensions")
+
+
+class ExtensionCreate(BaseModel):
+    extension: str = Field(
+        min_length=settings.EXTENSION_DIGITS,
+        max_length=settings.EXTENSION_DIGITS,
+        regex=f"^\d{{{settings.EXTENSION_DIGITS}}}$",
+    )
+    name: str
+    public: bool
 
 
 class TemporaryExtensions(SQLModel, table=True):

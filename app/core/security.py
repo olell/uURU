@@ -3,6 +3,8 @@ from typing import Any
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
 import jwt
+import random
+import string
 
 from app.core.config import settings
 
@@ -26,3 +28,16 @@ def create_access_token(subject: str | Any, expires_delta: timedelta) -> str:
     to_encode = {"exp": expire, "sub": str(subject)}
     encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=JWT_ALGORITHM)
     return encoded_jwt
+
+
+def generate_extension_password():
+    return "".join(
+        random.choice(settings.EXTENSION_PASSWORD_CHARS)
+        for _ in range(settings.EXTENSION_PASSWORD_LENGTH)
+    )
+
+
+def generate_extension_token():
+    return settings.EXTENSION_TOKEN_LENGTH + "".join(
+        random.choice(string.digits) for _ in range(settings.EXTENSION_TOKEN_LENGTH)
+    )

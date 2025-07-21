@@ -1,15 +1,17 @@
 from typing import Annotated
 import uuid
-from fastapi import APIRouter, Body, HTTPException
+from fastapi import APIRouter, Body, HTTPException, status
 from datetime import timedelta
 from pydantic import BaseModel, Field
+import sqlalchemy
 
 from app.api.deps import CurrentUser
 from app.core.db import SessionDep
 from app.core.config import settings
 from app.core.security import create_access_token
-from app.models.crud.user import authenticate_user, get_user_by_id
-from app.models.user import Token, UserPublic
+from app.models.crud import CRUDNotAllowedException
+from app.models.crud.user import authenticate_user, create_user, get_user_by_id
+from app.models.user import Token, UserPublic, UserCreate
 
 router = APIRouter(prefix="/user", tags=["user"])
 
@@ -36,3 +38,22 @@ def info(*, user_id: uuid.UUID | None = None, session: SessionDep, user: Current
         return user
     else:
         return get_user_by_id(session, user_id, user)
+
+
+@router.post("/register", response_model=UserPublic)
+def register(
+    *, session: SessionDep, executing: CurrentUser | None = None, new: UserCreate
+):
+    try:
+        user = create_user(session, executing, new)
+    except CRUDNotAllowedException:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You're not allowed to create this user",
+        )
+    except sqlalchemy.exc.IntegrityError:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT, detail="Username already in use"
+        )
+
+    return user

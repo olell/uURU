@@ -39,9 +39,9 @@ class ExtensionCreate(BaseModel):
 
 
 class ExtensionUpdate(BaseModel):
-    name: Optional[str]
-    info: Optional[str]
-    public: Optional[bool]
+    name: Optional[str] = None
+    info: Optional[str] = None
+    public: Optional[bool] = None
 
 
 class TemporaryExtensions(SQLModel, table=True):

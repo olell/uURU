@@ -1,4 +1,5 @@
-from sqlmodel import Session, select, col
+from typing import Optional
+from sqlmodel import Session, select, col, or_
 
 from app.core.security import generate_extension_password
 
@@ -23,7 +24,7 @@ def create_extension(
     session.commit()
     session.refresh(db_obj)
 
-    return session
+    return db_obj
 
 
 def update_extension(
@@ -63,13 +64,21 @@ def get_extension_by_id(
 
 
 def filter_extensions_by_name(
-    session: Session, name: str, public=True, order=True
+    session: Session,
+    user: Optional[User] = None,
+    name: Optional[str] = None,
+    public=True,
+    order=True,
 ) -> list[Extension]:
-    query = select(Extension).where(col(Extension.name).contains(name))
+    query = select(Extension)
 
-    if public:
+    if name is not None:  # filter by name
+        query = query.where(col(Extension.name).contains(name))
+    if public and user is None:  # filter for public only
         query = query.where(Extension.public == True)
-    if order:
+    elif public and user is not None:  # filter for public only + users own
+        query = query.where(or_(Extension.public == True, Extension.user_id == user.id))
+    if order:  # order by extension number
         query = query.order_by(Extension.extension)
 
     return list(session.exec(query).all())

@@ -74,8 +74,8 @@ def test_create_read_delete_user(
     assert not "password" in info.keys()
 
     # then delete it again
-    # r = client.delete(
-    #     f"{settings.API_V1_STR}/user/{info["id"]}", headers=root_token_headers
-    # )
+    r = client.delete(
+        f"{settings.API_V1_STR}/user?user_id={info["id"]}", headers=root_token_headers
+    )
 
-    # assert r.status_code == 204
+    assert r.status_code == 204

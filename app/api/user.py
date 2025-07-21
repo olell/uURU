@@ -10,7 +10,12 @@ from app.core.db import SessionDep
 from app.core.config import settings
 from app.core.security import create_access_token
 from app.models.crud import CRUDNotAllowedException
-from app.models.crud.user import authenticate_user, create_user, get_user_by_id
+from app.models.crud.user import (
+    authenticate_user,
+    create_user,
+    delete_user,
+    get_user_by_id,
+)
 from app.models.user import Token, UserPublic, UserCreate
 
 router = APIRouter(prefix="/user", tags=["user"])
@@ -38,6 +43,17 @@ def info(*, user_id: uuid.UUID | None = None, session: SessionDep, user: Current
         return user
     else:
         return get_user_by_id(session, user_id)
+
+
+@router.delete("/", status_code=status.HTTP_204_NO_CONTENT)
+def info(*, user_id: uuid.UUID | None = None, session: SessionDep, user: CurrentUser):
+    try:
+        if user_id is None:
+            delete_user(session, user, user)
+        else:
+            delete_user(session, user, get_user_by_id(session, user_id))
+    except CRUDNotAllowedException as e:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
 
 
 @router.post(

@@ -11,8 +11,9 @@ def create_user(
     session: Session, creating_user: User | None, new_user: UserCreate
 ) -> User:
 
-    if creating_user is not None and not creating_user.role == UserRole.ADMIN:
-        raise CRUDNotAllowedException("Only admins are permitted to create new users")
+    if new_user.role != UserRole.USER:
+        if creating_user is None or creating_user.role != UserRole.ADMIN:
+            raise CRUDNotAllowedException("You may not register an admin account")
 
     db_obj = User.model_validate(
         new_user, update={"password_hash": get_password_hash(new_user.password)}

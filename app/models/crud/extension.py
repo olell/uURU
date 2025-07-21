@@ -1,7 +1,7 @@
 from typing import Optional
 from sqlmodel import Session, select, col, or_
 
-from app.core.security import generate_extension_password
+from app.core.security import generate_extension_password, generate_extension_token
 
 from app.models.crud import CRUDNotAllowedException
 from app.models.user import User, UserRole
@@ -16,7 +16,7 @@ def create_extension(
         extension,
         update={
             "password": generate_extension_password(),
-            "token": "",
+            "token": generate_extension_token(),
             "user_id": user.id,
         },
     )

@@ -64,9 +64,17 @@ def test_own(client: TestClient, root_token_headers: dict[str, str]) -> None:
 
     r = client.get(f"{settings.API_V1_STR}/extension/own", headers=root_token_headers)
     assert r.status_code == status.HTTP_200_OK
-    own = r.json()
+    own: list[dict[str, any]] = r.json()
 
     assert any([create_data["extension"] == entry["extension"] for entry in own])
+    entry = list(filter(lambda e: e["extension"] == create_data["extension"], own))
+    assert len(entry) == 1
+    entry = entry[0]
+
+    assert len(entry["password"]) == settings.EXTENSION_PASSWORD_LENGTH
+    assert len(entry["token"]) == settings.EXTENSION_TOKEN_LENGTH + len(
+        settings.EXTENSION_TOKEN_PREFIX
+    )
 
     # then delete it again
     r = client.delete(

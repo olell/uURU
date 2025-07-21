@@ -38,6 +38,6 @@ def generate_extension_password():
 
 
 def generate_extension_token():
-    return settings.EXTENSION_TOKEN_LENGTH + "".join(
+    return settings.EXTENSION_TOKEN_PREFIX + "".join(
         random.choice(string.digits) for _ in range(settings.EXTENSION_TOKEN_LENGTH)
     )

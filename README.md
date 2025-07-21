@@ -13,3 +13,11 @@ using this command:
 ```bash
 uv run fastapi dev
 ```
+
+## Run tests
+
+To run the test use this command
+
+```bash
+coverage run --source=app -m pytest
+```

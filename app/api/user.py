@@ -5,7 +5,7 @@ from datetime import timedelta
 from pydantic import BaseModel, Field
 import sqlalchemy
 
-from app.api.deps import CurrentUser
+from app.api.deps import CurrentUser, OptionalCurrentUser
 from app.core.db import SessionDep
 from app.core.config import settings
 from app.core.security import create_access_token
@@ -60,7 +60,7 @@ def info(*, user_id: uuid.UUID | None = None, session: SessionDep, user: Current
     "/register", response_model=UserPublic, status_code=status.HTTP_201_CREATED
 )
 def register(
-    *, session: SessionDep, executing: CurrentUser | None = None, new: UserCreate
+    *, session: SessionDep, executing: OptionalCurrentUser = None, new: UserCreate
 ):
     try:
         user = create_user(session, executing, new)

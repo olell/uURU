@@ -4,6 +4,7 @@ from typing import Annotated, Any, Literal
 from pydantic import AnyUrl, BeforeValidator, PostgresDsn, computed_field
 from pydantic_core import MultiHostUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_extra_types.color import Color
 
 import string
 
@@ -93,6 +94,15 @@ class Settings(BaseSettings):
 
     EXTENSION_TOKEN_PREFIX: str = "01990"
     EXTENSION_TOKEN_LENGTH: int = 8
+
+    ## SITE
+
+    SITE_NAME: str = "Default"
+    SITE_SLOGAN: str = "You can configure this!"
+    SHOW_SITE_SLOGAN: bool = True
+
+    PRIMARY_COLOR: Color = "#75ff40"
+    SECONDARY_COLOR: Color = "#450b6f"
 
 
 settings = Settings()

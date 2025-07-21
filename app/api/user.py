@@ -37,10 +37,12 @@ def info(*, user_id: uuid.UUID | None = None, session: SessionDep, user: Current
     if user_id is None:
         return user
     else:
-        return get_user_by_id(session, user_id, user)
+        return get_user_by_id(session, user_id)
 
 
-@router.post("/register", response_model=UserPublic)
+@router.post(
+    "/register", response_model=UserPublic, status_code=status.HTTP_201_CREATED
+)
 def register(
     *, session: SessionDep, executing: CurrentUser | None = None, new: UserCreate
 ):

@@ -8,10 +8,13 @@ from app.core.security import get_password_hash, verify_password
 
 
 def create_user(
-    session: Session, creating_user: User | None, new_user: UserCreate
+    session: Session,
+    creating_user: User | None,
+    new_user: UserCreate,
+    created_by_system=False,
 ) -> User:
 
-    if new_user.role != UserRole.USER:
+    if new_user.role != UserRole.USER and not created_by_system:
         if creating_user is None or creating_user.role != UserRole.ADMIN:
             raise CRUDNotAllowedException("You may not register an admin account")
 

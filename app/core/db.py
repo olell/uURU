@@ -44,6 +44,7 @@ def init_db(session, engine=engine) -> None:
                 username=settings.DEFAULT_ROOT_USER,
                 password=settings.DEFAULT_ROOT_PASSWORD,
             ),
+            created_by_system=True,
         )
 
 

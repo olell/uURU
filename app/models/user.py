@@ -1,9 +1,12 @@
-from sqlmodel import SQLModel, Field
+from typing import TYPE_CHECKING
+from sqlmodel import Relationship, SQLModel, Field
 from pydantic import BaseModel
 
 from enum import Enum
 
 import uuid
+
+from app.models.extension import Extension
 
 
 class UserRole(str, Enum):
@@ -19,6 +22,8 @@ class UserBase(SQLModel):
 class User(UserBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     password_hash: str
+
+    extensions: list[Extension] = Relationship(back_populates="user")
 
 
 class UserCreate(UserBase):

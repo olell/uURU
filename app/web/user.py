@@ -7,7 +7,8 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from app.core.config import settings
 from app.core.db import SessionDep
 from app.core.security import create_access_token
-from app.models.crud.user import authenticate_user
+from app.models.crud.user import authenticate_user, create_user
+from app.models.user import UserCreate
 from app.web.deps import OptionalCurrentUser
 from app.web.templates import templates
 
@@ -56,3 +57,11 @@ def logout(user: OptionalCurrentUser):
     response = RedirectResponse("/", status_code=status.HTTP_303_SEE_OTHER)
     response.delete_cookie("session")
     return response
+
+
+@router.post(
+    "/register", response_class=RedirectResponse, status_code=status.HTTP_303_SEE_OTHER
+)
+def register_handle(session: SessionDep, data: Annotated[UserCreate, Form()]):
+    create_user(session, None, data)
+    return "/user/login"

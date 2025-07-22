@@ -15,11 +15,20 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">Phonebook</a>
+          <a
+            class="nav-link {% if request.url.path == '/phonebook' %}active{% endif %}"
+            aria-current="page"
+            href="/"
+            >Phonebook</a
+          >
         </li>
         {% if user is defined and user is not none %}
         <li class="nav-item">
-          <a class="nav-link" href="#">Your Extensions</a>
+          <a
+            class="nav-link {% if request.url.path == '/extension/own' %}active{% endif %}"
+            href="/extension/own"
+            >Your Extensions</a
+          >
         </li>
         {% endif %}
       </ul>

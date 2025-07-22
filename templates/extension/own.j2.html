@@ -1,1 +1,29 @@
-{% extends "bootstrap_base.j2.html" %} {% block body %} {% endblock %}
+{% extends "bootstrap_base.j2.html" %} {% block body %}
+
+<div class="container">
+  <h1 class="fs-3">Your Extensions</h1>
+  <a href="/extension/create">Add a new extension</a>
+  <hr />
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Name</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for extension in user.extensions %}
+      <tr>
+        <td scope="row">
+          <a href="tel:{{ extension.extension }}">{{ extension.extension }}</a>
+        </td>
+        <td>{{ extension.name }}</td>
+        <td>-</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}

@@ -15,7 +15,7 @@ from app.web.templates import templates
 router = APIRouter(prefix="/user")
 
 
-@router.get("/login", response_class=HTMLResponse | RedirectResponse)
+@router.get("/login", response_class=HTMLResponse)
 def login_page(request: Request, current_user: OptionalCurrentUser):
     if current_user:
         return RedirectResponse("/", status_code=status.HTTP_303_SEE_OTHER)

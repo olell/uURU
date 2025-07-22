@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
-from app.web import index
-from app.web import user
+from app.web.routes import index
+from app.web.routes import user
 
 router = APIRouter(tags=["webinterface"])
 router.include_router(index.router)

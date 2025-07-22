@@ -33,7 +33,7 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 11520  # 8 days
 
     ## NETWORK
-
+    WEB_PREFIX: str = ""
     API_V1_STR: str = "/api/v1"
 
     BACKEND_CORS_ORIGINS: Annotated[list[AnyUrl] | str, BeforeValidator(parse_cors)] = (
@@ -101,9 +101,6 @@ class Settings(BaseSettings):
     SITE_NAME: str = "Default"
     SITE_SLOGAN: str = "You can configure this!"
     SHOW_SITE_SLOGAN: bool = True
-
-    PRIMARY_COLOR: Color = "#75ff40"
-    SECONDARY_COLOR: Color = "#450b6f"
 
 
 settings = Settings()

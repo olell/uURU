@@ -2,12 +2,14 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from sqlmodel import Session
 
 from app.core.db import engine, init_db, drop_db
 from app.core.config import settings
 
-from app.api.main import router
+from app.api.main import router as api_router
+from app.web.main import router as web_router
 
 
 @asynccontextmanager
@@ -34,4 +36,6 @@ if settings.all_cors_origins:
         allow_headers=["*"],
     )
 
-app.include_router(router, prefix=settings.API_V1_STR)
+app.include_router(api_router, prefix=settings.API_V1_STR)
+app.include_router(web_router, prefix=settings.WEB_PREFIX)
+app.mount("/static", StaticFiles(directory="static"), name="static")

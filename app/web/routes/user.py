@@ -19,7 +19,7 @@ router = APIRouter(prefix="/user")
 def login_page(request: Request, current_user: OptionalCurrentUser):
     if current_user:
         return RedirectResponse("/", status_code=status.HTTP_303_SEE_OTHER)
-    return templates.TemplateResponse(request=request, name="login.j2.html")
+    return templates.TemplateResponse(request=request, name="user/login.j2.html")
 
 
 @router.post(

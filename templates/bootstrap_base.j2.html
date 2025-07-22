@@ -14,7 +14,8 @@
     {% block head %} {% endblock %}
   </head>
   <body>
-    {% include "navbar.j2.html" %} {% block body %} {% endblock %}
+    {% block navbar %}{% include "navbar.j2.html" %}{% endblock %} {% block body
+    %} {% endblock %}
     <script src="/static/js/bootstrap.bundle.min.js"></script>
     <script src="/static/js/main.js"></script>
   </body>

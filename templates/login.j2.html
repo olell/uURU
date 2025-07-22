@@ -1,0 +1,65 @@
+{% extends "bootstrap_base.j2.html" %} {% block navbar %}{% endblock %} {% block
+head %}
+<style>
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    display: -ms-flexbox;
+    display: -webkit-box;
+    display: flex;
+    -ms-flex-align: center;
+    -ms-flex-pack: center;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    justify-content: center;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    background-color: #f5f5f5;
+  }
+
+  .form-login {
+    width: 100%;
+    max-width: 330px;
+    padding: 15px;
+    margin: 0 auto;
+  }
+</style>
+{% endblock %} {% block body %}
+<form class="form-login" method="POST">
+  <div class="d-grid gap-2">
+    <h1 class="h3 mb-3 font-weight-normal text-center">
+      {{ settings.SITE_NAME }} - µURU<br />
+      Please sign in
+    </h1>
+    <div class="form-floating">
+      <input
+        type="text"
+        class="form-control"
+        id="inputUsername"
+        name="username"
+        placeholder="Username"
+      />
+      <label for="inputUsername">Username</label>
+    </div>
+    <div class="form-floating">
+      <input
+        type="password"
+        class="form-control"
+        id="inputPassword"
+        name="password"
+        placeholder="Password"
+      />
+      <label for="inputPassword">Password</label>
+    </div>
+    <button class="btn btn-lg btn-primary btn-block mt-3 submit" type="submit">
+      Sign in
+    </button>
+    <a href="#">Register a new account here!</a>
+  </div>
+</form>
+
+{% endblock %}

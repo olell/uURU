@@ -1,8 +1,8 @@
 from enum import Enum
-from typing import Optional, TYPE_CHECKING, Self
+from typing import Optional, TYPE_CHECKING, Self, Any
 
 from sqlmodel import Relationship, SQLModel, Field
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel, model_validator, field_validator
 from pydantic_extra_types.mac_address import MacAddress
 
 import uuid
@@ -61,9 +61,16 @@ class ExtensionCreate(BaseModel):
     )
     name: str
     info: str
-    public: bool
+    public: bool = Field(default=False)
     type: ExtensionType
     mac: Optional[MacAddress] = None
+
+    # required if the model is parsed from form data where a checked
+    # checkbox will only set the key, but not a value ("")
+    @field_validator("public", mode="before")
+    @classmethod
+    def validate_checkbox(cls, value: Any) -> Any:
+        return True if value == "" else value
 
 
 class ExtensionUpdate(BaseModel):

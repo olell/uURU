@@ -1,5 +1,6 @@
 from typing import Optional
 from sqlmodel import Session, select, col, or_
+import sqlalchemy
 
 from app.core.security import generate_extension_password, generate_extension_token
 
@@ -12,17 +13,20 @@ def create_extension(
     session: Session, user: User, extension: ExtensionCreate
 ) -> Extension:
 
-    db_obj = Extension.model_validate(
-        extension,
-        update={
-            "password": generate_extension_password(),
-            "token": generate_extension_token(),
-            "user_id": user.id,
-        },
-    )
-    session.add(db_obj)
-    session.commit()
-    session.refresh(db_obj)
+    try:
+        db_obj = Extension.model_validate(
+            extension,
+            update={
+                "password": generate_extension_password(),
+                "token": generate_extension_token(),
+                "user_id": user.id,
+            },
+        )
+        session.add(db_obj)
+        session.commit()
+        session.refresh(db_obj)
+    except sqlalchemy.exc.IntegrityError:
+        raise CRUDNotAllowedException("Extension not available")
 
     return db_obj
 

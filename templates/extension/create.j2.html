@@ -1,0 +1,74 @@
+{% extends "bootstrap_base.j2.html" %} {% block body %}
+
+<div class="container">
+  <h1 class="fs-3">Create a new Extension</h1>
+  <form method="post">
+    <div class="d-grid gap-2">
+      <div>
+        <label for="extensionInput" class="form-label">Extension</label>
+        <input
+          type="text"
+          class="form-control"
+          id="extensionInput"
+          placeholder="1234"
+          name="extension"
+          minlength="{{ settings.EXTENSION_DIGITS }}"
+          maxlength="{{ settings.EXTENSION_DIGITS }}"
+          aria-describedby="extensionHelpBlock"
+        />
+        <div id="extensionHelpBlock" class="form-text">
+          The extension must be {{ settings.EXTENSION_DIGITS }} digits long. If
+          you enter letters they will automatically be converted to their vanity
+          digits.
+        </div>
+      </div>
+      <div>
+        <label for="nameInput" class="form-label">Name</label>
+        <input
+          type="text"
+          class="form-control"
+          name="name"
+          id="nameInput"
+          placeholder="{{ user.username }}'s extension"
+        />
+      </div>
+      <div>
+        <label for="infoInput" class="form-label">Info</label>
+        <input
+          type="text"
+          class="form-control"
+          id="infoInput"
+          name="info"
+          placeholder="..."
+          aria-describedby="infoHelpBlock"
+        />
+        <div id="infoHelpBlock" class="form-text">
+          You can store some information about this extension here. It will not
+          be visible for the public.
+        </div>
+      </div>
+      <div>
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            value=""
+            id="showPublicCheck"
+            name="public"
+            checked
+          />
+          <label class="form-check-label" for="showPublicCheck">
+            Show in public phonebook
+          </label>
+        </div>
+      </div>
+    </div>
+    <input
+      type="submit"
+      class="btn btn-primary float-end ps-5 pe-5"
+      value="Add"
+    />
+  </form>
+</div>
+
+{% endblock %}

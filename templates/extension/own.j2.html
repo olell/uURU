@@ -21,8 +21,15 @@
         </td>
         <td>{{ extension.name }}</td>
         <td>
-          <input class="form-check-input" type="checkbox" {% if extension.public
-          %}checked{%endif%} disabled
+          <input
+            class="form-check-input"
+            type="checkbox"
+            {%
+            if
+            extension.public
+            %}checked{%endif%}
+            disabled
+          />
         </td>
         <td>-</td>
       </tr>

@@ -15,6 +15,7 @@
           minlength="{{ settings.EXTENSION_DIGITS }}"
           maxlength="{{ settings.EXTENSION_DIGITS }}"
           aria-describedby="extensionHelpBlock"
+          oninput="vanity_check_extension()"
         />
         <div id="extensionHelpBlock" class="form-text">
           The extension must be {{ settings.EXTENSION_DIGITS }} digits long. If
@@ -70,5 +71,28 @@
     />
   </form>
 </div>
+
+<script>
+  let vanity_digits = {
+    2: ["a", "b", "c"],
+    3: ["d", "e", "f"],
+    4: ["g", "h", "i"],
+    5: ["j", "k", "l"],
+    6: ["m", "n", "o"],
+    7: ["p", "q", "r", "s"],
+    8: ["t", "u", "v"],
+    9: ["w", "x", "y", "z"],
+  };
+  function vanity_check_extension() {
+    const input = $("#extensionInput");
+    let val = $("#extensionInput").val();
+    Object.keys(vanity_digits).forEach((d) => {
+      vanity_digits[d].forEach((c) => {
+        val = val.replace(c, d);
+      });
+    });
+    input.val(val);
+  }
+</script>
 
 {% endblock %}

@@ -1,0 +1,19 @@
+services:
+  database:
+    image: postgres:14.18
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: rootpasswd
+      POSTGRES_DB: uuru
+
+  app:
+    build: .
+    environment:
+      UURU_SITE_NAME: "TARMAC"
+      UURU_LIFESPAN_DROP_DB: 1
+      UURU_POSTGRES_SERVER: database
+      UURU_POSTGRES_USER: root
+      UURU_POSTGRES_PASSWORD: rootpasswd
+      UURU_POSTGRES_DB: uuru
+    ports:
+      - 8000:8000

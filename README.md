@@ -14,6 +14,18 @@ using this command:
 uv run fastapi dev
 ```
 
+## Get Started (Docker)
+
+**production environment**:
+```
+docker compose up
+```
+
+**development environment**:
+```
+docker compose up -f docker-compose.yml -f docker-compose.dev.yml
+```
+
 ## Run tests
 
 To run the test use this command

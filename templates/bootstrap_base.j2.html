@@ -28,5 +28,18 @@
       nomodule
       src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"
     ></script>
+    <script>
+      function updateTheme() {
+        const colorMode = window.matchMedia("(prefers-color-scheme: dark)")
+          .matches
+          ? "dark"
+          : "light";
+        document.querySelector("html").setAttribute("data-bs-theme", colorMode);
+      }
+      updateTheme();
+      window
+        .matchMedia("(prefers-color-scheme: dark)")
+        .addEventListener("change", updateTheme);
+    </script>
   </body>
 </html>

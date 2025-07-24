@@ -6,7 +6,11 @@ from app.core.db import SessionDep
 from app.web.deps import CurrentUser
 from app.web.templates import templates
 from app.models.extension import ExtensionCreate
-from app.models.crud.extension import create_extension
+from app.models.crud.extension import (
+    create_extension,
+    delete_extension,
+    get_extension_by_id,
+)
 
 router = APIRouter(prefix="/extension")
 
@@ -39,4 +43,19 @@ def create_extension_handle(
     except:
         # todo information about error
         return "/extension/create"
+    return "/extension/own"
+
+
+@router.get(
+    "/delete/{extension}",
+    response_class=RedirectResponse,
+    status_code=status.HTTP_303_SEE_OTHER,
+)
+def delete_extension_handle(session: SessionDep, extension: int, user: CurrentUser):
+    print(user)
+    try:
+        delete_extension(session, user, get_extension_by_id(session, extension, False))
+    except Exception as e:
+        print(e)
+        pass
     return "/extension/own"

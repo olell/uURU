@@ -31,7 +31,18 @@
             disabled
           />
         </td>
-        <td>-</td>
+        <td>
+          <a
+            class="text-danger text-decoration-none me-4"
+            href="/extension/delete/{{ extension.extension }}"
+          >
+            <ion-icon name="trash"></ion-icon>
+          </a>
+
+          <a class="text-success" href="#">
+            <ion-icon name="pencil"></ion-icon>
+          </a>
+        </td>
       </tr>
       {% endfor %}
     </tbody>

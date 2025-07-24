@@ -234,3 +234,5 @@ __marimo__/
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode
 
 markdown/
+
+*.sqlite3

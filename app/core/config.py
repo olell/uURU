@@ -1,3 +1,4 @@
+from enum import Enum
 import secrets
 from typing import Annotated, Any, Literal
 
@@ -7,6 +8,12 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic_extra_types.color import Color
 
 import string
+
+
+class DBType(str, Enum):
+    POSTGRES = "postgres"
+    MYSQL = "mysql"
+    SQLITE = "sqlite"
 
 
 def parse_cors(v: Any) -> list[str] | str:
@@ -47,12 +54,16 @@ class Settings(BaseSettings):
 
     ## DATABASE
 
-    POSTGRES_SERVER: str
-    POSTGRES_PORT: int = 5432
-    POSTGRES_USER: str
-    POSTGRES_PASSWORD: str = ""
-    POSTGRES_DB: str = ""
-    POSTGRES_DB_TEST: str | None = None
+    DATABASE_TYPE: DBType = DBType.SQLITE
+
+    DATABASE_PATH: str | None = "./database.sqlite3"
+
+    DATABASE_SERVER: str | None = None
+    DATABASE_PORT: int | None = 5432
+    DATABASE_USER: str | None = None
+    DATABASE_PASSWORD: str | None = ""
+    DATABASE_DB: str | None = ""
+    DATABASE_DB_TEST: str | None = None
 
     @computed_field  # type: ignore[prop-decorator]
     @property
@@ -72,14 +83,28 @@ class Settings(BaseSettings):
     @computed_field  # type: ignore[prop-decorator]
     @property
     def SQLALCHEMY_DATABASE_URI(self) -> PostgresDsn:
-        return MultiHostUrl.build(
-            scheme="postgresql+psycopg",
-            username=self.POSTGRES_USER,
-            password=self.POSTGRES_PASSWORD,
-            host=self.POSTGRES_SERVER,
-            port=self.POSTGRES_PORT,
-            path=self.POSTGRES_DB,
-        )
+        match (self.DATABASE_TYPE):
+            case DBType.SQLITE:
+                return f"sqlite:///{self.DATABASE_PATH}"
+            case DBType.POSTGRES:
+                return MultiHostUrl.build(
+                    scheme="postgresql+psycopg",
+                    username=self.DATABASE_USER,
+                    password=self.DATABASE_PASSWORD,
+                    host=self.DATABASE_SERVER,
+                    port=self.DATABASE_PORT,
+                    path=self.DATABASE_DB,
+                )
+            case DBType.MYSQL:
+                return MultiHostUrl.build(
+                    scheme="mysql+pymysql",
+                    username=self.DATABASE_USER,
+                    password=self.DATABASE_PASSWORD,
+                    host=self.DATABASE_SERVER,
+                    port=self.DATABASE_PORT,
+                    path=self.DATABASE_DB,
+                    charset="utf8mb4",
+                )
 
     ## BEHAVIOR
 

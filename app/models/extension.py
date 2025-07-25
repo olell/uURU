@@ -76,20 +76,21 @@ class ExtensionCreate(BaseModel):
 class ExtensionUpdate(BaseModel):
     name: Optional[str] = None
     info: Optional[str] = None
-    public: Optional[bool] = None
+    public: Optional[bool] = False
     type: Optional[ExtensionType] = None
-
 
     # required if the model is parsed from form data where a checked
     # checkbox will only set the key, but not a value ("")
-    @field_validator("public", mode="after")
+    @field_validator("public", mode="before")
     @classmethod
     def validate_checkbox(cls, value: Any) -> Any:
+        print(f"before '{value}'")
         if value is None:
+            print("validated", False)
             return False
         else:
-            return value
-
+            print("Validated", True if value == "" else value)
+            return True if value == "" else value
 
 
 class TemporaryExtensions(SQLModel, table=True):

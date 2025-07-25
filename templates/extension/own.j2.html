@@ -39,9 +39,27 @@
             <ion-icon name="trash"></ion-icon>
           </a>
 
-          <a class="text-success" href="/extension/edit/{{ extension.extension }}">
+          <a
+            class="text-success text-decoration-none me-4"
+            href="/extension/edit/{{ extension.extension }}"
+          >
             <ion-icon name="pencil"></ion-icon>
           </a>
+
+          <a
+            class="text-warning"
+            data-bs-toggle="popover"
+            title="Credentials"
+            data-bs-content="<b>Password:</b><br/> {{ extension.password }}<br/><br/><b>Token:</b><br/> {{ extension.token }}"
+            data-bs-html="true" 
+            tabindex="0"
+            data-bs-trigger="focus"
+            role="button"
+          >
+            <ion-icon name="key"></ion-icon>
+          </a>
+          
+
         </td>
       </tr>
       {% endfor %}

@@ -15,3 +15,7 @@ $(document).ready(() => {
     $(".alert").alert("close");
   }, 2000);
 });
+
+$(function () {
+  $('[data-bs-toggle="popover"]').popover();
+});

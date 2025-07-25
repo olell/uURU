@@ -1,7 +1,9 @@
-from typing import Optional, TYPE_CHECKING
+from enum import Enum
+from typing import Optional, TYPE_CHECKING, Self
 
 from sqlmodel import Relationship, SQLModel, Field
-from pydantic import BaseModel
+from pydantic import BaseModel, model_validator
+from pydantic_extra_types.mac_address import MacAddress
 
 import uuid
 
@@ -9,6 +11,13 @@ if TYPE_CHECKING:
     from app.models.user import User
 
 from app.core.config import settings
+
+
+class ExtensionType(str, Enum):
+    SIP = "SIP"
+    DECT = "DECT"
+    INNOVAPHONE_241 = "Innovaphone 241"
+    INNOVAPHONE_201A = "Innovaphone 201a"
 
 
 class ExtensionBase(SQLModel):
@@ -26,6 +35,23 @@ class Extension(ExtensionBase, table=True):
     user_id: Optional[uuid.UUID] = Field(default=None, foreign_key="user.id")
     user: Optional["User"] = Relationship(back_populates="extensions")
 
+    type: ExtensionType
+    mac: Optional[MacAddress] = None
+
+    # TODO: should throw http error - not 500 and stack trace
+    @model_validator(mode="after")
+    def verify_mac_set(self) -> Self:
+        if self.type in [
+            ExtensionType.SIP,
+            ExtensionType.DECT,
+        ]:
+            return self
+
+        if not self.mac:
+            raise ValueError("mac needs to be defined if innovaphone")
+
+        return self
+
 
 class ExtensionCreate(BaseModel):
     extension: str = Field(
@@ -36,12 +62,15 @@ class ExtensionCreate(BaseModel):
     name: str
     info: str
     public: bool
+    type: ExtensionType
+    mac: Optional[MacAddress] = None
 
 
 class ExtensionUpdate(BaseModel):
     name: Optional[str] = None
     info: Optional[str] = None
     public: Optional[bool] = None
+    type: Optional[ExtensionType] = None
 
 
 class TemporaryExtensions(SQLModel, table=True):

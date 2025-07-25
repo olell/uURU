@@ -75,4 +75,5 @@ def register_handle(request: Request, session: SessionDep, data: Annotated[UserC
         create_user(session, None, data)
     except sqlalchemy.exc.IntegrityError:
         MessageBroker.push(request, {"message": f"Username already in use!", "category": "error"})
+    MessageBroker.push(request, {"message": "Account successfully created!", "category": "success"})
     return "/user/login"

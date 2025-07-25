@@ -41,7 +41,6 @@ class MessageBroker(object):
         adds a new message to the queue
         """
         sessid = request.cookies.get("session", None)
-        print("sessid is None?")
         if sessid is None:
             return
 

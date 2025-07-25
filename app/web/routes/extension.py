@@ -68,7 +68,7 @@ def edit_extension_page(
     extension = get_extension_by_id(session, extension, False)
     if extension is None:
         return RedirectResponse(
-            "/extensions/own", status_code=status.HTTP_303_SEE_OTHER
+            "/extension/own", status_code=status.HTTP_303_SEE_OTHER
         )
     return templates.TemplateResponse(
         request, "extension/create.j2.html", context={"user": user, "edit": extension}

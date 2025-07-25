@@ -3,6 +3,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Request, Form, status
 from fastapi.responses import HTMLResponse, RedirectResponse
+import sqlalchemy
 
 from app.core.config import settings
 from app.core.db import SessionDep
@@ -19,6 +20,7 @@ router = APIRouter(prefix="/user")
 @router.get("/login", response_class=HTMLResponse)
 def login_page(request: Request, current_user: OptionalCurrentUser):
     if current_user:
+        MessageBroker.push(request, {"message": "You're already logged in!", "category": "warning"})
         return RedirectResponse("/", status_code=status.HTTP_303_SEE_OTHER)
     return templates.TemplateResponse(request=request, name="user/login.j2.html")
 
@@ -68,6 +70,9 @@ def logout(request: Request, user: OptionalCurrentUser):
 @router.post(
     "/register", response_class=RedirectResponse, status_code=status.HTTP_303_SEE_OTHER
 )
-def register_handle(session: SessionDep, data: Annotated[UserCreate, Form()]):
-    create_user(session, None, data)
+def register_handle(request: Request, session: SessionDep, data: Annotated[UserCreate, Form()]):
+    try:
+        create_user(session, None, data)
+    except sqlalchemy.exc.IntegrityError:
+        MessageBroker.push(request, {"message": f"Username already in use!", "category": "error"})
     return "/user/login"

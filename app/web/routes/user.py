@@ -10,6 +10,7 @@ from app.core.security import create_access_token
 from app.models.crud.user import authenticate_user, create_user
 from app.models.user import UserCreate
 from app.web.deps import OptionalCurrentUser
+from app.web.message import MessageBroker
 from app.web.templates import templates
 
 router = APIRouter(prefix="/user")
@@ -26,17 +27,19 @@ def login_page(request: Request, current_user: OptionalCurrentUser):
     "/login", response_class=RedirectResponse, status_code=status.HTTP_303_SEE_OTHER
 )
 def login_handle(
+    request: Request,
     session: SessionDep,
     username: Annotated[str, Form()],
     password: Annotated[str, Form()],
     current_user: OptionalCurrentUser,
 ):
     if current_user is not None:
+        MessageBroker.push(request, {"message": "You're already logged in!", "category": "warning"})
         return "/"
 
     user = authenticate_user(session, username, password)
     if not user:
-        # todo, pass an error message
+        MessageBroker.push(request, {"message": "Failed to log in! (Invalid username or password?)", "category": "error"})
         return "/user/login"
 
     expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -44,15 +47,18 @@ def login_handle(
 
     response = RedirectResponse("/", status_code=status.HTTP_303_SEE_OTHER)
     response.set_cookie("auth", token)
+    MessageBroker.push(request, {"message": f"Hello {user.username} 👋"})
     return response
 
 
 @router.get(
     "/logout", response_class=RedirectResponse, status_code=status.HTTP_303_SEE_OTHER
 )
-def logout(user: OptionalCurrentUser):
+def logout(request: Request, user: OptionalCurrentUser):
     if not user:
         return "/"
+    
+    MessageBroker.push(request, {"message": "See ya!"})
 
     response = RedirectResponse("/", status_code=status.HTTP_303_SEE_OTHER)
     response.delete_cookie("auth")

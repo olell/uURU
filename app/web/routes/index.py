@@ -1,3 +1,4 @@
+from typing import Optional
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 
@@ -28,4 +29,11 @@ def phonebook(
         request=request,
         name="phonebook.j2.html",
         context={"user": user, "phonebook": phonebook_data, "query": query},
+    )
+
+
+@router.get("/error/{status_code}")
+def error(request: Request, status_code: Optional[int] = None):
+    return templates.TemplateResponse(
+        request, "error.j2.html", {"status_code": status_code}
     )

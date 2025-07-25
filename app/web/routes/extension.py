@@ -1,5 +1,5 @@
 from typing import Annotated
-from fastapi import APIRouter, Request, status, Form
+from fastapi import APIRouter, Request, status, Form, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse
 
 from app.core.db import SessionDep
@@ -67,9 +67,7 @@ def edit_extension_page(
 ):
     extension = get_extension_by_id(session, extension, False)
     if extension is None:
-        return RedirectResponse(
-            "/extension/own", status_code=status.HTTP_303_SEE_OTHER
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Extension not found")
     return templates.TemplateResponse(
         request, "extension/create.j2.html", context={"user": user, "edit": extension}
     )

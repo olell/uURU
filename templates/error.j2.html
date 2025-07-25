@@ -1,0 +1,39 @@
+{% extends "bootstrap_base.j2.html" %} {% block navbar %}{% endblock %} {% block
+head %}
+<style>
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    display: -ms-flexbox;
+    display: -webkit-box;
+    display: flex;
+    flex-direction: column;
+    -ms-flex-align: center;
+    -ms-flex-pack: center;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    justify-content: center;
+  }
+
+  h1 {
+    font-size: 15vh;
+  }
+
+  img {
+    max-width: 100vw;
+    max-height: 60vh;
+  }
+</style>
+{% endblock %} {% block body %}
+<h1 class="mb-5">{{ status_code }} :(</h1>
+{% set rand = range(1, 100) | random %}
+{% if rand < 50 %}
+<img src="https://http.cat/{{ status_code }}"/>
+{% else %}
+<img src="https://http.dog/{{ status_code }}.jpg"/>
+{% endif %}
+{% endblock %}

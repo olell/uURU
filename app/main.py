@@ -1,9 +1,11 @@
 from contextlib import asynccontextmanager
 import uuid
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.exception_handlers import http_exception_handler
 from sqlmodel import Session
 
 from app.core.db import engine, init_db, drop_db
@@ -36,6 +38,17 @@ if settings.all_cors_origins:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+
+@app.exception_handler(403)
+@app.exception_handler(404)
+@app.exception_handler(HTTPException)
+async def web_exception_handler(request: Request, exc: HTTPException):
+    # keep default handler for api
+    if str(request.url.path).startswith(settings.API_V1_STR):
+        return await http_exception_handler(request, exc)
+    
+    return RedirectResponse(f"/error/{exc.status_code}")
 
 app.include_router(api_router, prefix=settings.API_V1_STR)
 app.include_router(web_router, prefix=settings.WEB_PREFIX)

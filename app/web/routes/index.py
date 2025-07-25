@@ -3,6 +3,7 @@ from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 
 from app.core.db import SessionDep
+from app.models.user import UserRole
 from app.web.deps import OptionalCurrentUser
 from app.web.message import Message, MessageBroker
 from app.web.templates import templates
@@ -24,7 +25,10 @@ def phonebook(
     query: str | None = None,
     user: OptionalCurrentUser,
 ):
-    phonebook_data = filter_extensions_by_name(session, user, query)
+    public = True
+    if user is not None and user.role == UserRole.ADMIN:
+        public = False
+    phonebook_data = filter_extensions_by_name(session, user, query, public)
     return templates.TemplateResponse(
         request=request,
         name="phonebook.j2.html",

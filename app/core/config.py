@@ -47,38 +47,39 @@ class Settings(BaseSettings):
 
     ## DATABASE
 
-    POSTGRES_SERVER: str
-    POSTGRES_PORT: int = 5432
-    POSTGRES_USER: str
-    POSTGRES_PASSWORD: str = ""
-    POSTGRES_DB: str = ""
-    POSTGRES_DB_TEST: str | None = None
+    DATABASE_TYPE: Literal["mysql"] | Literal["postgres"] = "postgres"
+    DATABASE_SERVER: str
+    DATABASE_PORT: int = 5432
+    DATABASE_USER: str
+    DATABASE_PASSWORD: str = ""
+    DATABASE_DB: str = ""
+    DATABASE_DB_TEST: str | None = None
 
     @computed_field  # type: ignore[prop-decorator]
     @property
     def SQLALCHEMY_TEST_DATABASE_URI(self) -> PostgresDsn:
-        if not self.POSTGRES_DB_TEST:
+        if not self.DATABASE_DB_TEST:
             return self.SQLALCHEMY_DATABASE_URI
 
         return MultiHostUrl.build(
-            scheme="postgresql+psycopg",
-            username=self.POSTGRES_USER,
-            password=self.POSTGRES_PASSWORD,
-            host=self.POSTGRES_SERVER,
-            port=self.POSTGRES_PORT,
-            path=self.POSTGRES_DB_TEST,
+            scheme="postgresql+psycopg" if self.DATABASE_TYPE == "postgres" else "mysql+pymysql",
+            username=self.DATABASE_USER,
+            password=self.DATABASE_PASSWORD,
+            host=self.DATABASE_SERVER,
+            port=self.DATABASE_PORT,
+            path=self.DATABASE_DB_TEST,
         )
 
     @computed_field  # type: ignore[prop-decorator]
     @property
     def SQLALCHEMY_DATABASE_URI(self) -> PostgresDsn:
         return MultiHostUrl.build(
-            scheme="postgresql+psycopg",
-            username=self.POSTGRES_USER,
-            password=self.POSTGRES_PASSWORD,
-            host=self.POSTGRES_SERVER,
-            port=self.POSTGRES_PORT,
-            path=self.POSTGRES_DB,
+            scheme="postgresql+psycopg" if self.DATABASE_TYPE == "postgres" else "mysql+pymysql",
+            username=self.DATABASE_USER,
+            password=self.DATABASE_PASSWORD,
+            host=self.DATABASE_SERVER,
+            port=self.DATABASE_PORT,
+            path=self.DATABASE_DB,
         )
 
     ## BEHAVIOR

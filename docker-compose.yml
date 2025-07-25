@@ -11,9 +11,10 @@ services:
     environment:
       UURU_SITE_NAME: "TARMAC"
       UURU_LIFESPAN_DROP_DB: 1
-      UURU_POSTGRES_SERVER: database
-      UURU_POSTGRES_USER: root
-      UURU_POSTGRES_PASSWORD: rootpasswd
-      UURU_POSTGRES_DB: uuru
+      UURU_DATABASE_TYPE: postgres
+      UURU_DATABASE_SERVER: database
+      UURU_DATABASE_USER: root
+      UURU_DATABASE_PASSWORD: rootpasswd
+      UURU_DATABASE_DB: uuru
     ports:
       - 8000:8000

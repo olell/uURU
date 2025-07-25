@@ -40,6 +40,17 @@
           >
         </li>
         {% endif %}
+        {% if user is defined and user.role == "admin" %}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Admin
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="/admin/users">Users</a></li>
+            <li><a class="dropdown-item" href="#">Extensions</a></li>
+          </ul>
+        </li>
+        {% endif %}
       </ul>
       <ul class="navbar-nav navbar-end">
         <li class="nav-item float-end">

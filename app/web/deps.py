@@ -8,7 +8,7 @@ from pydantic import ValidationError
 from app.core.config import settings
 from app.core.db import SessionDep
 from app.core.security import JWT_ALGORITHM
-from app.models.user import TokenPayload, User
+from app.models.user import TokenPayload, User, UserRole
 from app.models.crud.user import get_user_by_id
 
 
@@ -48,5 +48,16 @@ def get_current_user(
     return user
 
 
+
 CurrentUser = Annotated[User, Depends(get_current_user)]
 OptionalCurrentUser = Annotated[User | None, Depends(get_current_user_optional)]
+
+def get_current_admin_user(session: SessionDep, current_user: CurrentUser):
+    if current_user.role != UserRole.ADMIN:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You're not permitted to visit this page"
+        )
+    return current_user
+
+AdminUser = Annotated[User, Depends(get_current_admin_user)]

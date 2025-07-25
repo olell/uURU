@@ -1,4 +1,4 @@
-from sqlmodel import Session, select
+from sqlmodel import Session, col, select
 import uuid
 
 from app.models.user import User, UserCreate, UserRole, UserUpdate
@@ -71,6 +71,12 @@ def get_user_by_username(session: Session, username: str) -> User | None:
 
     return user
 
+def filter_user_by_username(session: Session, username: str | None = None) -> list[User]:
+    query = select(User)
+    if username is not None:
+        query = query.where(col(User.username).contains(username))
+    
+    return list(session.exec(query).all())
 
 def authenticate_user(session: Session, username: str, password: str) -> User | None:
     db_user = get_user_by_username(session, username)

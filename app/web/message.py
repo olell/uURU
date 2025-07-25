@@ -6,6 +6,7 @@ from fastapi import Request
 class MessageCategory(str, Enum):
     DEBUG = "debug"
     INFO = "info"
+    SUCCESS = "success"
     WARNING = "warning"
     ERROR = "error"
 

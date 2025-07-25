@@ -46,7 +46,7 @@
           {% if user is not defined or user is none %}
           <a class="nav-link" href="/user/login">Login</a>
           {% else %}
-          <a class="nav-link" href="/user/logout">Logout</a>
+          <a class="nav-link" href="/user/logout">Logout {% if user is defined %}({{ user.username }}){% endif %}</a>
           {% endif %}
         </li>
       </ul>

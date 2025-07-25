@@ -5,11 +5,12 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from app.core.db import SessionDep
 from app.web.deps import CurrentUser
 from app.web.templates import templates
-from app.models.extension import ExtensionCreate
+from app.models.extension import ExtensionCreate, ExtensionUpdate
 from app.models.crud.extension import (
     create_extension,
     delete_extension,
     get_extension_by_id,
+    update_extension,
 )
 
 router = APIRouter(prefix="/extension")
@@ -52,10 +53,46 @@ def create_extension_handle(
     status_code=status.HTTP_303_SEE_OTHER,
 )
 def delete_extension_handle(session: SessionDep, extension: int, user: CurrentUser):
-    print(user)
     try:
         delete_extension(session, user, get_extension_by_id(session, extension, False))
     except Exception as e:
         print(e)
         pass
     return "/extension/own"
+
+
+@router.get("/edit/{extension}", response_class=HTMLResponse)
+def edit_extension_page(
+    request: Request, session: SessionDep, user: CurrentUser, extension: int
+):
+    extension = get_extension_by_id(session, extension, False)
+    if extension is None:
+        return RedirectResponse(
+            "/extensions/own", status_code=status.HTTP_303_SEE_OTHER
+        )
+    return templates.TemplateResponse(
+        request, "extension/create.j2.html", context={"user": user, "edit": extension}
+    )
+
+
+@router.post(
+    "/edit/{extension_id}",
+    response_class=RedirectResponse,
+    status_code=status.HTTP_303_SEE_OTHER,
+)
+def edit_extension_handle(
+    request: Request,
+    session: SessionDep,
+    user: CurrentUser,
+    extension_id: int,
+    data: Annotated[ExtensionUpdate, Form()],
+):
+    extension = get_extension_by_id(session, extension_id, False)
+    if extension is None:
+        return f"/extension/edit/{extension_id}"
+    try:
+        print(data)
+        update_extension(session, user, extension, data)
+    except:
+        return "/extension/own"
+    return f"/extension/edit/{extension_id}"

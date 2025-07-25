@@ -1,7 +1,8 @@
 {% extends "bootstrap_base.j2.html" %} {% block body %}
 
 <div class="container">
-  <h1 class="fs-3">Create a new Extension</h1>
+  {% if edit is not defined %}<h1 class="fs-3">Create a new Extension</h1>{% endif %}
+  {% if edit is defined %}<h1 class="fs-3">Edit Extension "{{ edit.name }}"</h1>{% endif %}
   <form method="post">
     <div class="d-grid gap-2">
       <div>
@@ -12,10 +13,12 @@
           id="extensionInput"
           placeholder="1234"
           name="extension"
+          {% if edit %}value="{{ edit.extension }}"{% endif %}
           minlength="{{ settings.EXTENSION_DIGITS }}"
           maxlength="{{ settings.EXTENSION_DIGITS }}"
           aria-describedby="extensionHelpBlock"
           oninput="vanity_check_extension()"
+          {% if edit is defined %}disabled{% endif %}
         />
         <div id="extensionHelpBlock" class="form-text">
           The extension must be {{ settings.EXTENSION_DIGITS }} digits long. If
@@ -29,6 +32,7 @@
           type="text"
           class="form-control"
           name="name"
+          {% if edit %}value="{{ edit.name }}"{% endif %}
           id="nameInput"
           placeholder="{{ user.username }}'s extension"
         />
@@ -40,6 +44,7 @@
           class="form-control"
           id="infoInput"
           name="info"
+          {% if edit %}value="{{ edit.info }}"{% endif %}
           placeholder="..."
           aria-describedby="infoHelpBlock"
         />
@@ -56,10 +61,11 @@
             value=""
             id="showPublicCheck"
             name="public"
-            checked
-          />
-          <label class="form-check-label" for="showPublicCheck">
-            Show in public phonebook
+            {% if edit is not defined %}checked{% endif %}
+            {% if edit is defined and edit.public %}checked{% endif %}
+            />
+            <label class="form-check-label" for="showPublicCheck">
+              Show in public phonebook
           </label>
         </div>
       </div>
@@ -67,7 +73,7 @@
     <input
       type="submit"
       class="btn btn-primary float-end ps-5 pe-5"
-      value="Add"
+      value="{% if edit is not defined %}Add{% else %}Save{% endif %}"
     />
   </form>
 </div>

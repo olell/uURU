@@ -80,6 +80,18 @@ class ExtensionUpdate(BaseModel):
     type: Optional[ExtensionType] = None
 
 
+    # required if the model is parsed from form data where a checked
+    # checkbox will only set the key, but not a value ("")
+    @field_validator("public", mode="after")
+    @classmethod
+    def validate_checkbox(cls, value: Any) -> Any:
+        if value is None:
+            return False
+        else:
+            return value
+
+
+
 class TemporaryExtensions(SQLModel, table=True):
     extension: str = Field(unique=True, primary_key=True)
     password: str

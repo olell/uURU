@@ -43,7 +43,7 @@ def login_handle(
     token = create_access_token(user.id, expires)
 
     response = RedirectResponse("/", status_code=status.HTTP_303_SEE_OTHER)
-    response.set_cookie("session", token)
+    response.set_cookie("auth", token)
     return response
 
 
@@ -55,7 +55,7 @@ def logout(user: OptionalCurrentUser):
         return "/"
 
     response = RedirectResponse("/", status_code=status.HTTP_303_SEE_OTHER)
-    response.delete_cookie("session")
+    response.delete_cookie("auth")
     return response
 
 

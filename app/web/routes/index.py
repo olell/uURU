@@ -3,6 +3,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 
 from app.core.db import SessionDep
 from app.web.deps import OptionalCurrentUser
+from app.web.message import Message, MessageBroker
 from app.web.templates import templates
 from app.models.crud.extension import filter_extensions_by_name
 

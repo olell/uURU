@@ -14,7 +14,7 @@ from app.models.crud.user import get_user_by_id
 
 def get_current_user_optional(
     session: SessionDep,
-    token: str = Depends(APIKeyCookie(name="session", auto_error=False)),
+    token: str = Depends(APIKeyCookie(name="auth", auto_error=False)),
 ) -> User | None:
     if token is None:
         return None
@@ -27,7 +27,7 @@ def get_current_user_optional(
 
 def get_current_user(
     session: SessionDep,
-    token: str = Depends(APIKeyCookie(name="session")),
+    token: str = Depends(APIKeyCookie(name="auth")),
 ) -> User:
 
     try:

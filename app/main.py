@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
+import uuid
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from sqlmodel import Session
@@ -39,3 +40,18 @@ if settings.all_cors_origins:
 app.include_router(api_router, prefix=settings.API_V1_STR)
 app.include_router(web_router, prefix=settings.WEB_PREFIX)
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+@app.middleware("http")
+async def add_session_cookie(request: Request, call_next):
+    sessid = None
+    set_sessid = False
+    if request.cookies.get("session", None) is None:
+        set_sessid = True
+        sessid = str(uuid.uuid4())
+        request.cookies.update({"session": sessid})
+    response = await call_next(request)
+    
+    if set_sessid:
+        response.set_cookie(key="session", value=sessid)
+
+    return response

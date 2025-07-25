@@ -18,8 +18,38 @@
     {% block head %} {% endblock %}
   </head>
   <body>
-    {% block navbar %}{% include "navbar.j2.html" %}{% endblock %} {% block body
-    %} {% endblock %}
+    {% block navbar %}{% include "navbar.j2.html" %}{% endblock %}
+    <div
+      style="
+        position: absolute;
+        top: 0;
+        width: 100vw;
+        align-items: center;
+        top: 1vh;
+      "
+    >
+      <div class="container">
+        {% for message in msgbroker.all(request) %} {% if message.category ==
+        "debug" %} {% set alert="alert-secondary" %} {% elif message.category ==
+        "warning" %} {% set alert="alert-warning" %} {% elif message.category ==
+        "error" %} {% set alert="alert-danger" %} {% else %} {% set
+        alert="alert-primary" %} {% endif %} 
+        <div
+          class="alert {{ alert }} alert-dismissible fade show"
+          role="alert"
+        >
+          {{message.message}}
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+            aria-label="Close"
+          ></button>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% block body %} {% endblock %}
     <script
       type="module"
       src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
@@ -28,18 +58,5 @@
       nomodule
       src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"
     ></script>
-    <script>
-      function updateTheme() {
-        const colorMode = window.matchMedia("(prefers-color-scheme: dark)")
-          .matches
-          ? "dark"
-          : "light";
-        document.querySelector("html").setAttribute("data-bs-theme", colorMode);
-      }
-      updateTheme();
-      window
-        .matchMedia("(prefers-color-scheme: dark)")
-        .addEventListener("change", updateTheme);
-    </script>
   </body>
 </html>

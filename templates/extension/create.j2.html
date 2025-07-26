@@ -1,10 +1,21 @@
 {% extends "bootstrap_base.j2.html" %} {% block body %}
 
 <div class="container">
-  {% if edit is not defined %}<h1 class="fs-3">Create a new Extension</h1>{% endif %}
-  {% if edit is defined %}<h1 class="fs-3">Edit Extension "{{ edit.name }}"</h1>{% endif %}
-  <form method="post">
+  {% if edit is not defined %}
+  <h1 class="fs-3">Create a new Extension</h1>
+  {% endif %} {% if edit is defined %}
+  <h1 class="fs-3">Edit Extension "{{ edit.name }}"</h1>
+  {% endif %}
+  <form id="extensionForm" method="post">
     <div class="d-grid gap-2">
+      <div>
+        <label for="typeInput" class="form-label">Phone Type</label>
+        <select class="form-select" aria-label="Extension type selector" name="type" id="typeInput">
+          {% for ext_type in ExtensionType %}
+          <option {% if index0 == 0 %} selected {% endif %} value="{{ ext_type.value }}">{{ ext_type.value }}</option>
+          {% endfor %}
+        </select>
+      </div>
       <div>
         <label for="extensionInput" class="form-label">Extension</label>
         <input
@@ -13,12 +24,26 @@
           id="extensionInput"
           placeholder="1234"
           name="extension"
-          {% if edit %}value="{{ edit.extension }}"{% endif %}
+          {%
+          if
+          edit
+          %}value="{{ edit.extension }}"
+          {%
+          endif
+          %}
           minlength="{{ settings.EXTENSION_DIGITS }}"
-          maxlength="{{ settings.EXTENSION_DIGITS }}"
+          maxlength="{{ settings.EXTENSION_DIGITS+1 }}"
           aria-describedby="extensionHelpBlock"
           oninput="vanity_check_extension()"
-          {% if edit is defined %}disabled{% endif %}
+          {%
+          if
+          edit
+          is
+          defined
+          %}disabled{%
+          endif
+          %}
+          required
         />
         <div id="extensionHelpBlock" class="form-text">
           The extension must be {{ settings.EXTENSION_DIGITS }} digits long. If
@@ -32,7 +57,14 @@
           type="text"
           class="form-control"
           name="name"
-          {% if edit %}value="{{ edit.name }}"{% endif %}
+          {%
+          if
+          edit
+          %}value="{{ edit.name }}"
+          {%
+          endif
+          %}
+          required
           id="nameInput"
           placeholder="{{ user.username }}'s extension"
         />
@@ -44,7 +76,13 @@
           class="form-control"
           id="infoInput"
           name="info"
-          {% if edit %}value="{{ edit.info }}"{% endif %}
+          {%
+          if
+          edit
+          %}value="{{ edit.info }}"
+          {%
+          endif
+          %}
           placeholder="..."
           aria-describedby="infoHelpBlock"
         />
@@ -52,6 +90,9 @@
           You can store some information about this extension here. It will not
           be visible for the public.
         </div>
+      </div>
+      <div id="macInputContainer">
+        
       </div>
       <div>
         <div class="form-check">
@@ -61,13 +102,37 @@
             value=""
             id="showPublicCheck"
             name="public"
-            {% if edit is not defined %}checked{% endif %}
-            {% if edit is defined and edit.public %}checked{% endif %}
-            />
-            <label class="form-check-label" for="showPublicCheck">
-              Show in public phonebook
+            {%
+            if
+            edit
+            is
+            not
+            defined
+            %}checked{%
+            endif
+            %}
+            {%
+            if
+            edit
+            is
+            defined
+            and
+            edit.public
+            %}checked{%
+            endif
+            %}
+          />
+          <label class="form-check-label" for="showPublicCheck">
+            Show in public phonebook
           </label>
         </div>
+      </div>
+      <div class="form-group">
+        <div
+          id="formError"
+          class="text-danger"
+          style="display: none"
+        ></div>
       </div>
     </div>
     <input
@@ -99,6 +164,49 @@
     });
     input.val(val);
   }
+
+  const ext_type_requires_mac = {
+    {% for ext_type in ExtensionType %} "{{ ext_type.value }}": {{ ExtensionType.requires_mac(ext_type)|lower }},
+    {% endfor %}
+  }
+
+  $("#typeInput").on("change", () => {
+    let val = $("#typeInput").val();
+    let mac_required = ext_type_requires_mac[val];
+    $("#macInputContainer").html(mac_required ? `
+    <label for="macInput" class="form-label">MAC-Address</label>
+        <input
+          type="text"
+          class="form-control"
+          name="mac"
+          {% if edit %}value="{{ edit.mac }}"{% endif %}
+          id="macInput"
+        />`: "");
+  })
+
+  $("#extensionForm").on("submit", (e) => {
+    // sanity check mac input
+    let ext_type = $("#typeInput").val();
+    let mac_required = ext_type_requires_mac[ext_type];
+    if (mac_required) {
+      let val = $("#macInput").val();
+      let match = /^[0-9a-f]{2}([:-])(?:[0-9a-f]{2}\1){4}[0-9a-f]{2}$/gmi.test(val);
+      if (!match) {
+        $("#formError").text("Invalid MAC-Adress");
+        $("#formError").css("display", "block");
+        e.preventDefault();
+      }
+    }
+
+    let ext_length = $("#extensionInput").val().length
+    if ((ext_length) != {{ settings.EXTENSION_DIGITS }}) {
+        $("#formError").text("Extension must be {{ settings.EXTENSION_DIGITS }} digits long!");
+        $("#formError").css("display", "block");
+        e.preventDefault();
+    }
+  });
+
+  
 </script>
 
 {% endblock %}

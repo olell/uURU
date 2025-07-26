@@ -5,7 +5,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from app.core.db import SessionDep
 from app.web.deps import CurrentUser
 from app.web.templates import templates
-from app.models.extension import ExtensionCreate, ExtensionUpdate
+from app.models.extension import ExtensionCreate, ExtensionType, ExtensionUpdate
 from app.models.crud.extension import (
     create_extension,
     delete_extension,
@@ -29,7 +29,9 @@ def get_own_extensions(
 @router.get("/create", response_class=HTMLResponse)
 def create_extension_page(request: Request, current_user: CurrentUser):
     return templates.TemplateResponse(
-        request, "extension/create.j2.html", {"user": current_user}
+        request,
+        "extension/create.j2.html",
+        {"user": current_user, "ExtensionType": ExtensionType},
     )
 
 
@@ -67,7 +69,9 @@ def edit_extension_page(
 ):
     extension = get_extension_by_id(session, extension, False)
     if extension is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Extension not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Extension not found"
+        )
     return templates.TemplateResponse(
         request, "extension/create.j2.html", context={"user": user, "edit": extension}
     )

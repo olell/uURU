@@ -1,5 +1,0 @@
-services:
-  app:
-    volumes:
-      - ./:/opt/app
-    command: "/bin/sh -c 'cd /opt/app && uv run fastapi dev --host 0.0.0.0'"

@@ -1,35 +1,46 @@
 # Micro User Registration Utility
 
-Minimal phone extension self registration utility. Build with shiny stuff like FastAPI and SQLModel.
+Minimal phone extension self registration utility for asterisk.
+Additional features:
 
-## Get Started (Dev Server)
+* `Innovaphone` provisioning
 
-To run the devserver on your machine you need to install `uv`. Please
-follow the steps [from these instructions](https://docs.astral.sh/uv/getting-started/installation/).
+Build with shiny stuff like FastAPI and SQLModel.
 
-Once you have `uv` installed, you can simply run the development server
-using this command:
+## Architecture
 
-```bash
+This project is based on two components:
+
+* `uuru` (+ database)
+* `asterisk` (+ database)
+
+`uuru` configure `asterisk` via the database integration.
+
+## Get Started
+
+### Requirements
+
+To deploy `uuru` you need
+
+* `docker compose` [Installation Instructions](https://docs.docker.com/compose/install/)
+* `uv` [Installation Instructions](https://docs.astral_.sh/uv/getting-started/installation/) (if you want to develop)
+
+### Production
+
+```
+docker compose up --build
+```
+
+### Development
+
+```
+cp -av .env.sample .env
+docker compose -f docker-compose-base.yml up --build -d
 uv run fastapi dev
 ```
 
-## Get Started (Docker)
+### ports
 
-**production environment**:
-```
-docker compose up
-```
-
-**development environment**:
-```
-docker compose up -f docker-compose.yml -f docker-compose.dev.yml
-```
-
-## Run tests
-
-To run the test use this command
-
-```bash
-coverage run --source=app -m pytest
-```
+* app: `127.0.0.1:8000`
+* mariadb app: `127.0.0.1:3307`
+* mariadb asterisk: `127.0.0.1:3306`

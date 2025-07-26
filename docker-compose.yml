@@ -1,19 +1,19 @@
-services:
-  database:
-    image: postgres:14.18
-    environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: rootpasswd
-      POSTGRES_DB: uuru
+include:
+  - docker-compose-base.yml
 
+services:
   app:
     build: .
+    depends_on:
+      mariadb-asterisk:
+        condition: service_healthy
     environment:
       UURU_SITE_NAME: "TARMAC"
       UURU_LIFESPAN_DROP_DB: 1
-      UURU_POSTGRES_SERVER: database
-      UURU_POSTGRES_USER: root
-      UURU_POSTGRES_PASSWORD: rootpasswd
-      UURU_POSTGRES_DB: uuru
+      UURU_DATABASE_TYPE: mysql
+      UURU_DATABASE_SERVER: mariadb-app
+      UURU_DATABASE_USER: uuru
+      UURU_DATABASE_PASSWORD: uurupassword
+      UURU_DATABASE_DB: uuru
     ports:
       - 8000:8000

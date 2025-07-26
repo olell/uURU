@@ -1,0 +1,38 @@
+services:
+  mariadb-app:
+    image: mariadb
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 300s
+    environment:
+      MARIADB_RANDOM_ROOT_PASSWORD: yes
+      MARIADB_USER: uuru
+      MARIADB_DATABASE: uuru
+      MARIADB_PASSWORD: uurupassword
+    ports:
+      - 127.0.0.1:3307:3306
+
+  mariadb-asterisk:
+    image: mariadb
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 300s
+    environment:
+      MARIADB_RANDOM_ROOT_PASSWORD: yes
+      MARIADB_USER: asterisk
+      MARIADB_DATABASE: asterisk
+      MARIADB_PASSWORD: asteriskpassword
+    ports:
+      - 127.0.0.1:3306:3306
+
+  asterisk:
+    build: asterisk/
+    depends_on:
+      mariadb-asterisk:
+        condition: service_healthy
+    environment:
+      MARIADB_DATABASE: asterisk
+      MARIADB_HOST: 127.0.0.1
+      MARIADB_USER: asterisk
+      MARIADB_PASSWORD: asteriskpassword
+    network_mode: host

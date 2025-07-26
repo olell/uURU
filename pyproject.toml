@@ -13,6 +13,7 @@ dependencies = [
     "pydantic-extra-types>=2.10.5",
     "pydantic-settings>=2.10.1",
     "pyjwt>=2.10.1",
+    "pymysql>=1.1.1",
     "pytest>=8.4.1",
     "python-dotenv>=1.1.1",
     "sqlmodel>=0.0.24",

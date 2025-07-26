@@ -19,6 +19,13 @@ class ExtensionType(str, Enum):
     INNOVAPHONE_241 = "Innovaphone 241"
     INNOVAPHONE_201A = "Innovaphone 201a"
 
+    @staticmethod
+    def requires_mac(ext_type: "ExtensionType") -> bool:
+        return not ext_type in [
+            ExtensionType.SIP,
+            ExtensionType.DECT,
+        ]
+
 
 class ExtensionBase(SQLModel):
     extension: str = Field(unique=True, primary_key=True)
@@ -41,10 +48,7 @@ class Extension(ExtensionBase, table=True):
     # TODO: should throw http error - not 500 and stack trace
     @model_validator(mode="after")
     def verify_mac_set(self) -> Self:
-        if self.type in [
-            ExtensionType.SIP,
-            ExtensionType.DECT,
-        ]:
+        if not ExtensionType.requires_mac(self.type):
             return self
 
         if not self.mac:

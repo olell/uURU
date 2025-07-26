@@ -33,7 +33,7 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 11520  # 8 days
 
     ## NETWORK
-
+    WEB_PREFIX: str = ""
     API_V1_STR: str = "/api/v1"
 
     BACKEND_CORS_ORIGINS: Annotated[list[AnyUrl] | str, BeforeValidator(parse_cors)] = (
@@ -57,29 +57,41 @@ class Settings(BaseSettings):
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def SQLALCHEMY_TEST_DATABASE_URI(self) -> PostgresDsn:
+    def SQLALCHEMY_TEST_DATABASE_URI(self) -> str:
         if not self.DATABASE_DB_TEST:
             return self.SQLALCHEMY_DATABASE_URI
 
-        return MultiHostUrl.build(
-            scheme="postgresql+psycopg" if self.DATABASE_TYPE == "postgres" else "mysql+pymysql",
-            username=self.DATABASE_USER,
-            password=self.DATABASE_PASSWORD,
-            host=self.DATABASE_SERVER,
-            port=self.DATABASE_PORT,
-            path=self.DATABASE_DB_TEST,
+        return str(
+            MultiHostUrl.build(
+                scheme=(
+                    "postgresql+psycopg"
+                    if self.DATABASE_TYPE == "postgres"
+                    else "mysql+pymysql"
+                ),
+                username=self.DATABASE_USER,
+                password=self.DATABASE_PASSWORD,
+                host=self.DATABASE_SERVER,
+                port=self.DATABASE_PORT,
+                path=self.DATABASE_DB_TEST,
+            )
         )
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def SQLALCHEMY_DATABASE_URI(self) -> PostgresDsn:
-        return MultiHostUrl.build(
-            scheme="postgresql+psycopg" if self.DATABASE_TYPE == "postgres" else "mysql+pymysql",
-            username=self.DATABASE_USER,
-            password=self.DATABASE_PASSWORD,
-            host=self.DATABASE_SERVER,
-            port=self.DATABASE_PORT,
-            path=self.DATABASE_DB,
+    def SQLALCHEMY_DATABASE_URI(self) -> str:
+        return str(
+            MultiHostUrl.build(
+                scheme=(
+                    "postgresql+psycopg"
+                    if self.DATABASE_TYPE == "postgres"
+                    else "mysql+pymysql"
+                ),
+                username=self.DATABASE_USER,
+                password=self.DATABASE_PASSWORD,
+                host=self.DATABASE_SERVER,
+                port=self.DATABASE_PORT,
+                path=self.DATABASE_DB,
+            )
         )
 
     ## BEHAVIOR
@@ -101,9 +113,6 @@ class Settings(BaseSettings):
     SITE_NAME: str = "Default"
     SITE_SLOGAN: str = "You can configure this!"
     SHOW_SITE_SLOGAN: bool = True
-
-    PRIMARY_COLOR: Color = "#75ff40"
-    SECONDARY_COLOR: Color = "#450b6f"
 
 
 settings = Settings()

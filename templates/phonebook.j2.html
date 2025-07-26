@@ -1,0 +1,57 @@
+{% extends "bootstrap_base.j2.html" %} {% block body %}
+<div class="container">
+  <form class="row g-3">
+    <div class="col-10">
+      <input
+        type="text"
+        class="form-control"
+        name="query"
+        value="{% if query is not none %}{{ query }}{% endif %}"
+        placeholder="Search"
+        {%
+        if
+        query
+        is
+        not
+        none
+        and
+        query
+        !=""
+        %}autofocus{%
+        endif
+        %}
+      />
+    </div>
+    <div class="col-2">
+      <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+  </form>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Name</th>
+        {% if user is defined and user.role == 'admin' %}
+        <th scope="col">Public</th>
+        <th scope="col">Created By</th>
+        {% endif %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for extension in phonebook %}
+      <tr>
+        <td scope="row">
+          <a href="tel:{{ extension.extension }}">{{ extension.extension }}</a>
+        </td>
+        <td>{{ extension.name }}</td>
+        {% if user is defined and user.role == 'admin' %}
+        <td>{% if not extension.public %} Not Public{% endif %}</td>
+        <td>{{ extension.user.username }}</td>
+        {% endif %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}

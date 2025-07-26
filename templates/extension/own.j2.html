@@ -1,0 +1,70 @@
+{% extends "bootstrap_base.j2.html" %} {% block body %}
+
+<div class="container">
+  <h1 class="fs-3">Your Extensions</h1>
+  <a href="/extension/create">Add a new extension</a>
+  <hr />
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Name</th>
+        <th scope="col">Public</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for extension in user.extensions %}
+      <tr>
+        <td scope="row">
+          <a href="tel:{{ extension.extension }}">{{ extension.extension }}</a>
+        </td>
+        <td>{{ extension.name }}</td>
+        <td>
+          <input
+            class="form-check-input"
+            type="checkbox"
+            {%
+            if
+            extension.public
+            %}checked{%endif%}
+            disabled
+          />
+        </td>
+        <td>
+          <a
+            class="text-danger text-decoration-none me-4"
+            href="/extension/delete/{{ extension.extension }}"
+          >
+            <ion-icon name="trash"></ion-icon>
+          </a>
+
+          <a
+            class="text-success text-decoration-none me-4"
+            href="/extension/edit/{{ extension.extension }}"
+          >
+            <ion-icon name="pencil"></ion-icon>
+          </a>
+
+          <a
+            class="text-warning"
+            data-bs-toggle="popover"
+            title="Credentials"
+            data-bs-content="<b>Password:</b><br/> {{ extension.password }}<br/><br/><b>Token:</b><br/> {{ extension.token }}"
+            data-bs-html="true" 
+            tabindex="0"
+            data-bs-trigger="focus"
+            role="button"
+          >
+            <ion-icon name="key"></ion-icon>
+          </a>
+          
+
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}

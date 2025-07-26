@@ -12,9 +12,6 @@ class SiteInfo(BaseModel):
     site_slogan: str
     show_site_slogan: bool
 
-    primary_color: Color
-    secondary_color: Color
-
 
 @router.get("/")
 def get_site_info() -> SiteInfo:
@@ -22,6 +19,4 @@ def get_site_info() -> SiteInfo:
         site_name=settings.SITE_NAME,
         site_slogan=settings.SITE_SLOGAN,
         show_site_slogan=settings.SHOW_SITE_SLOGAN,
-        primary_color=settings.PRIMARY_COLOR,
-        secondary_color=settings.SECONDARY_COLOR,
     )

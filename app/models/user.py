@@ -39,6 +39,11 @@ class UserUpdate(BaseModel):
     role: UserRole | None = None
 
 
+class PasswordChange(BaseModel):
+    current_password: str = Field(min_length=10, max_length=100)
+    new_password: str = Field(min_length=10, max_length=100)
+
+
 class Token(BaseModel):
     token: str
 

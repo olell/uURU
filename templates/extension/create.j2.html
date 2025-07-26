@@ -1,0 +1,104 @@
+{% extends "bootstrap_base.j2.html" %} {% block body %}
+
+<div class="container">
+  {% if edit is not defined %}<h1 class="fs-3">Create a new Extension</h1>{% endif %}
+  {% if edit is defined %}<h1 class="fs-3">Edit Extension "{{ edit.name }}"</h1>{% endif %}
+  <form method="post">
+    <div class="d-grid gap-2">
+      <div>
+        <label for="extensionInput" class="form-label">Extension</label>
+        <input
+          type="text"
+          class="form-control"
+          id="extensionInput"
+          placeholder="1234"
+          name="extension"
+          {% if edit %}value="{{ edit.extension }}"{% endif %}
+          minlength="{{ settings.EXTENSION_DIGITS }}"
+          maxlength="{{ settings.EXTENSION_DIGITS }}"
+          aria-describedby="extensionHelpBlock"
+          oninput="vanity_check_extension()"
+          {% if edit is defined %}disabled{% endif %}
+        />
+        <div id="extensionHelpBlock" class="form-text">
+          The extension must be {{ settings.EXTENSION_DIGITS }} digits long. If
+          you enter letters they will automatically be converted to their vanity
+          digits.
+        </div>
+      </div>
+      <div>
+        <label for="nameInput" class="form-label">Name</label>
+        <input
+          type="text"
+          class="form-control"
+          name="name"
+          {% if edit %}value="{{ edit.name }}"{% endif %}
+          id="nameInput"
+          placeholder="{{ user.username }}'s extension"
+        />
+      </div>
+      <div>
+        <label for="infoInput" class="form-label">Info</label>
+        <input
+          type="text"
+          class="form-control"
+          id="infoInput"
+          name="info"
+          {% if edit %}value="{{ edit.info }}"{% endif %}
+          placeholder="..."
+          aria-describedby="infoHelpBlock"
+        />
+        <div id="infoHelpBlock" class="form-text">
+          You can store some information about this extension here. It will not
+          be visible for the public.
+        </div>
+      </div>
+      <div>
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            value=""
+            id="showPublicCheck"
+            name="public"
+            {% if edit is not defined %}checked{% endif %}
+            {% if edit is defined and edit.public %}checked{% endif %}
+            />
+            <label class="form-check-label" for="showPublicCheck">
+              Show in public phonebook
+          </label>
+        </div>
+      </div>
+    </div>
+    <input
+      type="submit"
+      class="btn btn-primary float-end ps-5 pe-5"
+      value="{% if edit is not defined %}Add{% else %}Save{% endif %}"
+    />
+  </form>
+</div>
+
+<script>
+  let vanity_digits = {
+    2: ["a", "b", "c"],
+    3: ["d", "e", "f"],
+    4: ["g", "h", "i"],
+    5: ["j", "k", "l"],
+    6: ["m", "n", "o"],
+    7: ["p", "q", "r", "s"],
+    8: ["t", "u", "v"],
+    9: ["w", "x", "y", "z"],
+  };
+  function vanity_check_extension() {
+    const input = $("#extensionInput");
+    let val = $("#extensionInput").val();
+    Object.keys(vanity_digits).forEach((d) => {
+      vanity_digits[d].forEach((c) => {
+        val = val.replace(c, d);
+      });
+    });
+    input.val(val);
+  }
+</script>
+
+{% endblock %}

@@ -47,12 +47,14 @@ async def web_exception_handler(request: Request, exc: HTTPException):
     # keep default handler for api
     if str(request.url.path).startswith(settings.API_V1_STR):
         return await http_exception_handler(request, exc)
-    
+
     return RedirectResponse(f"/error/{exc.status_code}")
+
 
 app.include_router(api_router, prefix=settings.API_V1_STR)
 app.include_router(web_router, prefix=settings.WEB_PREFIX)
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
 
 @app.middleware("http")
 async def add_session_cookie(request: Request, call_next):
@@ -63,8 +65,22 @@ async def add_session_cookie(request: Request, call_next):
         sessid = str(uuid.uuid4())
         request.cookies.update({"session": sessid})
     response = await call_next(request)
-    
+
     if set_sessid:
         response.set_cookie(key="session", value=sessid)
 
     return response
+
+
+@app.middleware("http")
+async def handle_exception_web(request: Request, call_next):
+    try:
+        return await call_next(request)
+    except Exception as e:
+        if str(request.url.path).startswith(settings.API_V1_STR):
+            raise e
+
+        if isinstance(e, HTTPException):
+            return RedirectResponse(f"/error/{e.status_code}")
+        else:
+            return RedirectResponse("/error/0")

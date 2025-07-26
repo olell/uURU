@@ -1,7 +1,7 @@
 from sqlmodel import Session, col, select
 import uuid
 
-from app.models.user import User, UserCreate, UserRole, UserUpdate
+from app.models.user import PasswordChange, User, UserCreate, UserRole, UserUpdate
 from app.models.crud import CRUDNotAllowedException
 
 from app.core.security import get_password_hash, verify_password
@@ -71,12 +71,16 @@ def get_user_by_username(session: Session, username: str) -> User | None:
 
     return user
 
-def filter_user_by_username(session: Session, username: str | None = None) -> list[User]:
+
+def filter_user_by_username(
+    session: Session, username: str | None = None
+) -> list[User]:
     query = select(User)
     if username is not None:
         query = query.where(col(User.username).contains(username))
-    
+
     return list(session.exec(query).all())
+
 
 def authenticate_user(session: Session, username: str, password: str) -> User | None:
     db_user = get_user_by_username(session, username)
@@ -85,3 +89,15 @@ def authenticate_user(session: Session, username: str, password: str) -> User | 
     if not verify_password(password, db_user.password_hash):
         return None
     return db_user
+
+
+def change_password(session: Session, user: User, credentials: PasswordChange) -> User:
+    if not verify_password(credentials.current_password, user.password_hash):
+        raise CRUDNotAllowedException("Invalid current password")
+
+    user.password_hash = get_password_hash(credentials.new_password)
+    session.add(user)
+    session.commit()
+    session.refresh(user)
+
+    return user

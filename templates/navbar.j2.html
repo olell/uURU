@@ -39,10 +39,15 @@
             >Your Extensions</a
           >
         </li>
-        {% endif %}
-        {% if user is defined and user.role == "admin" %}
+        {% endif %} {% if user is defined and user.role == "admin" %}
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
             Admin
           </a>
           <ul class="dropdown-menu">
@@ -53,13 +58,27 @@
         {% endif %}
       </ul>
       <ul class="navbar-nav navbar-end">
+        {% if user is not defined or user is none %}
         <li class="nav-item float-end">
-          {% if user is not defined or user is none %}
           <a class="nav-link" href="/user/login">Login</a>
-          {% else %}
-          <a class="nav-link" href="/user/logout">Logout {% if user is defined %}({{ user.username }}){% endif %}</a>
-          {% endif %}
         </li>
+        {% else %}
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            {{ user.username }}
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="/user/settings">Settings</a></li>
+            <li><a class="dropdown-item" href="/user/logout">Logout</a></li>
+          </ul>
+        </li>
+        {% endif %}
       </ul>
     </div>
   </div>

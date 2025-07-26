@@ -8,9 +8,10 @@ import sqlalchemy
 from app.core.config import settings
 from app.core.db import SessionDep
 from app.core.security import create_access_token
-from app.models.crud.user import authenticate_user, create_user
-from app.models.user import UserCreate
-from app.web.deps import OptionalCurrentUser
+from app.models.crud import CRUDNotAllowedException
+from app.models.crud.user import authenticate_user, change_password, create_user
+from app.models.user import PasswordChange, UserCreate
+from app.web.deps import CurrentUser, OptionalCurrentUser
 from app.web.message import MessageBroker
 from app.web.templates import templates
 
@@ -20,7 +21,9 @@ router = APIRouter(prefix="/user")
 @router.get("/login", response_class=HTMLResponse)
 def login_page(request: Request, current_user: OptionalCurrentUser):
     if current_user:
-        MessageBroker.push(request, {"message": "You're already logged in!", "category": "warning"})
+        MessageBroker.push(
+            request, {"message": "You're already logged in!", "category": "warning"}
+        )
         return RedirectResponse("/", status_code=status.HTTP_303_SEE_OTHER)
     return templates.TemplateResponse(request=request, name="user/login.j2.html")
 
@@ -36,12 +39,20 @@ def login_handle(
     current_user: OptionalCurrentUser,
 ):
     if current_user is not None:
-        MessageBroker.push(request, {"message": "You're already logged in!", "category": "warning"})
+        MessageBroker.push(
+            request, {"message": "You're already logged in!", "category": "warning"}
+        )
         return "/"
 
     user = authenticate_user(session, username, password)
     if not user:
-        MessageBroker.push(request, {"message": "Failed to log in! (Invalid username or password?)", "category": "error"})
+        MessageBroker.push(
+            request,
+            {
+                "message": "Failed to log in! (Invalid username or password?)",
+                "category": "error",
+            },
+        )
         return "/user/login"
 
     expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -59,7 +70,7 @@ def login_handle(
 def logout(request: Request, user: OptionalCurrentUser):
     if not user:
         return "/"
-    
+
     MessageBroker.push(request, {"message": "See ya!"})
 
     response = RedirectResponse("/", status_code=status.HTTP_303_SEE_OTHER)
@@ -70,10 +81,40 @@ def logout(request: Request, user: OptionalCurrentUser):
 @router.post(
     "/register", response_class=RedirectResponse, status_code=status.HTTP_303_SEE_OTHER
 )
-def register_handle(request: Request, session: SessionDep, data: Annotated[UserCreate, Form()]):
+def register_handle(
+    request: Request, session: SessionDep, data: Annotated[UserCreate, Form()]
+):
     try:
         create_user(session, None, data)
     except sqlalchemy.exc.IntegrityError:
-        MessageBroker.push(request, {"message": f"Username already in use!", "category": "error"})
-    MessageBroker.push(request, {"message": "Account successfully created!", "category": "success"})
+        MessageBroker.push(
+            request, {"message": f"Username already in use!", "category": "error"}
+        )
+    MessageBroker.push(
+        request, {"message": "Account successfully created!", "category": "success"}
+    )
     return "/user/login"
+
+
+@router.get("/settings", response_class=HTMLResponse)
+def settings_page(request: Request, user: CurrentUser):
+    return templates.TemplateResponse(request, "user/settings.j2.html", {"user": user})
+
+
+@router.post(
+    "/change_password",
+    response_class=RedirectResponse,
+    status_code=status.HTTP_303_SEE_OTHER,
+)
+def settings_handle(
+    request: Request,
+    session: SessionDep,
+    user: CurrentUser,
+    credentials: Annotated[PasswordChange, Form()],
+):
+    try:
+        change_password(session, user, credentials)
+    except CRUDNotAllowedException as e:
+        MessageBroker.push(request, {"message": str(e), "category": "error"})
+
+    return "/user/settings"

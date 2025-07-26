@@ -57,29 +57,41 @@ class Settings(BaseSettings):
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def SQLALCHEMY_TEST_DATABASE_URI(self) -> PostgresDsn:
+    def SQLALCHEMY_TEST_DATABASE_URI(self) -> str:
         if not self.DATABASE_DB_TEST:
             return self.SQLALCHEMY_DATABASE_URI
 
-        return MultiHostUrl.build(
-            scheme="postgresql+psycopg" if self.DATABASE_TYPE == "postgres" else "mysql+pymysql",
-            username=self.DATABASE_USER,
-            password=self.DATABASE_PASSWORD,
-            host=self.DATABASE_SERVER,
-            port=self.DATABASE_PORT,
-            path=self.DATABASE_DB_TEST,
+        return str(
+            MultiHostUrl.build(
+                scheme=(
+                    "postgresql+psycopg"
+                    if self.DATABASE_TYPE == "postgres"
+                    else "mysql+pymysql"
+                ),
+                username=self.DATABASE_USER,
+                password=self.DATABASE_PASSWORD,
+                host=self.DATABASE_SERVER,
+                port=self.DATABASE_PORT,
+                path=self.DATABASE_DB_TEST,
+            )
         )
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def SQLALCHEMY_DATABASE_URI(self) -> PostgresDsn:
-        return MultiHostUrl.build(
-            scheme="postgresql+psycopg" if self.DATABASE_TYPE == "postgres" else "mysql+pymysql",
-            username=self.DATABASE_USER,
-            password=self.DATABASE_PASSWORD,
-            host=self.DATABASE_SERVER,
-            port=self.DATABASE_PORT,
-            path=self.DATABASE_DB,
+    def SQLALCHEMY_DATABASE_URI(self) -> str:
+        return str(
+            MultiHostUrl.build(
+                scheme=(
+                    "postgresql+psycopg"
+                    if self.DATABASE_TYPE == "postgres"
+                    else "mysql+pymysql"
+                ),
+                username=self.DATABASE_USER,
+                password=self.DATABASE_PASSWORD,
+                host=self.DATABASE_SERVER,
+                port=self.DATABASE_PORT,
+                path=self.DATABASE_DB,
+            )
         )
 
     ## BEHAVIOR

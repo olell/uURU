@@ -59,7 +59,7 @@ def delete_user(session: Session, executing_user: User, user_to_delete: User) ->
 
 
 def get_user_by_id(session: Session, user_id: uuid.UUID) -> User | None:
-    statement = select(User).where(User.id == user_id)
+    statement = select(User).where(User.id == uuid.UUID(user_id))
     user = session.exec(statement).first()
 
     return user

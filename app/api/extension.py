@@ -4,6 +4,7 @@ from fastapi import APIRouter, status, HTTPException
 import sqlalchemy
 
 from app.api.deps import OptionalCurrentUser, SessionDep, CurrentUser
+from app.core.db import SessionAsteriskDep
 from app.models.crud import CRUDNotAllowedException
 from app.models.extension import (
     Extension,
@@ -23,9 +24,14 @@ router = APIRouter(prefix="/extension", tags=["extension"])
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=ExtensionBase)
-def create(session: SessionDep, user: CurrentUser, data: ExtensionCreate):
+def create(
+    session: SessionDep,
+    session_asterisk: SessionAsteriskDep,
+    user: CurrentUser,
+    data: ExtensionCreate,
+):
     try:
-        return create_extension(session, user, data)
+        return create_extension(session, session_asterisk, user, data)
     except sqlalchemy.exc.IntegrityError:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT, detail="Extension already in use"
@@ -50,8 +56,13 @@ def update(
 
 
 @router.delete("/{extension}", status_code=status.HTTP_204_NO_CONTENT)
-def delete(session: SessionDep, user: CurrentUser, extension: str):
-    ext = get_extension_by_id(session, extension, public=False)
+def delete(
+    session: SessionDep,
+    session_asterisk: SessionAsteriskDep,
+    user: CurrentUser,
+    extension: str,
+):
+    ext = get_extension_by_id(session, session_asterisk, extension, public=False)
 
     if ext is None:
         raise HTTPException(

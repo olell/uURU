@@ -2,7 +2,7 @@ from typing import Annotated
 from fastapi import APIRouter, Request, status, Form, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse
 
-from app.core.db import SessionDep
+from app.core.db import SessionAsteriskDep, SessionDep
 from app.web.deps import CurrentUser
 from app.web.templates import templates
 from app.models.extension import ExtensionCreate, ExtensionType, ExtensionUpdate
@@ -39,10 +39,13 @@ def create_extension_page(request: Request, current_user: CurrentUser):
     "/create", response_class=RedirectResponse, status_code=status.HTTP_303_SEE_OTHER
 )
 def create_extension_handle(
-    session: SessionDep, data: Annotated[ExtensionCreate, Form()], user: CurrentUser
+    session: SessionDep,
+    session_asterisk: SessionAsteriskDep,
+    data: Annotated[ExtensionCreate, Form()],
+    user: CurrentUser,
 ):
     try:
-        create_extension(session, user, data)
+        create_extension(session, session_asterisk, user, data)
     except:
         # todo information about error
         return "/extension/create"
@@ -54,9 +57,19 @@ def create_extension_handle(
     response_class=RedirectResponse,
     status_code=status.HTTP_303_SEE_OTHER,
 )
-def delete_extension_handle(session: SessionDep, extension: int, user: CurrentUser):
+def delete_extension_handle(
+    session: SessionDep,
+    session_asterisk: SessionAsteriskDep,
+    extension: int,
+    user: CurrentUser,
+):
     try:
-        delete_extension(session, user, get_extension_by_id(session, extension, False))
+        delete_extension(
+            session,
+            session_asterisk,
+            user,
+            get_extension_by_id(session, extension, False),
+        )
     except Exception as e:
         print(e)
         pass

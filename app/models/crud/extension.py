@@ -2,6 +2,8 @@ from typing import Optional
 from sqlmodel import Session, select, col, or_
 import sqlalchemy
 
+from pydantic_extra_types.mac_address import MacAddress
+
 from app.core.security import generate_extension_password, generate_extension_token
 
 from app.models.crud import CRUDNotAllowedException
@@ -87,6 +89,10 @@ def get_extension_by_id(
         query = query.where(Extension.public == True)
 
     return session.exec(query).first()
+
+
+def get_extension_by_mac(session: Session, mac: MacAddress) -> Extension:
+    return session.exec(select(Extension).where(Extension.mac == mac)).first()
 
 
 def filter_extensions_by_name(

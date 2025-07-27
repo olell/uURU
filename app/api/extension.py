@@ -56,8 +56,13 @@ def update(
 
 
 @router.delete("/{extension}", status_code=status.HTTP_204_NO_CONTENT)
-def delete(session: SessionDep, user: CurrentUser, extension: str):
-    ext = get_extension_by_id(session, extension, public=False)
+def delete(
+    session: SessionDep,
+    session_asterisk: SessionAsteriskDep,
+    user: CurrentUser,
+    extension: str,
+):
+    ext = get_extension_by_id(session, session_asterisk, extension, public=False)
 
     if ext is None:
         raise HTTPException(

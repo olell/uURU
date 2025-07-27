@@ -5,7 +5,10 @@ import sqlalchemy
 from app.core.security import generate_extension_password, generate_extension_token
 
 from app.models.crud import CRUDNotAllowedException
-from app.models.crud.asterisk import create_asterisk_extension
+from app.models.crud.asterisk import (
+    create_asterisk_extension,
+    delete_asterisk_extension,
+)
 from app.models.user import User, UserRole
 from app.models.extension import ExtensionCreate, Extension, ExtensionUpdate
 
@@ -50,9 +53,13 @@ def update_extension(
     return extension
 
 
-def delete_extension(session: Session, user: User, extension: Extension) -> None:
+def delete_extension(
+    session: Session, session_asterisk: Session, user: User, extension: Extension
+) -> None:
     if not (extension.user_id == user.id or user.role == UserRole.ADMIN):
         raise CRUDNotAllowedException("You're not allowed to delete this extension")
+
+    delete_asterisk_extension(session_asterisk, extension)
 
     session.delete(extension)
     session.commit()

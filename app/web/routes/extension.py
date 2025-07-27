@@ -57,9 +57,19 @@ def create_extension_handle(
     response_class=RedirectResponse,
     status_code=status.HTTP_303_SEE_OTHER,
 )
-def delete_extension_handle(session: SessionDep, extension: int, user: CurrentUser):
+def delete_extension_handle(
+    session: SessionDep,
+    session_asterisk: SessionAsteriskDep,
+    extension: int,
+    user: CurrentUser,
+):
     try:
-        delete_extension(session, user, get_extension_by_id(session, extension, False))
+        delete_extension(
+            session,
+            session_asterisk,
+            user,
+            get_extension_by_id(session, extension, False),
+        )
     except Exception as e:
         print(e)
         pass

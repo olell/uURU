@@ -1,4 +1,4 @@
-from sqlmodel import Session
+from sqlmodel import Session, delete, select
 
 from app.models.asterisk import PSAor, PSAuth, PSEndpoint
 from app.models.crud import CRUDNotAllowedException
@@ -40,3 +40,15 @@ def create_asterisk_extension(
         raise CRUDNotAllowedException(f"could not configure endpoint in asterisk: {e}")
 
     return [ps_aor, ps_auth, ps_endpoint]
+
+
+def delete_asterisk_extension(session_asterisk: Session, extension: Extension) -> None:
+    try:
+        for cls in [PSEndpoint, PSAuth, PSAor]:
+            session_asterisk.exec(delete(cls).where(cls.id == extension.extension))
+
+    except Exception as e:
+        session_asterisk.rollback()
+        raise e
+
+    session_asterisk.commit()

@@ -28,6 +28,10 @@ To deploy `uuru` you need
 ### Production
 
 ```
+cat > .env << EOF
+UURU_WEB_HOST = "$yourIP:8000"
+UURU_ASTERISK_HOST = "$yourIP"
+EOF
 docker compose up --build
 ```
 
@@ -35,6 +39,10 @@ docker compose up --build
 
 ```
 cp -av .env.sample .env
+cat >> .env << EOF
+UURU_WEB_HOST = "$yourIP:8000"
+UURU_ASTERISK_HOST = "$yourIP"
+EOF
 docker compose -f docker-compose-base.yml up --build -d
 uv run fastapi dev
 ```
@@ -44,3 +52,14 @@ uv run fastapi dev
 * app: `127.0.0.1:8000`
 * mariadb app: `127.0.0.1:3307`
 * mariadb asterisk: `127.0.0.1:3306`
+
+## Auto Provisioning
+
+`uuru` supports auto provisioning of Innovaphone devices (currently only `IP241`).
+To activate add the following snippet to your `dnsmasq.conf`:
+```
+dhcp-option=vendor:1.3.6.1.4.1.6666,215,"http://${UURU_WEB_HOST}/api/v1/provisioning/innovaphone/update?mac=#m&localip=#i"
+dhcp-option=vendor:1.3.6.1.4.1.6666,216,1
+```
+
+_replace `${UURU_WEB_HOST}` accordingly

@@ -55,6 +55,12 @@ class Settings(BaseSettings):
     DATABASE_DB: str = ""
     DATABASE_DB_TEST: str | None = None
 
+    ASTERISK_DATABASE_SERVER: str
+    ASTERISK_DATABASE_PORT: int = 3306
+    ASTERISK_DATABASE_USER: str
+    ASTERISK_DATABASE_PASSWORD: str
+    ASTERISK_DATABASE_DB: str
+
     @computed_field  # type: ignore[prop-decorator]
     @property
     def SQLALCHEMY_TEST_DATABASE_URI(self) -> str:
@@ -91,6 +97,20 @@ class Settings(BaseSettings):
                 host=self.DATABASE_SERVER,
                 port=self.DATABASE_PORT,
                 path=self.DATABASE_DB,
+            )
+        )
+
+    @computed_field
+    @property
+    def SQLACLCHEMY_ASTERISK_DATABASE_URI(self) -> str:
+        return str(
+            MultiHostUrl.build(
+                scheme="mysql+pymysql",
+                username=self.ASTERISK_DATABASE_USER,
+                password=self.ASTERISK_DATABASE_PASSWORD,
+                host=self.ASTERISK_DATABASE_SERVER,
+                port=self.ASTERISK_DATABASE_PORT,
+                path=self.ASTERISK_DATABASE_DB,
             )
         )
 

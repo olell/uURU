@@ -1,21 +1,3 @@
-"""
-pothos geo asset management core/db.py
-Copyright (C) 2025  Ole Lange
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/>.
-"""
-
 from typing import Annotated
 from fastapi import Depends
 from sqlmodel import Session, create_engine, SQLModel, func, select
@@ -23,14 +5,19 @@ from sqlmodel import Session, create_engine, SQLModel, func, select
 from app.core.config import settings
 
 from app.models import *
+from app.models.user import User
 from app.models.crud.user import create_user
 from app.models.user import UserCreate, UserRole
 
 engine = create_engine(str(settings.SQLALCHEMY_DATABASE_URI))
+engine_asterisk = create_engine(str(settings.SQLACLCHEMY_ASTERISK_DATABASE_URI))
 
 
 def init_db(session, engine=engine) -> None:
-    SQLModel.metadata.create_all(engine)
+    SQLModel.metadata.create_all(engine, tables=[x.__table__ for x in tables])
+    SQLModel.metadata.create_all(
+        engine_asterisk, tables=[x.__table__ for x in asterisk_tables]
+    )
 
     # check if there are any users in the DB, if not create a root user with
     # configured default credentials
@@ -49,7 +36,7 @@ def init_db(session, engine=engine) -> None:
 
 
 def drop_db(engine=engine) -> None:
-    SQLModel.metadata.drop_all(engine)
+    SQLModel.metadata.drop_all(engine, [x.__table__ for x in tables])
 
 
 def get_session():
@@ -57,4 +44,10 @@ def get_session():
         yield session
 
 
+def get_asterisk_session():
+    with Session(engine_asterisk) as session:
+        yield session
+
+
 SessionDep = Annotated[Session, Depends(get_session)]
+SessionAsteriskDep = Annotated[Session, Depends(get_asterisk_session)]

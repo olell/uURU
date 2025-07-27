@@ -1,1 +1,5 @@
-from app.models.user import *
+from app.models.user import User
+from app.models.extension import Extension, TemporaryExtensions
+
+tables = [User, Extension, TemporaryExtensions]
+asterisk_tables = []

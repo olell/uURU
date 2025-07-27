@@ -7,13 +7,10 @@ services:
     depends_on:
       mariadb-asterisk:
         condition: service_healthy
+    env_file: ".env"
     environment:
-      UURU_SITE_NAME: "TARMAC"
-      UURU_LIFESPAN_DROP_DB: 1
-      UURU_DATABASE_TYPE: mysql
+      UURU_DATABASE_PORT: 3306
       UURU_DATABASE_SERVER: mariadb-app
-      UURU_DATABASE_USER: uuru
-      UURU_DATABASE_PASSWORD: uurupassword
-      UURU_DATABASE_DB: uuru
+      UURU_ASTERISK_DATABASE_SERVER: mariadb-asterisk
     ports:
       - 8000:8000

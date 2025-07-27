@@ -25,24 +25,25 @@ To deploy `uuru` you need
 * `docker compose` [Installation Instructions](https://docs.docker.com/compose/install/)
 * `uv` [Installation Instructions](https://docs.astral_.sh/uv/getting-started/installation/) (if you want to develop)
 
+### Prepare
+
+```
+cp -av .env.sample .env
+# edit .env file
+# UURU_WEB_HOST
+# UURU_WEB_HOST
+# UURU_SECRET_KEY $(pwgen -1 30)
+```
+
 ### Production
 
 ```
-cat > .env << EOF
-UURU_WEB_HOST = "$yourIP:8000"
-UURU_ASTERISK_HOST = "$yourIP"
-EOF
 docker compose up --build
 ```
 
 ### Development
 
 ```
-cp -av .env.sample .env
-cat >> .env << EOF
-UURU_WEB_HOST = "$yourIP:8000"
-UURU_ASTERISK_HOST = "$yourIP"
-EOF
 docker compose -f docker-compose-base.yml up --build -d
 uv run fastapi dev
 ```

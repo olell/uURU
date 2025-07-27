@@ -40,6 +40,9 @@ class Settings(BaseSettings):
     WEB_PREFIX: str = ""
     API_V1_STR: str = "/api/v1"
 
+    WEB_HOST: str = "127.0.0.1:8000"
+    ASTERISK_HOST: str = "127.0.0.1"
+
     BACKEND_CORS_ORIGINS: Annotated[list[AnyUrl] | str, BeforeValidator(parse_cors)] = (
         []
     )

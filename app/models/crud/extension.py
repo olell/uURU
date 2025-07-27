@@ -5,12 +5,13 @@ import sqlalchemy
 from app.core.security import generate_extension_password, generate_extension_token
 
 from app.models.crud import CRUDNotAllowedException
+from app.models.crud.asterisk import create_asterisk_extension
 from app.models.user import User, UserRole
 from app.models.extension import ExtensionCreate, Extension, ExtensionUpdate
 
 
 def create_extension(
-    session: Session, user: User, extension: ExtensionCreate
+    session: Session, session_asterisk: Session, user: User, extension: ExtensionCreate
 ) -> Extension:
 
     try:
@@ -27,6 +28,8 @@ def create_extension(
         session.refresh(db_obj)
     except sqlalchemy.exc.IntegrityError:
         raise CRUDNotAllowedException("Extension not available")
+
+    create_asterisk_extension(session_asterisk, db_obj)
 
     return db_obj
 

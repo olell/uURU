@@ -35,6 +35,7 @@ dependencies = [
     { name = "fastapi", extra = ["standard"] },
     { name = "httpx" },
     { name = "jinja2" },
+    { name = "mitel-ommclient2" },
     { name = "psycopg", extra = ["binary"] },
     { name = "pydantic-extra-types" },
     { name = "pydantic-settings" },
@@ -54,6 +55,7 @@ requires-dist = [
     { name = "fastapi", extras = ["standard"], specifier = ">=0.116.1" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "jinja2", specifier = ">=3.1.6" },
+    { name = "mitel-ommclient2", extras = ["crypt"], git = "https://github.com/hirnpfirsich/mitel_ommclient2.git" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.2.9" },
     { name = "pydantic-extra-types", specifier = ">=2.10.5" },
     { name = "pydantic-settings", specifier = ">=2.10.1" },
@@ -431,6 +433,11 @@ sdist = { url = "https://files.pythonhosted.org/packages/d6/54/cfe61301667036ec9
 wheels = [
     { url = "https://files.pythonhosted.org/packages/b3/38/89ba8ad64ae25be8de66a6d463314cf1eb366222074cfda9ee839c56a4b4/mdurl-0.1.2-py3-none-any.whl", hash = "sha256:84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8", size = 9979, upload-time = "2022-08-14T12:40:09.779Z" },
 ]
+
+[[package]]
+name = "mitel-ommclient2"
+version = "0.0.1"
+source = { git = "https://github.com/hirnpfirsich/mitel_ommclient2.git#baf887444a1a9cf9a946c941ab2256cc35825f0d" }
 
 [[package]]
 name = "packaging"

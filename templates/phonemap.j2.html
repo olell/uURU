@@ -1,0 +1,54 @@
+{% extends "bootstrap_base.j2.html" %}
+{% block head %}
+ <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+  crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""></script>
+  
+<style>
+  #map {
+    position: relative;
+    border: 1px solid black;
+    border-radius: 8px;
+    height: 90vh;  /* or as desired */
+    width: 100%;  /* This means "100% of the width of its container", the .col-md-8 */
+  }
+</style>
+
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div id="map"></div>
+</div>
+
+<script>
+    var map = L.map('map');
+
+    var phonebook_data = [
+    {% for extension in phonebook %}
+    {% if extension.lat is not none and extension.lon is not none %}
+        {
+            "coordinates": [{{ extension.lat_float }}, {{ extension.lon_float }}],
+            "extension": "{{ extension.extension }}",
+            "name": "{{ extension.name }}",
+            {% if extension.location_name is not none %}"location": "{{ extension.location_name }}"{% endif %}
+        },{% endif %}{% endfor %}];
+
+
+    $(window).ready(() => {
+        map.setView([{{ settings.SITE_LAT }}, {{ settings.SITE_LON }}], 15);
+        L.tileLayer('https://tile.openstreetmap.de/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+        
+        phonebook_data.forEach((e) => {
+            L.marker(e.coordinates).bindPopup(`<b>${e.extension}</b><br/>${e.name}<br/>${e.location ? ("@ " + e.location) : ""}`).addTo(map);
+        })
+    });
+</script>
+
+{% endblock %}

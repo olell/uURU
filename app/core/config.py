@@ -133,6 +133,8 @@ class Settings(BaseSettings):
     SITE_NAME: str = "Default"
     SITE_SLOGAN: str = "You can configure this!"
     SHOW_SITE_SLOGAN: bool = True
+    SITE_LAT: float = 0
+    SITE_LON: float = 0
 
 
 settings = Settings()

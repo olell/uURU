@@ -4,6 +4,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 
 from app.core.db import SessionAsteriskDep, SessionDep
 from app.web.deps import CurrentUser
+from app.web.message import MessageBroker
 from app.web.templates import templates
 from app.models.extension import ExtensionCreate, ExtensionType, ExtensionUpdate
 from app.models.crud.extension import (
@@ -39,6 +40,7 @@ def create_extension_page(request: Request, current_user: CurrentUser):
     "/create", response_class=RedirectResponse, status_code=status.HTTP_303_SEE_OTHER
 )
 def create_extension_handle(
+    request: Request,
     session: SessionDep,
     session_asterisk: SessionAsteriskDep,
     data: Annotated[ExtensionCreate, Form()],
@@ -46,9 +48,10 @@ def create_extension_handle(
 ):
     try:
         create_extension(session, session_asterisk, user, data)
-    except:
-        # todo information about error
+    except Exception as e:
+        MessageBroker.push(request, {"message": "Failed to create extension", "category": "error"})
         return "/extension/create"
+    MessageBroker.push(request, {"message": "Created extension!", "category": "success"})
     return "/extension/own"
 
 
@@ -58,6 +61,7 @@ def create_extension_handle(
     status_code=status.HTTP_303_SEE_OTHER,
 )
 def delete_extension_handle(
+    request: Request,
     session: SessionDep,
     session_asterisk: SessionAsteriskDep,
     extension: int,
@@ -71,8 +75,9 @@ def delete_extension_handle(
             get_extension_by_id(session, extension, False),
         )
     except Exception as e:
-        print(e)
+        MessageBroker.push(request, {"message": "Failed to delete extension!", "category": "error"})
         pass
+    MessageBroker.push(request, {"message": "Deleted extension!", "category": "success"})
     return "/extension/own"
 
 
@@ -109,5 +114,7 @@ def edit_extension_handle(
         print(data)
         update_extension(session, user, extension, data)
     except:
+        MessageBroker.push(request, {"message": "Failed to update extension!", "category": "error"})
         return "/extension/own"
+    MessageBroker.push(request, {"message": "Saved!", "category": "success"})
     return f"/extension/edit/{extension_id}"

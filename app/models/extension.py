@@ -31,6 +31,37 @@ class ExtensionBase(SQLModel):
     extension: str = Field(unique=True, primary_key=True)
     name: str
 
+    location_name: Optional[str] = None
+    # stored as lat/lon * 10000000 ## todo: validator
+    lat: Optional[int] = Field(default=None, ge=-900000000, le=900000000)
+    lon: Optional[int] = Field(default=None, ge=-1800000000, le=1800000000)
+
+    @field_validator("lat", "lon", mode="before")
+    @classmethod
+    def validate_latlon(cls, value):
+        if value is None:
+            return None
+
+        if isinstance(value, str):
+            value = float(value)
+            if abs(value) > 180:
+                value = int(value)
+
+        if isinstance(value, float):
+            return int(value * 10000000)
+        if isinstance(value, int):
+            return value
+
+        raise ValueError("Lat / Lon must be an integer or float")
+
+    @property
+    def lat_float(self) -> float:
+        return self.lat / 10000000
+
+    @property
+    def lon_float(self) -> float:
+        return self.lon / 10000000
+
 
 class Extension(ExtensionBase, table=True):
     # store only in database, don't expose
@@ -69,6 +100,10 @@ class ExtensionCreate(BaseModel):
     type: ExtensionType
     mac: Optional[MacAddress] = None
 
+    location_name: Optional[str] = None
+    lat: Optional[float] = None
+    lon: Optional[float] = None
+
     # required if the model is parsed from form data where a checked
     # checkbox will only set the key, but not a value ("")
     @field_validator("public", mode="before")
@@ -82,6 +117,28 @@ class ExtensionUpdate(BaseModel):
     info: Optional[str] = None
     public: Optional[bool] = False
     type: Optional[ExtensionType] = None
+
+    location_name: Optional[str] = None
+    lat: Optional[float] = None
+    lon: Optional[float] = None
+
+    @field_validator("lat", "lon", mode="before")
+    @classmethod
+    def validate_latlon(cls, value):
+        if value is None:
+            return None
+
+        if isinstance(value, str):
+            value = float(value)
+            if abs(value) > 180:
+                value = int(value)
+
+        if isinstance(value, float):
+            return int(value * 10000000)
+        if isinstance(value, int):
+            return value
+
+        raise ValueError("Lat / Lon must be an integer or float")
 
     # required if the model is parsed from form data where a checked
     # checkbox will only set the key, but not a value ("")

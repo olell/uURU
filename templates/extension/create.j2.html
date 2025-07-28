@@ -1,5 +1,24 @@
-{% extends "bootstrap_base.j2.html" %} {% block body %}
+{% extends "bootstrap_base.j2.html" %}
+{% block head %}
+ <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+  crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""></script>
+  
+<style>
+  #map {
+    position: relative;
+    border: 1px solid black;
+    border-radius: 8px;
+    height: 600px;  /* or as desired */
+    width: 100%;  /* This means "100% of the width of its container", the .col-md-8 */
+  }
+</style>
 
+{% endblock %}
+{% block body %}
 <div class="container">
   {% if edit is not defined %}
   <h1 class="fs-3">Create a new Extension</h1>
@@ -24,25 +43,12 @@
           id="extensionInput"
           placeholder="1234"
           name="extension"
-          {%
-          if
-          edit
-          %}value="{{ edit.extension }}"
-          {%
-          endif
-          %}
+          {% if edit %}value="{{ edit.extension }}" {% endif %}
           minlength="{{ settings.EXTENSION_DIGITS }}"
           maxlength="{{ settings.EXTENSION_DIGITS+1 }}"
           aria-describedby="extensionHelpBlock"
           oninput="vanity_check_extension()"
-          {%
-          if
-          edit
-          is
-          defined
-          %}disabled{%
-          endif
-          %}
+          {% if edit is defined %}disabled{% endif %}
           required
         />
         <div id="extensionHelpBlock" class="form-text">
@@ -57,13 +63,7 @@
           type="text"
           class="form-control"
           name="name"
-          {%
-          if
-          edit
-          %}value="{{ edit.name }}"
-          {%
-          endif
-          %}
+          {% if edit %}value="{{ edit.name }}"{% endif %}
           required
           id="nameInput"
           placeholder="{{ user.username }}'s extension"
@@ -76,13 +76,7 @@
           class="form-control"
           id="infoInput"
           name="info"
-          {%
-          if
-          edit
-          %}value="{{ edit.info }}"
-          {%
-          endif
-          %}
+          {% if edit %}value="{{ edit.info }}"{% endif %}
           placeholder="..."
           aria-describedby="infoHelpBlock"
         />
@@ -92,7 +86,38 @@
         </div>
       </div>
       <div id="macInputContainer">
-        
+      </div>
+      <div>
+        <div>
+          <label for="locationInput" class="form-label">Location (
+            <a data-bs-toggle="collapse" href="#mapCollapse" role="button" aria-expanded="false" aria-controls="mapCollapse" id="mapButton">
+            <span><ion-icon name="map-outline"/> </span> Select on Map
+          </a>)</label>
+          <input
+            type="text"
+            class="form-control"
+            name="location_name"
+            {% if edit %}value="{{ edit.location_name }}"{% endif %}
+            id="locationInput"
+            placeholder="{{ user.username }}'s base"
+          />
+        </div>
+        <div class="form-group">
+          
+        </div>
+        <div class="collapse" id="mapCollapse">
+          <button type="button" class="btn btn-primary mb-2" onclick="getLocation();">
+            Use your current location
+          </button>
+          <div id="map">
+          </div>
+          <div id="locationForm">
+            {% if edit is defined and edit.lat_float is not none and edit.lon_float is not none %}
+              <input type="hidden" name="lat" value="{{ edit.lat_float }}"/>
+              <input type="hidden" name="lon" value="{{ edit.lon_float }}"/>
+            {% endif %} 
+          </div>
+        </div>
       </div>
       <div>
         <div class="form-check">
@@ -102,25 +127,8 @@
             value=""
             id="showPublicCheck"
             name="public"
-            {%
-            if
-            edit
-            is
-            not
-            defined
-            %}checked{%
-            endif
-            %}
-            {%
-            if
-            edit
-            is
-            defined
-            and
-            edit.public
-            %}checked{%
-            endif
-            %}
+            {% if edit is not defined %}checked{% endif %}
+            {% if edit is defined and edit.public %}checked{% endif %}
           />
           <label class="form-check-label" for="showPublicCheck">
             Show in public phonebook
@@ -207,6 +215,62 @@
   });
 
   
+
+  var map = L.map('map');
+  {% if edit is not defined %}
+  var marker = L.marker([0, 0]);
+  {% else %}
+  var marker = L.marker([{{ edit.lat_float }}, {{ edit.lon_float }}]).addTo(map);
+  {% endif %}
+
+  $(window).ready(() => {
+    {% if edit is not defined %}
+    map.setView([{{ settings.SITE_LAT }}, {{ settings.SITE_LON }}], 15);
+    {% else %}
+    map.setView([{{ edit.lat_float }}, {{ edit.lon_float }}], 19);
+    {% endif %}
+    L.tileLayer('https://tile.openstreetmap.de/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+  })
+
+  $('#mapCollapse').on('shown.bs.collapse', (e) => {
+    map.invalidateSize(true);
+  });
+
+  map.on('click', (e) => {
+    marker.addTo(map);
+    marker.setLatLng(e.latlng);
+    $("#locationForm").html(`
+    <input type="hidden" name="lat" value="${e.latlng.lat}"/>
+    <input type="hidden" name="lon" value="${e.latlng.lng}"/>
+    `)
+  })
+
+  function getLocation() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((pos) => {
+        marker.addTo(map);
+        marker_pos = new L.LatLng(pos.coords.latitude, pos.coords.longitude);
+        marker.setLatLng(marker_pos);
+        map.setView(marker_pos, 19);
+        $("#locationForm").html(`
+        <input type="hidden" name="lat" value="${pos.coords.latitude}"/>
+        <input type="hidden" name="lon" value="${pos.coords.longitude}"/>
+        `)
+      }, (e) => {alert(e.message)});
+    } else {
+      alert("Geolocation is not supported by this browser.");
+    }
+  }
+
+  marker.on('click', (e) => {
+    map.removeLayer(marker);
+    marker.setLatLng(new L.LatLng(0, 0));
+    $("#locationForm").html("");
+  })
+
 </script>
 
 {% endblock %}

@@ -56,10 +56,12 @@ class ExtensionBase(SQLModel):
 
     @property
     def lat_float(self) -> float:
+        if self.lat is None: return None
         return self.lat / 10000000
 
     @property
     def lon_float(self) -> float:
+        if self.lon is None: return None
         return self.lon / 10000000
 
 

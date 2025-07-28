@@ -35,6 +35,22 @@ def phonebook(
         context={"user": user, "phonebook": phonebook_data, "query": query},
     )
 
+@router.get("/map", response_class=HTMLResponse)
+def phonemap(
+    *,
+    session: SessionDep,
+    request: Request,
+    user: OptionalCurrentUser,
+):
+    public = True
+    if user is not None and user.role == UserRole.ADMIN:
+        public = False
+    phonebook_data = filter_extensions_by_name(session, user, None, public)
+    return templates.TemplateResponse(
+        request=request,
+        name="phonemap.j2.html",
+        context={"user": user, "phonebook": phonebook_data},
+    )
 
 @router.get("/error/{status_code}")
 def error(request: Request, status_code: Optional[int] = None):

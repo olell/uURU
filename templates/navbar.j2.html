@@ -31,6 +31,14 @@
             >Phonebook</a
           >
         </li>
+        <li class="nav-item">
+          <a
+            class="nav-link {% if request.url.path == '/map' %}active{% endif %}"
+            aria-current="page"
+            href="/map"
+            >Map</a
+          >
+        </li>
         {% if user is defined and user is not none %}
         <li class="nav-item">
           <a

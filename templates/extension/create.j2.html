@@ -217,17 +217,17 @@
   
 
   var map = L.map('map');
-  {% if edit is not defined %}
-  var marker = L.marker([0, 0]);
-  {% else %}
+  {% if edit is defined and edit.lat_float is not none and edit.lon_float is not none %}
   var marker = L.marker([{{ edit.lat_float }}, {{ edit.lon_float }}]).addTo(map);
+  {% else %}
+  var marker = L.marker([0, 0]);
   {% endif %}
 
   $(window).ready(() => {
-    {% if edit is not defined %}
-    map.setView([{{ settings.SITE_LAT }}, {{ settings.SITE_LON }}], 15);
-    {% else %}
+    {% if edit is defined and edit.lat_float is not none and edit.lon_float is not none %}
     map.setView([{{ edit.lat_float }}, {{ edit.lon_float }}], 19);
+    {% else %} 
+    map.setView([{{ settings.SITE_LAT }}, {{ settings.SITE_LON }}], 15);
     {% endif %}
     L.tileLayer('https://tile.openstreetmap.de/{z}/{x}/{y}.png', {
         maxZoom: 19,

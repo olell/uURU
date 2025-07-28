@@ -8,18 +8,7 @@
         name="query"
         value="{% if query is not none %}{{ query }}{% endif %}"
         placeholder="Search"
-        {%
-        if
-        query
-        is
-        not
-        none
-        and
-        query
-        !=""
-        %}autofocus{%
-        endif
-        %}
+        {% if query is not none and query !="" %}autofocus{% endif %}
       />
     </div>
     <div class="col-2">
@@ -31,6 +20,7 @@
       <tr>
         <th scope="col">#</th>
         <th scope="col">Name</th>
+        <th scope="col">Location</th>
         {% if user is defined and user.role == 'admin' %}
         <th scope="col">Public</th>
         <th scope="col">Created By</th>
@@ -44,6 +34,7 @@
           <a href="tel:{{ extension.extension }}">{{ extension.extension }}</a>
         </td>
         <td>{{ extension.name }}</td>
+        <td>{{ extension.location_name }}</td>
         {% if user is defined and user.role == 'admin' %}
         <td>{% if not extension.public %} Not Public{% endif %}</td>
         <td>{{ extension.user.username }}</td>

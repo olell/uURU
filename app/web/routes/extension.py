@@ -64,7 +64,7 @@ def delete_extension_handle(
     request: Request,
     session: SessionDep,
     session_asterisk: SessionAsteriskDep,
-    extension: int,
+    extension: str,
     user: CurrentUser,
 ):
     try:
@@ -83,7 +83,7 @@ def delete_extension_handle(
 
 @router.get("/edit/{extension}", response_class=HTMLResponse)
 def edit_extension_page(
-    request: Request, session: SessionDep, user: CurrentUser, extension: int
+    request: Request, session: SessionDep, user: CurrentUser, extension: str
 ):
     extension = get_extension_by_id(session, extension, False)
     if extension is None:
@@ -104,7 +104,7 @@ def edit_extension_handle(
     request: Request,
     session: SessionDep,
     user: CurrentUser,
-    extension_id: int,
+    extension_id: str,
     data: Annotated[ExtensionUpdate, Form()],
 ):
     extension = get_extension_by_id(session, extension_id, False)

@@ -45,7 +45,7 @@
           name="extension"
           {% if edit %}value="{{ edit.extension }}" {% endif %}
           minlength="{{ settings.EXTENSION_DIGITS }}"
-          maxlength="{{ settings.EXTENSION_DIGITS+1 }}"
+          maxlength="{{ settings.EXTENSION_DIGITS }}"
           aria-describedby="extensionHelpBlock"
           oninput="vanity_check_extension()"
           {% if edit is defined %}disabled{% endif %}

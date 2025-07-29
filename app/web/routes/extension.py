@@ -78,11 +78,11 @@ def delete_extension_handle(
             user,
             get_extension_by_id(session, extension, False),
         )
+        MessageBroker.push(request, {"message": "Deleted extension!", "category": "success"})
     except Exception as e:
         MessageBroker.push(request, {"message": "Failed to delete extension!", "category": "error"})
-        pass
-    MessageBroker.push(request, {"message": "Deleted extension!", "category": "success"})
-    return "/extension/own"
+    finally:
+        return "/extension/own"
 
 
 @router.get("/edit/{extension}", response_class=HTMLResponse)
@@ -115,10 +115,9 @@ def edit_extension_handle(
     if extension is None:
         return f"/extension/edit/{extension_id}"
     try:
-        print(data)
         update_extension(session, user, extension, data)
     except:
         MessageBroker.push(request, {"message": "Failed to update extension!", "category": "error"})
-        return "/extension/own"
+        return "/extension/edit/{extension}"
     MessageBroker.push(request, {"message": "Saved!", "category": "success"})
     return f"/extension/edit/{extension_id}"

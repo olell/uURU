@@ -37,7 +37,7 @@ def update_user(
 
     data = update_data.model_dump(exclude_unset=True)
     extra_data = {}
-    if "password" in data:
+    if "password" in data and data["password"] is not None:
         password = data["password"]
         hashed = get_password_hash(password)
         extra_data.update({"password_hash": hashed})

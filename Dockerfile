@@ -33,9 +33,13 @@ COPY ./pyproject.toml ./uv.lock /app/
 
 COPY ./app /app/app
 
+COPY ./static /app/static
+COPY ./templates /app/templates
+COPY ./templates_provisioning /app/templates_provisioning
+
 # Sync the project
 # Ref: https://docs.astral.sh/uv/guides/integration/docker/#intermediate-layers
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync
 
-CMD ["fastapi", "run", "--workers", "4", "app/main.py"]
+CMD ["uvicorn", "app.main:app", "--workers", "4", "--host", "0.0.0.0"]

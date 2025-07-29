@@ -83,7 +83,7 @@ class Extension(ExtensionBase, table=True):
     user: Optional["User"] = Relationship(back_populates="extensions")
 
     type: ExtensionType
-    mac: Optional[MacAddress] = None
+    mac: Optional[MacAddress] = Field(default=None, unique=True)
 
     # TODO: should throw http error - not 500 and stack trace
     @model_validator(mode="after")
@@ -107,7 +107,7 @@ class ExtensionCreate(BaseModel):
     info: str
     public: bool = Field(default=False)
     type: ExtensionType
-    mac: Optional[MacAddress] = None
+    mac: Optional[MacAddress] = Field(default=None, unique=True)
 
     location_name: Optional[str] = None
     lat: Optional[float] = None

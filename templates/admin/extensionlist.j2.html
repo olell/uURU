@@ -21,20 +21,12 @@
         <td>{{ extension.name }}</td>
         <td><a href="/admin/edit_user/{{ extension.user.id }}">{{ extension.user.username }}</a></td>
         <td>
-          <a
-            class="text-danger text-decoration-none me-4"
-            href="/extension/delete/{{ extension.extension }}"
-          >
+          <a class="text-danger text-decoration-none me-4" href="/extension/delete/{{ extension.extension }}">
             <ion-icon name="trash"></ion-icon>
           </a>
-
-          <a
-            class="text-success text-decoration-none me-4"
-            href="/extension/edit/{{ extension.extension }}"
-          >
+          <a class="text-success text-decoration-none me-4" href="/extension/edit/{{ extension.extension }}">
             <ion-icon name="pencil"></ion-icon>
           </a>
-
           <a
             class="text-warning"
             data-bs-toggle="popover"
@@ -47,8 +39,6 @@
           >
             <ion-icon name="key"></ion-icon>
           </a>
-          
-
         </td>
       </tr>
       {% endfor %}

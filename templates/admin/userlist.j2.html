@@ -8,18 +8,7 @@
         name="query"
         value="{% if query is not none %}{{ query }}{% endif %}"
         placeholder="Search"
-        {%
-        if
-        query
-        is
-        not
-        none
-        and
-        query
-        !=""
-        %}autofocus{%
-        endif
-        %}
+        {% if query is not none and query !="" %}autofocus{% endif %}
       />
     </div>
     <div class="col-2">

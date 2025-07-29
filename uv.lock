@@ -42,6 +42,7 @@ dependencies = [
     { name = "pytest" },
     { name = "python-dotenv" },
     { name = "sqlmodel" },
+    { name = "uvicorn" },
 ]
 
 [package.metadata]
@@ -59,6 +60,7 @@ requires-dist = [
     { name = "pytest", specifier = ">=8.4.1" },
     { name = "python-dotenv", specifier = ">=1.1.1" },
     { name = "sqlmodel", specifier = ">=0.0.24" },
+    { name = "uvicorn", specifier = ">=0.35.0" },
 ]
 
 [[package]]

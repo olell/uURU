@@ -42,4 +42,4 @@ COPY ./templates_provisioning /app/templates_provisioning
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync
 
-CMD ["fastapi", "run", "--workers", "4", "app/main.py"]
+CMD ["uvicorn", "app.main:app", "--workers", "4", "--host", "0.0.0.0"]

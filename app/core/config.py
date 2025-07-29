@@ -133,6 +133,7 @@ class Settings(BaseSettings):
     EXTENSION_TOKEN_LENGTH: int = 8
 
     RESERVED_EXTENSIONS: list[int | tuple[int, int]]
+    ALL_EXTENSION_TYPES_PUBLIC: bool = 0
 
     ## SITE
 

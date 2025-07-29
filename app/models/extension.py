@@ -26,6 +26,13 @@ class ExtensionType(str, Enum):
             ExtensionType.DECT,
         ]
 
+    @staticmethod
+    def is_public(ext_type: "ExtensionType") -> bool:
+        return settings.ALL_EXTENSION_TYPES_PUBLIC or ext_type in [
+            ExtensionType.SIP,
+            ExtensionType.DECT,
+        ]
+
 
 class ExtensionBase(SQLModel):
     extension: str = Field(unique=True, primary_key=True)

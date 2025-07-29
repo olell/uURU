@@ -31,7 +31,9 @@
         <label for="typeInput" class="form-label">Phone Type</label>
         <select class="form-select" aria-label="Extension type selector" name="type" id="typeInput" {% if edit is defined %}disabled{% endif %}>
           {% for ext_type in ExtensionType %}
-          <option {% if index0 == 0 %} selected {% endif %} value="{{ ext_type.value }}">{{ ext_type.value }}</option>
+            {% if user.role == 'admin' or ExtensionType.is_public(ext_type) %}
+              <option {% if index0 == 0 %} selected {% endif %} value="{{ ext_type.value }}">{{ ext_type.value }}</option>
+            {% endif %}
           {% endfor %}
         </select>
       </div>

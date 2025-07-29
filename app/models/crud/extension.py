@@ -10,7 +10,7 @@ from app.models.crud.asterisk import (
     delete_asterisk_extension,
 )
 from app.models.user import User, UserRole
-from app.models.extension import ExtensionCreate, Extension, ExtensionUpdate
+from app.models.extension import ExtensionCreate, Extension, ExtensionType, ExtensionUpdate
 from app.core.config import settings
 
 
@@ -25,6 +25,9 @@ def create_extension(
                 isinstance(rule, tuple) and ext >= rule[0] and ext <= rule[1]
             ):
                 raise CRUDNotAllowedException("This extension is reserved!")
+
+        if not ExtensionType.is_public(extension.type):
+            raise CRUDNotAllowedException("Normal users may not create this kind of extension!")
 
     try:
         db_obj = Extension.model_validate(

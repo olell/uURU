@@ -1,7 +1,11 @@
 import secrets
 from typing import Annotated, Any, Literal
 
-from pydantic import AnyUrl, BeforeValidator, PostgresDsn, computed_field
+from pydantic import (
+    AnyUrl,
+    BeforeValidator,
+    computed_field,
+)
 from pydantic_core import MultiHostUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic_extra_types.color import Color
@@ -127,6 +131,9 @@ class Settings(BaseSettings):
 
     EXTENSION_TOKEN_PREFIX: str = "01990"
     EXTENSION_TOKEN_LENGTH: int = 8
+
+    RESERVED_EXTENSIONS: list[int | tuple[int, int]]
+    ALL_EXTENSION_TYPES_PUBLIC: bool = 0
 
     ## SITE
 

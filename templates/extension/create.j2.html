@@ -31,7 +31,9 @@
         <label for="typeInput" class="form-label">Phone Type</label>
         <select class="form-select" aria-label="Extension type selector" name="type" id="typeInput" {% if edit is defined %}disabled{% endif %}>
           {% for ext_type in ExtensionType %}
-          <option {% if index0 == 0 %} selected {% endif %} value="{{ ext_type.value }}">{{ ext_type.value }}</option>
+            {% if user.role == 'admin' or ExtensionType.is_public(ext_type) %}
+              <option {% if index0 == 0 %} selected {% endif %} value="{{ ext_type.value }}">{{ ext_type.value }}</option>
+            {% endif %}
           {% endfor %}
         </select>
       </div>
@@ -45,7 +47,7 @@
           name="extension"
           {% if edit %}value="{{ edit.extension }}" {% endif %}
           minlength="{{ settings.EXTENSION_DIGITS }}"
-          maxlength="{{ settings.EXTENSION_DIGITS+1 }}"
+          maxlength="{{ settings.EXTENSION_DIGITS }}"
           aria-describedby="extensionHelpBlock"
           oninput="vanity_check_extension()"
           {% if edit is defined %}disabled{% endif %}
@@ -192,6 +194,8 @@
         />`: "");
   })
 
+  const reserved_extensions = JSON.parse('{{ settings.RESERVED_EXTENSIONS }}'.replace("(", "[").replace(")", "]"));
+
   $("#extensionForm").on("submit", (e) => {
     // sanity check mac input
     let ext_type = $("#typeInput").val();
@@ -206,12 +210,27 @@
       }
     }
 
+    // sanity check extension length
     let ext_length = $("#extensionInput").val().length
     if ((ext_length) != {{ settings.EXTENSION_DIGITS }}) {
         $("#formError").text("Extension must be {{ settings.EXTENSION_DIGITS }} digits long!");
         $("#formError").css("display", "block");
         e.preventDefault();
     }
+
+{% if user.role != 'admin' %}
+    // sanity check reserved extensions
+    reserved_extensions.forEach(rule => {
+      let ext = parseInt($("#extensionInput").val());
+      console.log(rule, ext);
+      if ((rule.length === 2 && ext >= rule[0] && ext <= rule[1]) || ext === rule) {
+        $("#formError").text("This extension is reserved, please use a different number!");
+        $("#formError").css("display", "block");
+        e.preventDefault();
+      }
+    });
+
+{% endif %}
   });
 
   

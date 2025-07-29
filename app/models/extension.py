@@ -2,7 +2,7 @@ from enum import Enum
 from typing import Optional, TYPE_CHECKING, Self, Any
 
 from sqlmodel import Relationship, SQLModel, Field
-from pydantic import BaseModel, model_validator, field_validator
+from pydantic import BaseModel, model_validator, field_validator, Field as PydanticField
 from pydantic_extra_types.mac_address import MacAddress
 
 import uuid
@@ -22,6 +22,13 @@ class ExtensionType(str, Enum):
     @staticmethod
     def requires_mac(ext_type: "ExtensionType") -> bool:
         return not ext_type in [
+            ExtensionType.SIP,
+            ExtensionType.DECT,
+        ]
+
+    @staticmethod
+    def is_public(ext_type: "ExtensionType") -> bool:
+        return settings.ALL_EXTENSION_TYPES_PUBLIC or ext_type in [
             ExtensionType.SIP,
             ExtensionType.DECT,
         ]
@@ -91,10 +98,10 @@ class Extension(ExtensionBase, table=True):
 
 
 class ExtensionCreate(BaseModel):
-    extension: str = Field(
+    extension: str = PydanticField(
         min_length=settings.EXTENSION_DIGITS,
         max_length=settings.EXTENSION_DIGITS,
-        regex=f"^\d{{{settings.EXTENSION_DIGITS}}}$",
+        pattern=fr"^\d{{{settings.EXTENSION_DIGITS}}}$"
     )
     name: str
     info: str

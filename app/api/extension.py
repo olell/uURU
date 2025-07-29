@@ -36,6 +36,10 @@ def create(
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT, detail="Extension already in use"
         )
+    except CRUDNotAllowedException as e:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail=str(e)
+        )
 
 
 @router.patch("/{extension}", response_model=ExtensionBase)

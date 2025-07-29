@@ -5,6 +5,7 @@ import uuid
 
 from app.core.db import SessionDep
 from app.models.crud import CRUDNotAllowedException
+from app.models.crud.extension import filter_extensions_by_name
 from app.models.crud.user import filter_user_by_username, get_user_by_id, update_user
 from app.models.user import UserRole, UserUpdate
 from app.web.message import MessageBroker
@@ -79,3 +80,13 @@ def user_edit_handle(
         )
     finally:
         return f"/admin/edit_user/{user_id}"
+
+
+@router.get("/extensions", response_class=HTMLResponse)
+def extensionlist(request: Request, session: SessionDep, user: AdminUser):
+    extensions = filter_extensions_by_name(session, user, None, False)
+
+    return templates.TemplateResponse(request, "admin/extensionlist.j2.html", {
+        "user": user,
+        "extensions": extensions
+    })

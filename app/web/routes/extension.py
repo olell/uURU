@@ -91,7 +91,7 @@ def edit_extension_page(
             status_code=status.HTTP_404_NOT_FOUND, detail="Extension not found"
         )
     return templates.TemplateResponse(
-        request, "extension/create.j2.html", context={"user": user, "edit": extension}
+        request, "extension/create.j2.html", context={"user": user, "edit": extension, "ExtensionType": ExtensionType}
     )
 
 

@@ -118,7 +118,6 @@ class ExtensionUpdate(BaseModel):
     name: Optional[str] = None
     info: Optional[str] = None
     public: Optional[bool] = False
-    type: Optional[ExtensionType] = None
 
     location_name: Optional[str] = None
     lat: Optional[float] = None

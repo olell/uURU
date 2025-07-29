@@ -35,7 +35,8 @@ class UserPublic(UserBase):
 
 
 class UserUpdate(BaseModel):
-    password: str | None = Field(min_length=10, max_length=100, default=None)
+    username: str | None = None
+    password: str | None = None
     role: UserRole | None = None
 
 

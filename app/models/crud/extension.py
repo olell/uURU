@@ -11,11 +11,20 @@ from app.models.crud.asterisk import (
 )
 from app.models.user import User, UserRole
 from app.models.extension import ExtensionCreate, Extension, ExtensionUpdate
+from app.core.config import settings
 
 
 def create_extension(
     session: Session, session_asterisk: Session, user: User, extension: ExtensionCreate
 ) -> Extension:
+
+    if user.role != UserRole.ADMIN:  # check that the extension is not reserved
+        ext = int(extension.extension)
+        for rule in settings.RESERVED_EXTENSIONS:
+            if (isinstance(rule, int) and ext == rule) or (
+                isinstance(rule, tuple) and ext >= rule[0] and ext <= rule[1]
+            ):
+                raise CRUDNotAllowedException("This extension is reserved!")
 
     try:
         db_obj = Extension.model_validate(

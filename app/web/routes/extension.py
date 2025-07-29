@@ -3,6 +3,7 @@ from fastapi import APIRouter, Request, status, Form, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse
 
 from app.core.db import SessionAsteriskDep, SessionDep
+from app.models.crud import CRUDNotAllowedException
 from app.web.deps import CurrentUser
 from app.web.message import MessageBroker
 from app.web.templates import templates
@@ -49,7 +50,10 @@ def create_extension_handle(
     try:
         create_extension(session, session_asterisk, user, data)
     except Exception as e:
-        MessageBroker.push(request, {"message": "Failed to create extension", "category": "error"})
+        if isinstance(e, CRUDNotAllowedException):
+            MessageBroker.push(request, {"message": f"Failed to create extension: {str(e)}", "category": "error"})
+        else:
+            MessageBroker.push(request, {"message": "Failed to create extension", "category": "error"})
         return "/extension/create"
     MessageBroker.push(request, {"message": "Created extension!", "category": "success"})
     return "/extension/own"

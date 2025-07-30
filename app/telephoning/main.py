@@ -81,20 +81,24 @@ class Telephoning(object):
         # stop all jobs
         self.scheduler.shutdown()
 
-    def get_flavor_by_type(self, phone_type: str) -> PhoneFlavor | None:
+    @staticmethod
+    def get_flavor_by_type(phone_type: str) -> PhoneFlavor | None:
         """
         returns the instance of the PhoneFlavor which supports the given
         phone_type, if there isn't such instance, it returns None
         """
+        self = Telephoning.instance()
         for flavor in self.flavors.values():
             if phone_type in flavor.PHONE_TYPES:
                 return flavor
         return None
     
-    def get_all_phone_types(self) -> list[str]:
+    @staticmethod
+    def get_all_phone_types() -> list[str]:
         """
         returns a list of all supported phone types
         """
+        self = Telephoning.instance()
         types = []
         flavors = list(self.flavors.values())
         flavors.sort(key=lambda f: -f.DISPLAY_INDEX)

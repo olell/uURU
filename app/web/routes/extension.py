@@ -4,10 +4,11 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 
 from app.core.db import SessionAsteriskDep, SessionDep
 from app.models.crud import CRUDNotAllowedException
+from app.telephoning.main import Telephoning
 from app.web.deps import CurrentUser
 from app.web.message import MessageBroker
 from app.web.templates import templates
-from app.models.extension import ExtensionCreate, ExtensionType, ExtensionUpdate
+from app.models.extension import ExtensionCreate, ExtensionUpdate
 from app.models.crud.extension import (
     create_extension,
     delete_extension,
@@ -33,7 +34,7 @@ def create_extension_page(request: Request, current_user: CurrentUser):
     return templates.TemplateResponse(
         request,
         "extension/create.j2.html",
-        {"user": current_user, "ExtensionType": ExtensionType},
+        {"user": current_user},
     )
 
 
@@ -107,6 +108,7 @@ def edit_extension_page(
 def edit_extension_handle(
     request: Request,
     session: SessionDep,
+    session_asterisk: SessionAsteriskDep,
     user: CurrentUser,
     extension_id: str,
     data: Annotated[ExtensionUpdate, Form()],
@@ -116,7 +118,7 @@ def edit_extension_handle(
         return f"/extension/edit/{extension_id}"
     try:
         print(data)
-        update_extension(session, user, extension, data)
+        update_extension(session, session_asterisk, user, extension, data)
     except:
         MessageBroker.push(request, {"message": "Failed to update extension!", "category": "error"})
         return "/extension/own"

@@ -30,9 +30,10 @@
       <div>
         <label for="typeInput" class="form-label">Phone Type</label>
         <select class="form-select" aria-label="Extension type selector" name="type" id="typeInput" {% if edit is defined %}disabled{% endif %}>
-          {% for ext_type in ExtensionType %}
-            {% if user.role == 'admin' or ExtensionType.is_public(ext_type) %}
-              <option {% if index0 == 0 %} selected {% endif %} value="{{ ext_type.value }}">{{ ext_type.value }}</option>
+          {% for phone_type in telephoning.get_all_phone_types() %}
+          {% set flavor = telephoning.get_flavor_by_type(phone_type) %}
+            {% if user.role == 'admin' or flavor.is_public() %}
+              <option {% if index0 == 0 %} selected {% endif %} value="{{ phone_type }}">{{ phone_type }}</option>
             {% endif %}
           {% endfor %}
         </select>

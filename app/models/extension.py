@@ -3,7 +3,6 @@ from typing import Optional, TYPE_CHECKING, Self, Any
 
 from sqlmodel import Relationship, SQLModel, Field
 from pydantic import BaseModel, model_validator, field_validator, Field as PydanticField
-from pydantic_extra_types.mac_address import MacAddress
 
 import uuid
 
@@ -11,28 +10,6 @@ if TYPE_CHECKING:
     from app.models.user import User
 
 from app.core.config import settings
-
-
-class ExtensionType(str, Enum):
-    SIP = "SIP"
-    DECT = "DECT"
-    INNOVAPHONE_241 = "Innovaphone 241"
-    INNOVAPHONE_201A = "Innovaphone 201a"
-
-    @staticmethod
-    def requires_mac(ext_type: "ExtensionType") -> bool:
-        return not ext_type in [
-            ExtensionType.SIP,
-            ExtensionType.DECT,
-        ]
-
-    @staticmethod
-    def is_public(ext_type: "ExtensionType") -> bool:
-        return settings.ALL_EXTENSION_TYPES_PUBLIC or ext_type in [
-            ExtensionType.SIP,
-            ExtensionType.DECT,
-        ]
-
 
 class ExtensionBase(SQLModel):
     extension: str = Field(unique=True, primary_key=True)
@@ -82,19 +59,7 @@ class Extension(ExtensionBase, table=True):
     user_id: Optional[uuid.UUID] = Field(default=None, foreign_key="user.id")
     user: Optional["User"] = Relationship(back_populates="extensions")
 
-    type: ExtensionType
-    mac: Optional[MacAddress] = Field(default=None, unique=True)
-
-    # TODO: should throw http error - not 500 and stack trace
-    @model_validator(mode="after")
-    def verify_mac_set(self) -> Self:
-        if not ExtensionType.requires_mac(self.type):
-            return self
-
-        if not self.mac:
-            raise ValueError("mac needs to be defined if innovaphone")
-
-        return self
+    type: str
 
 
 class ExtensionCreate(BaseModel):
@@ -106,8 +71,7 @@ class ExtensionCreate(BaseModel):
     name: str
     info: str
     public: bool = Field(default=False)
-    type: ExtensionType
-    mac: Optional[MacAddress] = Field(default=None, unique=True)
+    type: str
 
     location_name: Optional[str] = None
     lat: Optional[float] = None

@@ -12,13 +12,18 @@ from app.models.crud.asterisk import (
     delete_asterisk_extension,
 )
 from app.models.user import User, UserRole
-from app.models.extension import ExtensionCreate, Extension, ExtensionType, ExtensionUpdate
+from app.models.extension import ExtensionCreate, Extension, ExtensionUpdate
 from app.core.config import settings
+from app.telephoning.main import Telephoning
 
 
 def create_extension(
     session: Session, session_asterisk: Session, user: User, extension: ExtensionCreate
 ) -> Extension:
+    
+    flavor = Telephoning.get_flavor_by_type(extension.type)
+    if flavor is None:
+        raise CRUDNotAllowedException("Unknown phone type!")
 
     if user.role != UserRole.ADMIN:  # check that the extension is not reserved
         ext = int(extension.extension)
@@ -28,7 +33,7 @@ def create_extension(
             ):
                 raise CRUDNotAllowedException("This extension is reserved!")
 
-        if not ExtensionType.is_public(extension.type):
+        if not flavor.is_public():
             raise CRUDNotAllowedException("Normal users may not create this kind of extension!")
 
     try:
@@ -47,22 +52,29 @@ def create_extension(
         raise CRUDNotAllowedException("Extension not available")
 
     create_asterisk_extension(session_asterisk, db_obj)
+    flavor.on_extension_create(session, session_asterisk, db_obj)
 
     return db_obj
 
 
 def update_extension(
-    session: Session, user: User, extension: Extension, update_data: ExtensionUpdate
+    session: Session, session_asterisk: Session, user: User, extension: Extension, update_data: ExtensionUpdate
 ) -> Extension:
 
     if not (extension.user_id == user.id or user.role == UserRole.ADMIN):
         raise CRUDNotAllowedException("You're not allowed to edit this extension")
+    
+    flavor = Telephoning.get_flavor_by_type(extension.type)
+    if flavor is None:
+        raise CRUDNotAllowedException("Unkown phone type!")
 
     data = update_data.model_dump(exclude_unset=True)
     extension.sqlmodel_update(data)
     session.add(extension)
     session.commit()
     session.refresh(extension)
+
+    flavor.on_extension_update(session, session_asterisk, extension)
 
     return extension
 
@@ -73,6 +85,11 @@ def delete_extension(
     if not (extension.user_id == user.id or user.role == UserRole.ADMIN):
         raise CRUDNotAllowedException("You're not allowed to delete this extension")
 
+    flavor = Telephoning.get_flavor_by_type(extension.type)
+    if flavor is None:
+        raise CRUDNotAllowedException("Unkown phone type!")
+
+    flavor.on_extension_delete(session, session_asterisk, extension)
     delete_asterisk_extension(session_asterisk, extension)
 
     session.delete(extension)
@@ -90,9 +107,9 @@ def get_extension_by_id(
 
     return session.exec(query).first()
 
-
-def get_extension_by_mac(session: Session, mac: MacAddress) -> Extension:
-    return session.exec(select(Extension).where(Extension.mac == mac)).first()
+# TODO FLAVOR (get_extension_by_property(session: Session, property: str, value: Any))
+# def get_extension_by_mac(session: Session, mac: MacAddress) -> Extension:
+#     return session.exec(select(Extension).where(Extension.mac == mac)).first()
 
 
 def filter_extensions_by_name(

@@ -6,7 +6,7 @@ from pydantic_extra_types.mac_address import MacAddress
 from app.telephoning import templates
 from app.core.config import settings
 from app.core.db import SessionDep
-from app.models.crud.extension import get_extension_by_mac
+#from app.models.crud.extension import get_extension_by_mac
 from app.telephoning.flavor import PhoneFlavor
 
 
@@ -33,7 +33,7 @@ class Innovaphone(PhoneFlavor):
         def get_config(
             request: Request, session: SessionDep, mac: MacAddress
         ) -> PlainTextResponse:
-            extension = get_extension_by_mac(session, mac)
+            extension = None #get_extension_by_mac(session, mac)
             if not extension:
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND,

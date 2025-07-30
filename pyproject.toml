@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "apscheduler>=3.11.0",
     "argon2-cffi>=25.1.0",
     "coverage>=7.9.2",
     "fastapi[standard]>=0.116.1",

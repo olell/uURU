@@ -39,6 +39,7 @@ class Settings(BaseSettings):
     ## NETWORK
     WEB_PREFIX: str = ""
     API_V1_STR: str = "/api/v1"
+    TELEPHONING_PREFIX: str = "/telephoning"
 
     WEB_HOST: str = "127.0.0.1:8000"
     ASTERISK_HOST: str = "127.0.0.1"

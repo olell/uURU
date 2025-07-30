@@ -4,10 +4,10 @@ ARG ASTERISK_SOURCE_VERSION=20.15.0
 
 # download needed packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
     wget \
     alembic \
     asterisk \
-    asterisk-mp3 \
     unixodbc \
     unixodbc-dev \
     odbc-mariadb \
@@ -32,5 +32,7 @@ COPY etc/ /etc/
 COPY usr/ /usr/
 
 COPY entrypoint.sh /
+
+HEALTHCHECK --start-period=600s CMD curl http://127.0.0.1:8088/metrics
 
 ENTRYPOINT /entrypoint.sh

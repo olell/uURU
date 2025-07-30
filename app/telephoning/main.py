@@ -96,7 +96,9 @@ class Telephoning(object):
         returns a list of all supported phone types
         """
         types = []
-        for flavor in self.flavors.values():
+        flavors = list(self.flavors.values())
+        flavors.sort(key=lambda f: -f.DISPLAY_INDEX)
+        for flavor in flavors:
             types.extend(flavor.PHONE_TYPES)
 
         return types

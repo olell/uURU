@@ -2,6 +2,7 @@ from fastapi import APIRouter
 from pydantic import BaseModel
 from sqlmodel import Session
 
+from app.core.config import settings
 from app.models.extension import Extension
 
 
@@ -36,6 +37,9 @@ class PhoneFlavor:
     # are also used to display the user a dropdown selection when creating a new
     # extension
     PHONE_TYPES: list[str] = []
+    # PhoneFlavors are ordered by this value before displayed to the user, the
+    # higher the more on top
+    DISPLAY_INDEX: int = 0
 
     # A pydantic model which describes which fields need to be configured by
     # the user when creating a new extension with this phone type
@@ -91,3 +95,7 @@ class PhoneFlavor:
         If itraises an NotImplementedError it will not be scheduled.
         """
         raise NotImplementedError
+
+    ## DO NOT OVERWRITE THOSE METHODS
+    def is_public(self):
+        return settings.ALL_EXTENSION_TYPES_PUBLIC or not self.IS_SPECIAL

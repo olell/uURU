@@ -1,4 +1,5 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
+
 if TYPE_CHECKING:
     from app.models.extension import Extension
 
@@ -55,6 +56,14 @@ class PhoneFlavor:
     # Job interval in seconds
     JOB_INTERVAL: int = 60
 
+    # When extensions are created the asterisk phonetype is configured based
+    # on this value. If its a string, the value is applied for all phone types
+    # in this flavor class. If it is a dict, it has to configure values for
+    # all phone types from this class.
+    # Supported codecs:
+    CODEC = Literal["g722", "alaw", "ulaw", "g726", "gsm", "lpc10"]
+    SUPPORTED_CODEC: CODEC | dict[str, CODEC] = "g722"
+
     def on_extension_create(
         self, session: Session, asterisk_session: Session, extension: "Extension"
     ):
@@ -102,9 +111,9 @@ class PhoneFlavor:
     ## DO NOT OVERWRITE THOSE METHODS
     def is_public(self):
         return settings.ALL_EXTENSION_TYPES_PUBLIC or not self.IS_SPECIAL
-    
+
     def get_schema(self):
         if self.EXTRA_FIELDS is None:
             return None
-        
+
         return self.EXTRA_FIELDS.model_json_schema()

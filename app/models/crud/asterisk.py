@@ -3,6 +3,7 @@ from sqlmodel import Session, delete, select
 from app.models.asterisk import PSAor, PSAuth, PSEndpoint
 from app.models.crud import CRUDNotAllowedException
 from app.models.extension import Extension
+from app.telephoning.main import Telephoning
 
 
 def create_asterisk_extension(
@@ -18,7 +19,14 @@ def create_asterisk_extension(
         )
         # TODO: fix hard coded context
         # TODO: fix hard coded transport
-        # TODO: fix hard coded codec
+
+        flavor = Telephoning.get_flavor_by_type(Extension.type)
+        codec = (
+            flavor.SUPPORTED_CODEC
+            if isinstance(flavor.SUPPORTED_CODEC, str)
+            else flavor.SUPPORTED_CODEC[Extension.type]
+        )
+
         ps_endpoint = PSEndpoint(
             id=extension.extension,
             transport="transport-udp",
@@ -26,7 +34,7 @@ def create_asterisk_extension(
             auth=ps_auth.id,
             context="pjsip_internal",
             disallow="all",
-            allow="g722",
+            allow=codec,
         )
         session_asterisk.add(ps_aor)
         session_asterisk.add(ps_auth)

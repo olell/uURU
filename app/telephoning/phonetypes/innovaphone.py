@@ -17,7 +17,11 @@ class InnovaphoneFields(BaseModel):
 
 class Innovaphone(PhoneFlavor):
 
-    PHONE_TYPES = ["Innovaphone 241", "Innovaphone 201a"]
+    PHONE_TYPES = ["Innovaphone 241", "Innovaphone 200a"]
+    SUPPORTED_CODEC = {
+        "Innovaphone 241": "g722",
+        "Innovaphone 200a": "alaw"
+    }
     EXTRA_FIELDS = InnovaphoneFields
     IS_SPECIAL = True
 

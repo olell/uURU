@@ -2,6 +2,7 @@ import importlib
 import pkgutil
 from fastapi import APIRouter, FastAPI
 from apscheduler.schedulers.background import BackgroundScheduler
+import json
 
 from app.core.config import settings
 from app.telephoning.flavor import PhoneFlavor
@@ -47,6 +48,9 @@ class Telephoning(object):
         self.flavor_classes = load_phone_flavors()
         self.flavors = {}
 
+        self.flavor_by_type = {}
+        self.all_types = []
+
     def start(self, app: FastAPI):
         
         for cls in self.flavor_classes:
@@ -55,7 +59,7 @@ class Telephoning(object):
             if flavor_name in self.flavors:
                 raise RuntimeError("Flavor classes must have unique names!")
 
-            flavor = cls()
+            flavor: PhoneFlavor = cls()
 
             # 2nd: create routes
             router = APIRouter(prefix=f"/{flavor_name}")
@@ -71,7 +75,16 @@ class Telephoning(object):
                 self.scheduler.add_job(flavor.job, "interval", seconds=flavor.JOB_INTERVAL)
 
             self.flavors.update({flavor_name: flavor})
+            self.flavor_by_type.update({
+                phone_type: flavor for phone_type in flavor.PHONE_TYPES
+            })
         
+        # create list of all phone types
+        flavors = list(self.flavors.values())
+        flavors.sort(key=lambda f: -f.DISPLAY_INDEX)
+        for flavor in flavors:
+            self.all_types.extend(flavor.PHONE_TYPES)
+
         # start scheduler and include router
         self.scheduler.start()
         app.include_router(self.router)
@@ -87,22 +100,28 @@ class Telephoning(object):
         returns the instance of the PhoneFlavor which supports the given
         phone_type, if there isn't such instance, it returns None
         """
-        self = Telephoning.instance()
-        for flavor in self.flavors.values():
-            if phone_type in flavor.PHONE_TYPES:
-                return flavor
-        return None
+        return Telephoning.instance().flavor_by_type.get(phone_type)
     
     @staticmethod
     def get_all_phone_types() -> list[str]:
         """
         returns a list of all supported phone types
         """
+        return Telephoning.instance().all_types
+    
+    @staticmethod
+    def get_schemas(as_json=True) -> dict[str, dict] | str:
+        """
+        returns a dict containing all json schemas
+        """
         self = Telephoning.instance()
-        types = []
-        flavors = list(self.flavors.values())
-        flavors.sort(key=lambda f: -f.DISPLAY_INDEX)
-        for flavor in flavors:
-            types.extend(flavor.PHONE_TYPES)
+        schemas = {}
 
-        return types
+        for phone_type in self.all_types:
+            flavor: PhoneFlavor = self.flavor_by_type[phone_type]
+            schema = flavor.get_schema()
+            if schema is not None:
+                schemas.update({
+                    phone_type: schema
+                })
+        return schemas if not as_json else json.dumps(schemas)

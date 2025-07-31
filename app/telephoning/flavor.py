@@ -99,3 +99,9 @@ class PhoneFlavor:
     ## DO NOT OVERWRITE THOSE METHODS
     def is_public(self):
         return settings.ALL_EXTENSION_TYPES_PUBLIC or not self.IS_SPECIAL
+    
+    def get_schema(self):
+        if self.EXTRA_FIELDS is None:
+            return None
+        
+        return self.EXTRA_FIELDS.model_json_schema()

@@ -1,10 +1,14 @@
 from enum import Enum
 from typing import Optional, TYPE_CHECKING, Self, Any
 
-from sqlmodel import Relationship, SQLModel, Field
-from pydantic import BaseModel, model_validator, field_validator, Field as PydanticField
-
+from sqlmodel import JSON, Column, Relationship, SQLModel, Field
+from pydantic import BaseModel, ValidationError, computed_field, model_validator, field_validator, Field as PydanticField
+import json
 import uuid
+from urllib.parse import unquote
+
+from app.telephoning.main import Telephoning
+
 
 if TYPE_CHECKING:
     from app.models.user import User
@@ -60,7 +64,27 @@ class Extension(ExtensionBase, table=True):
     user: Optional["User"] = Relationship(back_populates="extensions")
 
     type: str
+    extra_fields: dict = Field(default_factory=dict, sa_column=Column(JSON))
 
+    @computed_field
+    @property
+    def get_flavor_model(self) -> BaseModel:
+        flavor = Telephoning.get_flavor_by_type(self.type)
+        if flavor.EXTRA_FIELDS is None:
+            return None
+        
+        return flavor.EXTRA_FIELDS.model_validate(self.extra_fields)
+        
+
+    @model_validator(mode="after")
+    def check_phone_flavor(self) -> Self:
+        if not self.type in Telephoning.get_all_phone_types():
+            raise ValidationError(f"Unknown phone type: {self.type}")
+        
+        flavor = Telephoning.get_flavor_by_type(self.type)
+        if flavor.EXTRA_FIELDS is not None:
+            print(flavor, flavor.EXTRA_FIELDS)
+            flavor.EXTRA_FIELDS.model_validate(self.extra_fields)
 
 class ExtensionCreate(BaseModel):
     extension: str = PydanticField(
@@ -72,6 +96,7 @@ class ExtensionCreate(BaseModel):
     info: str
     public: bool = Field(default=False)
     type: str
+    extra_fields: dict = {}
 
     location_name: Optional[str] = None
     lat: Optional[float] = None
@@ -84,6 +109,18 @@ class ExtensionCreate(BaseModel):
     def validate_checkbox(cls, value: Any) -> Any:
         return True if value == "" else value
 
+    @field_validator("extra_fields", mode="before")
+    @classmethod
+    def validate_extra_fields_json(cls, value: Any):
+        print("validating extra fields")
+        print(value, type(value))
+        if not isinstance(value, str):
+            return value
+        
+        if value.strip().startswith("%7B"):
+            value = unquote(value)
+        
+        return json.loads(value)
 
 class ExtensionUpdate(BaseModel):
     name: Optional[str] = None

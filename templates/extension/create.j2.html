@@ -44,7 +44,11 @@
           {% for phone_type in telephoning.get_all_phone_types() %}
           {% set flavor = telephoning.get_flavor_by_type(phone_type) %}
             {% if user.role == 'admin' or flavor.is_public() %}
+              {% if edit is defined %}
+              <option {% if edit.type == phone_type %} selected {% endif %} value="{{ phone_type }}">{{ phone_type }}</option>
+              {% else %}
               <option {% if index0 == 0 %} selected {% endif %} value="{{ phone_type }}">{{ phone_type }}</option>
+              {% endif %}
             {% endif %}
           {% endfor %}
         </select>
@@ -193,8 +197,8 @@
         if (errors === false) {
           // all inputs are valid, create json and submit main form
           const json_values = JSON.stringify(values);
-          $("#extraFields").html(`<input type=hidden value="${encodeURI(json_values)}"/>`)
-          //$("#extensionForm").submit();
+          $("#extraFields").html(`<input type=hidden name="extra_fields" value="${encodeURI(json_values)}"/>`)
+          $("#extensionForm").submit();
         }
       }
     });

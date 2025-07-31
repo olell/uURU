@@ -107,9 +107,13 @@ def get_extension_by_id(
 
     return session.exec(query).first()
 
-# TODO FLAVOR (get_extension_by_property(session: Session, property: str, value: Any))
-# def get_extension_by_mac(session: Session, mac: MacAddress) -> Extension:
-#     return session.exec(select(Extension).where(Extension.mac == mac)).first()
+def get_extension_by_extra_field(session: Session, key: str, value: any) -> Extension | None:
+    # TODO: This should be optimized!
+    all_extensions = session.exec(select(Extension)).all()
+    for extension in all_extensions:
+        if extension.extra_fields.get(key, None) == value:
+            return extension
+    return None
 
 
 def filter_extensions_by_name(

@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException, Request, status
 from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel, Field
 
+from app.models.crud.extension import get_extension_by_extra_field
 from app.telephoning import templates
 from app.core.config import settings
 from app.core.db import SessionDep
@@ -18,6 +19,9 @@ class Innovaphone(PhoneFlavor):
     EXTRA_FIELDS = InnovaphoneFields
     IS_SPECIAL = True
 
+    def on_extension_create(self, session, asterisk_session, extension):
+        print(f"A new {extension.type} was created. My extra_fields are {extension.extra_fields}")
+
     def generate_routes(self, router: APIRouter):
 
         ########################################################################
@@ -32,7 +36,7 @@ class Innovaphone(PhoneFlavor):
         def get_config(
             request: Request, session: SessionDep, mac: str
         ) -> PlainTextResponse:
-            extension = None #get_extension_by_mac(session, mac)
+            extension = get_extension_by_extra_field(session, "mac", mac)
             if not extension:
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND,

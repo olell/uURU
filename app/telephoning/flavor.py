@@ -1,9 +1,12 @@
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from app.models.extension import Extension
+
 from fastapi import APIRouter
 from pydantic import BaseModel
 from sqlmodel import Session
 
 from app.core.config import settings
-from app.models.extension import Extension
 
 
 class PhoneFlavor:
@@ -53,17 +56,17 @@ class PhoneFlavor:
     JOB_INTERVAL: int = 60
 
     def on_extension_create(
-        self, session: Session, asterisk_session: Session, extension: Extension
+        self, session: Session, asterisk_session: Session, extension: "Extension"
     ):
         pass
 
     def on_extension_update(
-        self, session: Session, asterisk_session: Session, extension: Extension
+        self, session: Session, asterisk_session: Session, extension: "Extension"
     ):
         pass
 
     def on_extension_delete(
-        self, session: Session, asterisk_session: Session, extension: Extension
+        self, session: Session, asterisk_session: Session, extension: "Extension"
     ):
         pass
 

@@ -55,7 +55,7 @@ requires-dist = [
     { name = "fastapi", extras = ["standard"], specifier = ">=0.116.1" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "jinja2", specifier = ">=3.1.6" },
-    { name = "mitel-ommclient2", extras = ["crypt"], git = "https://github.com/hirnpfirsich/mitel_ommclient2.git" },
+    { name = "mitel-ommclient2", git = "https://github.com/hirnpfirsich/mitel_ommclient2.git" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.2.9" },
     { name = "pydantic-extra-types", specifier = ">=2.10.5" },
     { name = "pydantic-settings", specifier = ">=2.10.1" },

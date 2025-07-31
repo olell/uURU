@@ -1,38 +1,49 @@
+from pydantic import BaseModel
 from sqlmodel import Session, delete, select
 
 from app.models.asterisk import PSAor, PSAuth, PSEndpoint
 from app.models.crud import CRUDNotAllowedException
-from app.models.extension import Extension
+from app.models.extension import Extension, TemporaryExtensions
 from app.telephoning.main import Telephoning
 
 
+class AsteriskExtension(BaseModel):
+    extension: str
+    password: str
+    type: str
+
+
 def create_asterisk_extension(
-    session_asterisk: Session, extension: Extension
+    session_asterisk: Session,
+    extension: str,
+    password: str,
+    type: str,
+    context="pjsip_internal",
 ) -> tuple[PSAor, PSAuth, PSEndpoint]:
 
     try:
-        ps_aor = PSAor(id=extension.extension)
+        ps_aor = PSAor(id=extension)
         ps_auth = PSAuth(
-            id=extension.extension,
-            username=extension.extension,
-            password=extension.password,
+            id=extension,
+            username=extension,
+            password=password,
         )
 
         # TODO: fix hard coded context
         # TODO: fix hard coded transport
-        flavor = Telephoning.get_flavor_by_type(extension.type)
+        flavor = Telephoning.get_flavor_by_type(type)
         codec = (
             flavor.SUPPORTED_CODEC
             if isinstance(flavor.SUPPORTED_CODEC, str)
-            else flavor.SUPPORTED_CODEC[extension.type]
+            else flavor.SUPPORTED_CODEC[type]
         )
 
         ps_endpoint = PSEndpoint(
-            id=extension.extension,
+            id=extension,
             transport="transport-udp",
             aors=ps_aor.id,
             auth=ps_auth.id,
-            context="pjsip_internal",
+            context=context,
             disallow="all",
             allow=codec,
         )

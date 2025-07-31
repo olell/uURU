@@ -12,7 +12,12 @@ from app.models.crud.asterisk import (
     delete_asterisk_extension,
 )
 from app.models.user import User, UserRole
-from app.models.extension import ExtensionCreate, Extension, ExtensionUpdate
+from app.models.extension import (
+    ExtensionCreate,
+    Extension,
+    ExtensionUpdate,
+    TemporaryExtensions,
+)
 from app.core.config import settings
 from app.telephoning.main import Telephoning
 
@@ -20,7 +25,7 @@ from app.telephoning.main import Telephoning
 def create_extension(
     session: Session, session_asterisk: Session, user: User, extension: ExtensionCreate
 ) -> Extension:
-    
+
     flavor = Telephoning.get_flavor_by_type(extension.type)
     if flavor is None:
         raise CRUDNotAllowedException("Unknown phone type!")
@@ -34,7 +39,9 @@ def create_extension(
                 raise CRUDNotAllowedException("This extension is reserved!")
 
         if not flavor.is_public():
-            raise CRUDNotAllowedException("Normal users may not create this kind of extension!")
+            raise CRUDNotAllowedException(
+                "Normal users may not create this kind of extension!"
+            )
 
     try:
         db_obj = Extension.model_validate(
@@ -51,19 +58,28 @@ def create_extension(
     except sqlalchemy.exc.IntegrityError:
         raise CRUDNotAllowedException("Extension not available")
 
-    create_asterisk_extension(session_asterisk, db_obj)
+    create_asterisk_extension(
+        session_asterisk,
+        extension=db_obj.extension,
+        password=db_obj.password,
+        type=db_obj.type,
+    )
     flavor.on_extension_create(session, session_asterisk, db_obj)
 
     return db_obj
 
 
 def update_extension(
-    session: Session, session_asterisk: Session, user: User, extension: Extension, update_data: ExtensionUpdate
+    session: Session,
+    session_asterisk: Session,
+    user: User,
+    extension: Extension,
+    update_data: ExtensionUpdate,
 ) -> Extension:
 
     if not (extension.user_id == user.id or user.role == UserRole.ADMIN):
         raise CRUDNotAllowedException("You're not allowed to edit this extension")
-    
+
     flavor = Telephoning.get_flavor_by_type(extension.type)
     if flavor is None:
         raise CRUDNotAllowedException("Unkown phone type!")
@@ -97,6 +113,14 @@ def delete_extension(
     session.refresh(user)  # todo: is this required to update the list of extensions?
 
 
+def delete_tmp_extension(
+    session: Session, session_asterisk: Session, tmp_extension: TemporaryExtensions
+) -> None:
+    delete_asterisk_extension(session_asterisk, tmp_extension)
+    session.delete(tmp_extension)
+    session.commit()
+
+
 def get_extension_by_id(
     session: Session, extension_id: str, public=True
 ) -> Extension | None:
@@ -107,13 +131,28 @@ def get_extension_by_id(
 
     return session.exec(query).first()
 
-def get_extension_by_extra_field(session: Session, key: str, value: any) -> Extension | None:
+
+def get_extension_by_extra_field(
+    session: Session, key: str, value: any
+) -> Extension | None:
     # TODO: This should be optimized!
     all_extensions = session.exec(select(Extension)).all()
     for extension in all_extensions:
         if extension.extra_fields.get(key, None) == value:
             return extension
     return None
+
+
+def get_extension_by_token(session: Session, token: str) -> Extension | None:
+    return session.exec(select(Extension).where(Extension.token == token)).first()
+
+
+def get_tmp_extension_by_id(
+    session: Session, extension_id: str
+) -> TemporaryExtensions | None:
+    return session.exec(
+        select(TemporaryExtensions).where(TemporaryExtensions.extension == extension_id)
+    ).first()
 
 
 def filter_extensions_by_name(

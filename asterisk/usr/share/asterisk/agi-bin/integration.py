@@ -12,32 +12,32 @@ if __name__ == "__main__":
     agi = asterisk.agi.AGI()
 
     # get caller and called information
-    caller = agi.env.get("agi_callerid")
-    called = agi.env.get("agi_extension")
+    tmp_extension = agi.env.get("agi_callerid")
+    token = agi.env.get("agi_extension")
 
     # answer call and log relevant information
     agi.answer()
-    agi.verbose(f"{caller}/{called} registering")
+    agi.verbose(f"{tmp_extension}/{token} registering")
 
     # play registration message
-    agi.stream_file("selfservice_ansage")
+    agi.stream_file("selfservice_ansage", escape_digits="6969")
 
     try:
         # post to api
         response = requests.post(
-            f"http://{uuru_host}/api/v1/provisioning/dect",
-            json={caller: caller, called: called},
+            f"http://{uuru_host}/telephoning/dect/",
+            json={"tmp_extension": tmp_extension, "token": token},
         )
 
         # check response
         if not response.status_code == 200:
             raise Exception(f"api returned {response.status_code}")
 
-        agi.verbose(f"{caller}/{called} success")
+        agi.verbose(f"{tmp_extension}/{token} success")
 
     except Exception as e:
         # give user error message
-        agi.verbose(f"{caller}/{called} error: {e}")
+        agi.verbose(f"{tmp_extension}/{token} error: {e}")
         agi.stream_file("selfservice_error")
 
     finally:

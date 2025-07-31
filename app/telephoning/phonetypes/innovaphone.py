@@ -1,7 +1,6 @@
 from fastapi import APIRouter, HTTPException, Request, status
 from fastapi.responses import PlainTextResponse
-from pydantic import BaseModel
-from pydantic_extra_types.mac_address import MacAddress
+from pydantic import BaseModel, Field
 
 from app.telephoning import templates
 from app.core.config import settings
@@ -11,7 +10,7 @@ from app.telephoning.flavor import PhoneFlavor
 
 
 class InnovaphoneFields(BaseModel):
-    mac: MacAddress
+    mac: str = Field(pattern="^([0-9a-f]{2}-){5}[0-9a-f]{2}$")
 
 class Innovaphone(PhoneFlavor):
 
@@ -23,7 +22,7 @@ class Innovaphone(PhoneFlavor):
 
         ########################################################################
         @router.get("/update")
-        def get_update(mac: MacAddress) -> PlainTextResponse:
+        def get_update(mac: str) -> PlainTextResponse:
             return PlainTextResponse(
                 f"mod cmd UP0 cfg http://{settings.WEB_HOST}{settings.API_V1_STR}/provisioning/innovaphone/config?mac={mac} iresetn"
             )
@@ -31,7 +30,7 @@ class Innovaphone(PhoneFlavor):
         ########################################################################
         @router.get("/innovaphone/config")
         def get_config(
-            request: Request, session: SessionDep, mac: MacAddress
+            request: Request, session: SessionDep, mac: str
         ) -> PlainTextResponse:
             extension = None #get_extension_by_mac(session, mac)
             if not extension:

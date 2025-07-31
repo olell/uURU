@@ -1,8 +1,17 @@
 from enum import Enum
+import random
+import string
 from typing import Optional, TYPE_CHECKING, Self, Any
 
 from sqlmodel import JSON, Column, Relationship, SQLModel, Field
-from pydantic import BaseModel, ValidationError, computed_field, model_validator, field_validator, Field as PydanticField
+from pydantic import (
+    BaseModel,
+    ValidationError,
+    computed_field,
+    model_validator,
+    field_validator,
+    Field as PydanticField,
+)
 import json
 import uuid
 from urllib.parse import unquote
@@ -14,6 +23,7 @@ if TYPE_CHECKING:
     from app.models.user import User
 
 from app.core.config import settings
+
 
 class ExtensionBase(SQLModel):
     extension: str = Field(unique=True, primary_key=True)
@@ -44,12 +54,14 @@ class ExtensionBase(SQLModel):
 
     @property
     def lat_float(self) -> float:
-        if self.lat is None: return None
+        if self.lat is None:
+            return None
         return self.lat / 10000000
 
     @property
     def lon_float(self) -> float:
-        if self.lon is None: return None
+        if self.lon is None:
+            return None
         return self.lon / 10000000
 
 
@@ -72,25 +84,25 @@ class Extension(ExtensionBase, table=True):
         flavor = Telephoning.get_flavor_by_type(self.type)
         if flavor is None or flavor.EXTRA_FIELDS is None:
             return None
-        
+
         return flavor.EXTRA_FIELDS.model_validate(self.extra_fields)
-        
 
     @model_validator(mode="after")
     def check_phone_flavor(self) -> Self:
         if not self.type in Telephoning.get_all_phone_types():
             raise ValidationError(f"Unknown phone type: {self.type}")
-        
+
         flavor = Telephoning.get_flavor_by_type(self.type)
         if flavor.EXTRA_FIELDS is not None:
             print(flavor, flavor.EXTRA_FIELDS)
             flavor.EXTRA_FIELDS.model_validate(self.extra_fields)
 
+
 class ExtensionCreate(BaseModel):
     extension: str = PydanticField(
         min_length=settings.EXTENSION_DIGITS,
         max_length=settings.EXTENSION_DIGITS,
-        pattern=fr"^\d{{{settings.EXTENSION_DIGITS}}}$"
+        pattern=rf"^\d{{{settings.EXTENSION_DIGITS}}}$",
     )
     name: str
     info: str
@@ -116,11 +128,12 @@ class ExtensionCreate(BaseModel):
         print(value, type(value))
         if not isinstance(value, str):
             return value
-        
+
         if value.strip().startswith("%7B"):
             value = unquote(value)
-        
+
         return json.loads(value)
+
 
 class ExtensionUpdate(BaseModel):
     name: Optional[str] = None
@@ -168,3 +181,14 @@ class TemporaryExtensions(SQLModel, table=True):
     password: str
     uid: int
     ppn: int
+
+    def generate_extension() -> int:
+        return int(
+            "9"
+            + "".join(
+                [
+                    random.choice(string.digits)
+                    for _ in range(settings.EXTENSION_DIGITS * 2)
+                ]
+            )
+        )

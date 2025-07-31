@@ -147,5 +147,10 @@ class Settings(BaseSettings):
     SITE_LAT: float = 0
     SITE_LON: float = 0
 
+    OMM_HOST: str | None = None
+    OMM_PORT: int = 12621
+    OMM_USER: str = "omm"
+    OMM_PASSWORD: str | None = None
+
 
 settings = Settings()

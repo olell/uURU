@@ -28,7 +28,7 @@ class Innovaphone(PhoneFlavor):
         @router.get("/update")
         def get_update(mac: str) -> PlainTextResponse:
             return PlainTextResponse(
-                f"mod cmd UP0 cfg http://{settings.WEB_HOST}{settings.API_V1_STR}/provisioning/innovaphone/config?mac={mac} iresetn"
+                f"mod cmd UP0 cfg http://{settings.WEB_HOST}/{settings.TELEPHONING_PREFIX}/innovaphone/config?mac={mac} iresetn"
             )
         
         ########################################################################

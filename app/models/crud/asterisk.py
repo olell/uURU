@@ -17,14 +17,14 @@ def create_asterisk_extension(
             username=extension.extension,
             password=extension.password,
         )
+
         # TODO: fix hard coded context
         # TODO: fix hard coded transport
-
-        flavor = Telephoning.get_flavor_by_type(Extension.type)
+        flavor = Telephoning.get_flavor_by_type(extension.type)
         codec = (
             flavor.SUPPORTED_CODEC
             if isinstance(flavor.SUPPORTED_CODEC, str)
-            else flavor.SUPPORTED_CODEC[Extension.type]
+            else flavor.SUPPORTED_CODEC[extension.type]
         )
 
         ps_endpoint = PSEndpoint(

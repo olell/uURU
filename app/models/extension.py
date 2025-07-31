@@ -70,7 +70,7 @@ class Extension(ExtensionBase, table=True):
     @property
     def get_flavor_model(self) -> BaseModel:
         flavor = Telephoning.get_flavor_by_type(self.type)
-        if flavor.EXTRA_FIELDS is None:
+        if flavor is None or flavor.EXTRA_FIELDS is None:
             return None
         
         return flavor.EXTRA_FIELDS.model_validate(self.extra_fields)

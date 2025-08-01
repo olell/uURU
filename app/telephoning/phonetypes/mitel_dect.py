@@ -24,7 +24,7 @@ from app.core.db import (
 )
 
 
-class DECT(PhoneFlavor):
+class MitelDECT(PhoneFlavor):
     PHONE_TYPES = ["DECT"]
     DISPLAY_INDEX = 1001
     IS_SPECIAL = False

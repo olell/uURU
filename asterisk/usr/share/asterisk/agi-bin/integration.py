@@ -25,7 +25,7 @@ if __name__ == "__main__":
     try:
         # post to api
         response = requests.post(
-            f"http://{uuru_host}/telephoning/dect/",
+            f"http://{uuru_host}/telephoning/miteldect/",
             json={"tmp_extension": tmp_extension, "token": token},
         )
 

@@ -58,12 +58,13 @@ def create_extension(
     except sqlalchemy.exc.IntegrityError:
         raise CRUDNotAllowedException("Extension not available")
 
-    create_asterisk_extension(
-        session_asterisk,
-        extension=db_obj.extension,
-        password=db_obj.password,
-        type=db_obj.type,
-    )
+    if not flavor.PREVENT_SIP_CREATION:
+        create_asterisk_extension(
+            session_asterisk,
+            extension=db_obj.extension,
+            password=db_obj.password,
+            type=db_obj.type,
+        )
     flavor.on_extension_create(session, session_asterisk, db_obj)
 
     return db_obj
@@ -106,7 +107,8 @@ def delete_extension(
         raise CRUDNotAllowedException("Unkown phone type!")
 
     flavor.on_extension_delete(session, session_asterisk, extension)
-    delete_asterisk_extension(session_asterisk, extension)
+    if not flavor.PREVENT_SIP_CREATION:
+        delete_asterisk_extension(session_asterisk, extension)
 
     session.delete(extension)
     session.commit()

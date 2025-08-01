@@ -14,5 +14,5 @@ def app_context(request: Request) -> dict[str, Any]:
 
 
 templates = Jinja2Templates(
-    directory="templates_provisioning", context_processors=[app_context]
+    directory="templates/telephoning", context_processors=[app_context]
 )

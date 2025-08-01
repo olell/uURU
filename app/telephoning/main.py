@@ -17,6 +17,8 @@ def load_phone_flavors() -> list[PhoneFlavor]:
     phone_flavors = []
 
     for _, module_name, _ in pkgutil.iter_modules(package.__path__):
+        if module_name not in settings.ENABLED_PHONE_FLAVORS:
+            continue
         module = importlib.import_module(f"app.telephoning.phonetypes.{module_name}")
 
         for attr_name in dir(module):

@@ -64,6 +64,10 @@ class PhoneFlavor:
     CODEC = Literal["g722", "alaw", "ulaw", "g726", "gsm", "lpc10"]
     SUPPORTED_CODEC: CODEC | dict[str, CODEC] = "g722"
 
+    # If this flag is set to true, on creation of such a phone type no SIP
+    # account is created in the asterisk database
+    PREVENT_SIP_CREATION = False
+
     def on_extension_create(
         self, session: Session, asterisk_session: Session, extension: "Extension"
     ):

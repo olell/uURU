@@ -144,6 +144,8 @@ class ExtensionUpdate(BaseModel):
     lat: Optional[float] = None
     lon: Optional[float] = None
 
+    extra_fields: dict = {}
+
     @field_validator("lat", "lon", mode="before")
     @classmethod
     def validate_latlon(cls, value):
@@ -174,6 +176,19 @@ class ExtensionUpdate(BaseModel):
         else:
             print("Validated", True if value == "" else value)
             return True if value == "" else value
+
+    @field_validator("extra_fields", mode="before")
+    @classmethod
+    def validate_extra_fields_json(cls, value: Any):
+        print("validating extra fields")
+        print(value, type(value))
+        if not isinstance(value, str):
+            return value
+
+        if value.strip().startswith("%7B"):
+            value = unquote(value)
+
+        return json.loads(value)
 
 
 class TemporaryExtensions(SQLModel, table=True):

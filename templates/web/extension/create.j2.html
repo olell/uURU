@@ -181,7 +181,10 @@
     }
 
     {% if edit %}
-    const edit_default_values = {{ edit.extra_fields }};
+    const edit_default_values = {{ edit.extra_fields|safe }};
+    Object.keys(edit_default_values).forEach((key) => {
+      updatedSchema["properties"][key]["default"] = edit_default_values[key];
+    })
     {% endif %}
     
     console.log(updatedSchema)

@@ -180,6 +180,10 @@
       })
     }
 
+    {% if edit %}
+    const edit_default_values = {{ edit.extra_fields }};
+    {% endif %}
+    
     console.log(updatedSchema)
 
     // generate new form from schema

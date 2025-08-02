@@ -51,14 +51,16 @@ def create_asterisk_extension(
         session_asterisk.add(ps_aor)
         session_asterisk.add(ps_auth)
         session_asterisk.add(ps_endpoint)
-        if autocommit:
-            session_asterisk.commit()
-            session_asterisk.refresh(ps_aor)
-            session_asterisk.refresh(ps_auth)
-            session_asterisk.refresh(ps_endpoint)
     except Exception as e:
+        session_asterisk.rollback()
         print(f"exception {e}")
         raise CRUDNotAllowedException(f"could not configure endpoint in asterisk: {e}")
+
+    if autocommit:
+        session_asterisk.commit()
+        session_asterisk.refresh(ps_aor)
+        session_asterisk.refresh(ps_auth)
+        session_asterisk.refresh(ps_endpoint)
 
     return [ps_aor, ps_auth, ps_endpoint]
 

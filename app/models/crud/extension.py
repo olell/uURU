@@ -57,20 +57,31 @@ def create_extension(
             },
         )
         session.add(db_obj)
-        if autocommit:
-            session.commit()
-            session.refresh(db_obj)
+
+        if not flavor.PREVENT_SIP_CREATION:
+            create_asterisk_extension(
+                session_asterisk,
+                extension=db_obj.extension,
+                password=db_obj.password,
+                type=db_obj.type,
+                autocommit=False,
+            )
+        flavor.on_extension_create(session, session_asterisk, db_obj)
+
     except sqlalchemy.exc.IntegrityError:
+        session.rollback()
+        session_asterisk.rollback()
         raise CRUDNotAllowedException("Extension not available")
 
-    if not flavor.PREVENT_SIP_CREATION:
-        create_asterisk_extension(
-            session_asterisk,
-            extension=db_obj.extension,
-            password=db_obj.password,
-            type=db_obj.type,
-        )
-    flavor.on_extension_create(session, session_asterisk, db_obj)
+    except Exception as e:
+        session.rollback()
+        session_asterisk.rollback()
+        raise e
+
+    if autocommit:
+        session.commit()
+        session.refresh(db_obj)
+        session_asterisk.commit()
 
     return db_obj
 
@@ -91,14 +102,20 @@ def update_extension(
     if flavor is None:
         raise CRUDNotAllowedException("Unkown phone type!")
 
-    data = update_data.model_dump(exclude_unset=True)
-    extension.sqlmodel_update(data)
-    session.add(extension)
+    try:
+        data = update_data.model_dump(exclude_unset=True)
+        extension.sqlmodel_update(data)
+        session.add(extension)
+
+        flavor.on_extension_update(session, session_asterisk, extension)
+    except Exception as e:
+        session.rollback()
+        session_asterisk.rollback()
+        raise e
+
     if autocommit:
         session.commit()
         session.refresh(extension)
-
-    flavor.on_extension_update(session, session_asterisk, extension)
 
     return extension
 
@@ -117,14 +134,21 @@ def delete_extension(
     if flavor is None:
         raise CRUDNotAllowedException("Unkown phone type!")
 
-    flavor.on_extension_delete(session, session_asterisk, extension)
-    if not flavor.PREVENT_SIP_CREATION:
-        delete_asterisk_extension(session_asterisk, extension)
+    try:
+        flavor.on_extension_delete(session, session_asterisk, extension)
+        if not flavor.PREVENT_SIP_CREATION:
+            delete_asterisk_extension(session_asterisk, extension, autocommit=False)
 
-    session.delete(extension)
+        session.delete(extension)
+    except Exception as e:
+        session.rollback()
+        session_asterisk.rollback()
+        raise e
+
     if autocommit:
         session.commit()
         session.refresh(user)
+        session_asterisk.commit()
 
 
 def delete_tmp_extension(
@@ -133,10 +157,17 @@ def delete_tmp_extension(
     tmp_extension: TemporaryExtensions,
     autocommit=True,
 ) -> None:
-    delete_asterisk_extension(session_asterisk, tmp_extension)
-    session.delete(tmp_extension)
+    try:
+        delete_asterisk_extension(session_asterisk, tmp_extension, autocommit=False)
+        session.delete(tmp_extension)
+    except Exception as e:
+        session.rollback()
+        session_asterisk.rollback()
+        raise e
+
     if autocommit:
         session.commit()
+        session_asterisk.commit()
 
 
 def get_extension_by_id(

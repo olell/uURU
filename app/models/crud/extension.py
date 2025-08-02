@@ -23,7 +23,11 @@ from app.telephoning.main import Telephoning
 
 
 def create_extension(
-    session: Session, session_asterisk: Session, user: User, extension: ExtensionCreate
+    session: Session,
+    session_asterisk: Session,
+    user: User,
+    extension: ExtensionCreate,
+    autocommit=True,
 ) -> Extension:
 
     flavor = Telephoning.get_flavor_by_type(extension.type)
@@ -53,19 +57,31 @@ def create_extension(
             },
         )
         session.add(db_obj)
-        session.commit()
-        session.refresh(db_obj)
+
+        if not flavor.PREVENT_SIP_CREATION:
+            create_asterisk_extension(
+                session_asterisk,
+                extension=db_obj.extension,
+                password=db_obj.password,
+                type=db_obj.type,
+                autocommit=False,
+            )
+        flavor.on_extension_create(session, session_asterisk, db_obj)
+
     except sqlalchemy.exc.IntegrityError:
+        session.rollback()
+        session_asterisk.rollback()
         raise CRUDNotAllowedException("Extension not available")
 
-    if not flavor.PREVENT_SIP_CREATION:
-        create_asterisk_extension(
-            session_asterisk,
-            extension=db_obj.extension,
-            password=db_obj.password,
-            type=db_obj.type,
-        )
-    flavor.on_extension_create(session, session_asterisk, db_obj)
+    except Exception as e:
+        session.rollback()
+        session_asterisk.rollback()
+        raise e
+
+    if autocommit:
+        session.commit()
+        session.refresh(db_obj)
+        session_asterisk.commit()
 
     return db_obj
 
@@ -76,6 +92,7 @@ def update_extension(
     user: User,
     extension: Extension,
     update_data: ExtensionUpdate,
+    autocommit=True,
 ) -> Extension:
 
     if not (extension.user_id == user.id or user.role == UserRole.ADMIN):
@@ -85,19 +102,30 @@ def update_extension(
     if flavor is None:
         raise CRUDNotAllowedException("Unkown phone type!")
 
-    data = update_data.model_dump(exclude_unset=True)
-    extension.sqlmodel_update(data)
-    session.add(extension)
-    session.commit()
-    session.refresh(extension)
+    try:
+        data = update_data.model_dump(exclude_unset=True)
+        extension.sqlmodel_update(data)
+        session.add(extension)
 
-    flavor.on_extension_update(session, session_asterisk, extension)
+        flavor.on_extension_update(session, session_asterisk, extension)
+    except Exception as e:
+        session.rollback()
+        session_asterisk.rollback()
+        raise e
+
+    if autocommit:
+        session.commit()
+        session.refresh(extension)
 
     return extension
 
 
 def delete_extension(
-    session: Session, session_asterisk: Session, user: User, extension: Extension
+    session: Session,
+    session_asterisk: Session,
+    user: User,
+    extension: Extension,
+    autocommit=True,
 ) -> None:
     if not (extension.user_id == user.id or user.role == UserRole.ADMIN):
         raise CRUDNotAllowedException("You're not allowed to delete this extension")
@@ -106,21 +134,40 @@ def delete_extension(
     if flavor is None:
         raise CRUDNotAllowedException("Unkown phone type!")
 
-    flavor.on_extension_delete(session, session_asterisk, extension)
-    if not flavor.PREVENT_SIP_CREATION:
-        delete_asterisk_extension(session_asterisk, extension)
+    try:
+        flavor.on_extension_delete(session, session_asterisk, extension)
+        if not flavor.PREVENT_SIP_CREATION:
+            delete_asterisk_extension(session_asterisk, extension, autocommit=False)
 
-    session.delete(extension)
-    session.commit()
-    session.refresh(user)  # todo: is this required to update the list of extensions?
+        session.delete(extension)
+    except Exception as e:
+        session.rollback()
+        session_asterisk.rollback()
+        raise e
+
+    if autocommit:
+        session.commit()
+        session.refresh(user)
+        session_asterisk.commit()
 
 
 def delete_tmp_extension(
-    session: Session, session_asterisk: Session, tmp_extension: TemporaryExtensions
+    session: Session,
+    session_asterisk: Session,
+    tmp_extension: TemporaryExtensions,
+    autocommit=True,
 ) -> None:
-    delete_asterisk_extension(session_asterisk, tmp_extension)
-    session.delete(tmp_extension)
-    session.commit()
+    try:
+        delete_asterisk_extension(session_asterisk, tmp_extension, autocommit=False)
+        session.delete(tmp_extension)
+    except Exception as e:
+        session.rollback()
+        session_asterisk.rollback()
+        raise e
+
+    if autocommit:
+        session.commit()
+        session_asterisk.commit()
 
 
 def get_extension_by_id(

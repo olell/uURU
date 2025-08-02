@@ -66,6 +66,26 @@ def create_asterisk_extension(
     return [ps_aor, ps_auth, ps_endpoint]
 
 
+def update_asterisk_extension(
+    session_asterisk: Session, extension: Extension, autocommit=True
+):
+    ps_endpoint = session_asterisk.exec(
+        select(PSEndpoint).where(PSEndpoint.id == extension.extension)
+    ).first()
+    if not ps_endpoint:
+        raise ValueError("no such endpoint in asterisk db")
+
+    try:
+        ps_endpoint.callerid = f"{extension.name} <{extension.extension}>"
+        session_asterisk.add(ps_endpoint)
+    except Exception as e:
+        session_asterisk.rollback()
+        raise e
+
+    if autocommit:
+        session_asterisk.commit()
+
+
 def delete_asterisk_extension(
     session_asterisk: Session, extension: Extension, autocommit=True
 ) -> None:

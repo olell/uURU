@@ -39,6 +39,7 @@ class Settings(BaseSettings):
     ## NETWORK
     WEB_PREFIX: str = ""
     API_V1_STR: str = "/api/v1"
+    TELEPHONING_PREFIX: str = "/telephoning"
 
     WEB_HOST: str = "127.0.0.1:8000"
     ASTERISK_HOST: str = "127.0.0.1"
@@ -138,6 +139,10 @@ class Settings(BaseSettings):
     RESERVED_EXTENSIONS: list[int | tuple[int, int]] = []
     ALL_EXTENSION_TYPES_PUBLIC: bool = 0
 
+    # list of enabled phone flavors, should contains the names of
+    # files in "app/telephoning/phonetypes/" without the .py suffix
+    ENABLED_PHONE_FLAVORS: list[str] = ["sip"]
+
     ## SITE
 
     SITE_NAME: str = "Default"
@@ -145,6 +150,11 @@ class Settings(BaseSettings):
     SHOW_SITE_SLOGAN: bool = True
     SITE_LAT: float = 0
     SITE_LON: float = 0
+
+    OMM_HOST: str | None = None
+    OMM_PORT: int = 12621
+    OMM_USER: str = "omm"
+    OMM_PASSWORD: str | None = None
 
 
 settings = Settings()

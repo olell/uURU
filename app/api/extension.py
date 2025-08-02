@@ -44,7 +44,7 @@ def create(
 
 @router.patch("/{extension}", response_model=ExtensionBase)
 def update(
-    session: SessionDep, user: CurrentUser, extension: str, data: ExtensionUpdate
+    session: SessionDep, session_asterisk: SessionAsteriskDep, user: CurrentUser, extension: str, data: ExtensionUpdate
 ):
     ext = get_extension_by_id(session, extension, public=False)
 
@@ -54,7 +54,7 @@ def update(
         )
 
     try:
-        return update_extension(session, user, ext, data)
+        return update_extension(session, session_asterisk, user, ext, data)
     except CRUDNotAllowedException as e:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
 

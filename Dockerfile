@@ -35,7 +35,6 @@ COPY ./app /app/app
 
 COPY ./static /app/static
 COPY ./templates /app/templates
-COPY ./templates_provisioning /app/templates_provisioning
 
 # Sync the project
 # Ref: https://docs.astral.sh/uv/guides/integration/docker/#intermediate-layers

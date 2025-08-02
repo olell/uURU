@@ -27,6 +27,7 @@ services:
 
   asterisk:
     build: asterisk/
+    image: olel/uuru-asterisk:latest
     depends_on:
       mariadb-asterisk:
         condition: service_healthy
@@ -36,17 +37,3 @@ services:
       MARIADB_USER: asterisk
       MARIADB_PASSWORD: asteriskpassword
     network_mode: host
-
-  ntp:
-    build: .
-    image: cturra/ntp:latest
-    container_name: ntp
-    restart: always
-    ports:
-      - 123:123/udp
-    environment:
-      - NTP_SERVERS=time.cloudflare.com
-      - LOG_LEVEL=0
-#      - TZ=America/Vancouver
-#      - NOCLIENTLOG=true
-#      - ENABLE_NTS=true

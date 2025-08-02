@@ -13,9 +13,9 @@ jobs:
         fail-fast: false
         matrix:
             include:
-                - dockerfile: ./Dockerfile
+                - context: .
                   image: olel/uuru:PR-${{ github.event.number }}
-                - dockerfile: ./asterisk/Dockerfile
+                - context: ./asterisk
                   image: olel/uuru-asterisk:PR-${{ github.event.number }}
 
     steps:
@@ -34,8 +34,8 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
-          context: .
-          file: ${{ matrix.dockerfile }}
+          context: ${{ matrix.context }}
+          file: ./Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ matrix.image }}

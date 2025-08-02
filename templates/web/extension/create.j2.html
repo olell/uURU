@@ -6,7 +6,11 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
     crossorigin=""></script>
-  
+
+<script src="/static/js/underscore-umd-min.js"></script>
+<script src="/static/js/jsv.js"></script>
+<script src="/static/js/jsonform.js"></script>
+
 <style>
   #map {
     position: relative;
@@ -27,12 +31,24 @@
   {% endif %}
   <form id="extensionForm" method="post">
     <div class="d-grid gap-2">
+      <div class="form-group">
+        <div
+          id="formError"
+          class="text-danger"
+          style="display: none"
+        ></div>
+      </div>
       <div>
         <label for="typeInput" class="form-label">Phone Type</label>
         <select class="form-select" aria-label="Extension type selector" name="type" id="typeInput" {% if edit is defined %}disabled{% endif %}>
-          {% for ext_type in ExtensionType %}
-            {% if user.role == 'admin' or ExtensionType.is_public(ext_type) %}
-              <option {% if index0 == 0 %} selected {% endif %} value="{{ ext_type.value }}">{{ ext_type.value }}</option>
+          {% for phone_type in telephoning.get_all_phone_types() %}
+          {% set flavor = telephoning.get_flavor_by_type(phone_type) %}
+            {% if user.role == 'admin' or flavor.is_public() %}
+              {% if edit is defined %}
+              <option {% if edit.type == phone_type %} selected {% endif %} value="{{ phone_type }}">{{ phone_type }}</option>
+              {% else %}
+              <option {% if index0 == 0 %} selected {% endif %} value="{{ phone_type }}">{{ phone_type }}</option>
+              {% endif %}
             {% endif %}
           {% endfor %}
         </select>
@@ -87,8 +103,6 @@
           be visible for the public.
         </div>
       </div>
-      <div id="macInputContainer">
-      </div>
       <div>
         <div>
           <label for="locationInput" class="form-label">Location (
@@ -119,6 +133,7 @@
               <input type="hidden" name="lon" value="{{ edit.lon_float }}"/>
             {% endif %} 
           </div>
+          <div id="extraFields"></div>
         </div>
       </div>
       <div>
@@ -137,21 +152,69 @@
           </label>
         </div>
       </div>
-      <div class="form-group">
-        <div
-          id="formError"
-          class="text-danger"
-          style="display: none"
-        ></div>
-      </div>
     </div>
-    <input
-      type="submit"
-      class="btn btn-primary float-end ps-5 pe-5"
-      value="{% if edit is not defined %}Add{% else %}Save{% endif %}"
-    />
+  </form>
+  <form action="#" id="extraForm">
+
   </form>
 </div>
+
+<script>
+
+  const schemas = {{ telephoning.get_schemas()|safe }};
+
+  function generate_form () {
+    // load / clear form for extra inputs
+    let form_element = $("#extraForm");
+    form_element.html("");
+
+    // load schema for selected type
+    let schema = schemas[$("#typeInput").val()];
+    if (!schema) schema = {};
+    
+    // jsonForm expects required attribute in key object not as seperate list
+    const { required, ...updatedSchema } = schema;
+    if (required) {
+      required.forEach((key) => {
+        updatedSchema["properties"][key]["required"] = true;
+      })
+    }
+
+    {% if edit %}
+    const edit_default_values = {{ edit.extra_fields|safe }};
+    Object.keys(edit_default_values).forEach((key) => {
+      updatedSchema["properties"][key]["default"] = edit_default_values[key];
+    })
+    {% endif %}
+    
+    console.log(updatedSchema)
+
+    // generate new form from schema
+    form_element.jsonForm({
+      schema: updatedSchema,
+      form: [
+        "*",
+        {
+          "type": "submit",
+          "title": "{% if edit is not defined %}Add{% else %}Save{% endif %}",
+          "htmlClass": "mt-4 float-end"
+        }
+      ],
+      onSubmit: (errors, values) => {
+        if (errors === false) {
+          // all inputs are valid, create json and submit main form
+          const json_values = JSON.stringify(values);
+          $("#extraFields").html(`<input type=hidden name="extra_fields" value="${encodeURI(json_values)}"/>`)
+          $("#extensionForm").submit();
+        }
+      }
+    });
+  }
+
+  $("#typeInput").on("change", generate_form);
+  $(window).ready(generate_form);
+
+</script>
 
 <script>
   let vanity_digits = {
@@ -175,41 +238,10 @@
     input.val(val);
   }
 
-  const ext_type_requires_mac = {
-    {% for ext_type in ExtensionType %} "{{ ext_type.value }}": {{ ExtensionType.requires_mac(ext_type)|lower }},
-    {% endfor %}
-  }
-
-  $("#typeInput").on("change", () => {
-    let val = $("#typeInput").val();
-    let mac_required = ext_type_requires_mac[val];
-    $("#macInputContainer").html(mac_required ? `
-    <label for="macInput" class="form-label">MAC-Address</label>
-        <input
-          type="text"
-          class="form-control"
-          name="mac"
-          {% if edit %}value="{{ edit.mac }}"{% endif %}
-          id="macInput"
-        />`: "");
-  })
-
   const reserved_extensions = JSON.parse('{{ settings.RESERVED_EXTENSIONS }}'.replace("(", "[").replace(")", "]"));
 
   $("#extensionForm").on("submit", (e) => {
-    // sanity check mac input
-    let ext_type = $("#typeInput").val();
-    let mac_required = ext_type_requires_mac[ext_type];
-    if (mac_required) {
-      let val = $("#macInput").val();
-      let match = /^[0-9a-f]{2}([:-])(?:[0-9a-f]{2}\1){4}[0-9a-f]{2}$/gmi.test(val);
-      if (!match) {
-        $("#formError").text("Invalid MAC-Adress");
-        $("#formError").css("display", "block");
-        e.preventDefault();
-      }
-    }
-
+    
     // sanity check extension length
     let ext_length = $("#extensionInput").val().length
     if ((ext_length) != {{ settings.EXTENSION_DIGITS }}) {
@@ -218,11 +250,20 @@
         e.preventDefault();
     }
 
+    // check required fields
+    $("[required]").each(function() {
+      if (!$(this).val()) {
+        $("#formError").text(`A value for ${$(this).attr("name")} is required!`);
+        $("#formError").css("display", "block");
+        e.preventDefault();
+        return;
+      }
+    })
+
 {% if user.role != 'admin' %}
     // sanity check reserved extensions
     reserved_extensions.forEach(rule => {
       let ext = parseInt($("#extensionInput").val());
-      console.log(rule, ext);
       if ((rule.length === 2 && ext >= rule[0] && ext <= rule[1]) || ext === rule) {
         $("#formError").text("This extension is reserved, please use a different number!");
         $("#formError").css("display", "block");

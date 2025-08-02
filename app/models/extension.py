@@ -1,37 +1,28 @@
 from enum import Enum
+import random
+import string
 from typing import Optional, TYPE_CHECKING, Self, Any
 
-from sqlmodel import Relationship, SQLModel, Field
-from pydantic import BaseModel, model_validator, field_validator, Field as PydanticField
-from pydantic_extra_types.mac_address import MacAddress
-
+from sqlmodel import JSON, Column, Relationship, SQLModel, Field
+from pydantic import (
+    BaseModel,
+    ValidationError,
+    computed_field,
+    model_validator,
+    field_validator,
+    Field as PydanticField,
+)
+import json
 import uuid
+from urllib.parse import unquote
+
+from app.telephoning.main import Telephoning
+
 
 if TYPE_CHECKING:
     from app.models.user import User
 
 from app.core.config import settings
-
-
-class ExtensionType(str, Enum):
-    SIP = "SIP"
-    DECT = "DECT"
-    INNOVAPHONE_241 = "Innovaphone 241"
-    INNOVAPHONE_201A = "Innovaphone 201a"
-
-    @staticmethod
-    def requires_mac(ext_type: "ExtensionType") -> bool:
-        return not ext_type in [
-            ExtensionType.SIP,
-            ExtensionType.DECT,
-        ]
-
-    @staticmethod
-    def is_public(ext_type: "ExtensionType") -> bool:
-        return settings.ALL_EXTENSION_TYPES_PUBLIC or ext_type in [
-            ExtensionType.SIP,
-            ExtensionType.DECT,
-        ]
 
 
 class ExtensionBase(SQLModel):
@@ -63,12 +54,14 @@ class ExtensionBase(SQLModel):
 
     @property
     def lat_float(self) -> float:
-        if self.lat is None: return None
+        if self.lat is None:
+            return None
         return self.lat / 10000000
 
     @property
     def lon_float(self) -> float:
-        if self.lon is None: return None
+        if self.lon is None:
+            return None
         return self.lon / 10000000
 
 
@@ -82,32 +75,40 @@ class Extension(ExtensionBase, table=True):
     user_id: Optional[uuid.UUID] = Field(default=None, foreign_key="user.id")
     user: Optional["User"] = Relationship(back_populates="extensions")
 
-    type: ExtensionType
-    mac: Optional[MacAddress] = Field(default=None, unique=True)
+    type: str
+    extra_fields: dict = Field(default_factory=dict, sa_column=Column(JSON))
 
-    # TODO: should throw http error - not 500 and stack trace
+    @computed_field
+    @property
+    def get_flavor_model(self) -> BaseModel:
+        flavor = Telephoning.get_flavor_by_type(self.type)
+        if flavor is None or flavor.EXTRA_FIELDS is None:
+            return None
+
+        return flavor.EXTRA_FIELDS.model_validate(self.extra_fields)
+
     @model_validator(mode="after")
-    def verify_mac_set(self) -> Self:
-        if not ExtensionType.requires_mac(self.type):
-            return self
+    def check_phone_flavor(self) -> Self:
+        if not self.type in Telephoning.get_all_phone_types():
+            raise ValidationError(f"Unknown phone type: {self.type}")
 
-        if not self.mac:
-            raise ValueError("mac needs to be defined if innovaphone")
-
-        return self
+        flavor = Telephoning.get_flavor_by_type(self.type)
+        if flavor.EXTRA_FIELDS is not None:
+            print(flavor, flavor.EXTRA_FIELDS)
+            flavor.EXTRA_FIELDS.model_validate(self.extra_fields)
 
 
 class ExtensionCreate(BaseModel):
     extension: str = PydanticField(
         min_length=settings.EXTENSION_DIGITS,
         max_length=settings.EXTENSION_DIGITS,
-        pattern=fr"^\d{{{settings.EXTENSION_DIGITS}}}$"
+        pattern=rf"^\d{{{settings.EXTENSION_DIGITS}}}$",
     )
     name: str
     info: str
     public: bool = Field(default=False)
-    type: ExtensionType
-    mac: Optional[MacAddress] = Field(default=None, unique=True)
+    type: str
+    extra_fields: dict = {}
 
     location_name: Optional[str] = None
     lat: Optional[float] = None
@@ -120,6 +121,19 @@ class ExtensionCreate(BaseModel):
     def validate_checkbox(cls, value: Any) -> Any:
         return True if value == "" else value
 
+    @field_validator("extra_fields", mode="before")
+    @classmethod
+    def validate_extra_fields_json(cls, value: Any):
+        print("validating extra fields")
+        print(value, type(value))
+        if not isinstance(value, str):
+            return value
+
+        if value.strip().startswith("%7B"):
+            value = unquote(value)
+
+        return json.loads(value)
+
 
 class ExtensionUpdate(BaseModel):
     name: Optional[str] = None
@@ -129,6 +143,8 @@ class ExtensionUpdate(BaseModel):
     location_name: Optional[str] = None
     lat: Optional[float] = None
     lon: Optional[float] = None
+
+    extra_fields: dict = {}
 
     @field_validator("lat", "lon", mode="before")
     @classmethod
@@ -161,9 +177,33 @@ class ExtensionUpdate(BaseModel):
             print("Validated", True if value == "" else value)
             return True if value == "" else value
 
+    @field_validator("extra_fields", mode="before")
+    @classmethod
+    def validate_extra_fields_json(cls, value: Any):
+        print("validating extra fields")
+        print(value, type(value))
+        if not isinstance(value, str):
+            return value
+
+        if value.strip().startswith("%7B"):
+            value = unquote(value)
+
+        return json.loads(value)
+
 
 class TemporaryExtensions(SQLModel, table=True):
     extension: str = Field(unique=True, primary_key=True)
     password: str
     uid: int
     ppn: int
+
+    def generate_extension() -> int:
+        return int(
+            "9"
+            + "".join(
+                [
+                    random.choice(string.digits)
+                    for _ in range(settings.EXTENSION_DIGITS * 2)
+                ]
+            )
+        )

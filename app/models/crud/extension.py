@@ -62,6 +62,7 @@ def create_extension(
             create_asterisk_extension(
                 session_asterisk,
                 extension=db_obj.extension,
+                extension_name=db_obj.name,
                 password=db_obj.password,
                 type=db_obj.type,
                 autocommit=False,

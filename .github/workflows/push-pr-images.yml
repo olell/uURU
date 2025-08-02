@@ -15,10 +15,10 @@ jobs:
             include:
                 - Dockerfile: ./Dockerfile
                   image: olel/uuru:PR-${{ github.event.number }}
-                  context: asterisk/
+                  context: ./
                 - Dockerfile: ./asterisk/Dockerfile
                   image: olel/uuru-asterisk:PR-${{ github.event.number }}
-                  context: ./
+                  context: ./asterisk/
 
     steps:
       - name: Checkout

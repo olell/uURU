@@ -4,8 +4,11 @@ include:
 services:
   app:
     build: .
+    image: olel/uuru:latest
     depends_on:
-      mariadb-asterisk:
+      mariadb-app:
+        condition: service_healthy
+      asterisk:
         condition: service_healthy
     env_file: ".env"
     environment:

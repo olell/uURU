@@ -113,6 +113,7 @@ class MitelDECT(PhoneFlavor):
                     create_asterisk_extension(
                         session_asterisk,
                         extension=tmp_ext_id,
+                        extension_name="DECT TMP",
                         password=password,
                         type="DECT",
                         context="pjsip_dect_tmp",

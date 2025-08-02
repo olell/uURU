@@ -16,6 +16,7 @@ class AsteriskExtension(BaseModel):
 def create_asterisk_extension(
     session_asterisk: Session,
     extension: str,
+    extension_name: str,
     password: str,
     type: str,
     context="pjsip_internal",
@@ -30,7 +31,6 @@ def create_asterisk_extension(
             password=password,
         )
 
-        # TODO: fix hard coded context
         # TODO: fix hard coded transport
         flavor = Telephoning.get_flavor_by_type(type)
         codec = (
@@ -47,6 +47,7 @@ def create_asterisk_extension(
             context=context,
             disallow="all",
             allow=codec,
+            callerid=f"{extension_name} <{extension}>",
         )
         session_asterisk.add(ps_aor)
         session_asterisk.add(ps_auth)
@@ -63,6 +64,26 @@ def create_asterisk_extension(
         session_asterisk.refresh(ps_endpoint)
 
     return [ps_aor, ps_auth, ps_endpoint]
+
+
+def update_asterisk_extension(
+    session_asterisk: Session, extension: Extension, autocommit=True
+):
+    ps_endpoint = session_asterisk.exec(
+        select(PSEndpoint).where(PSEndpoint.id == extension.extension)
+    ).first()
+    if not ps_endpoint:
+        raise ValueError("no such endpoint in asterisk db")
+
+    try:
+        ps_endpoint.callerid = f"{extension.name} <{extension.extension}>"
+        session_asterisk.add(ps_endpoint)
+    except Exception as e:
+        session_asterisk.rollback()
+        raise e
+
+    if autocommit:
+        session_asterisk.commit()
 
 
 def delete_asterisk_extension(

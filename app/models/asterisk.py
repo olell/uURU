@@ -14,6 +14,8 @@ class PSEndpoint(SQLModel, table=True):
     disallow: str
     allow: str
     direct_media: str = "0"
+    callerid: str
+    send_pai: str = "1"
 
 
 class PSAor(SQLModel, table=True):

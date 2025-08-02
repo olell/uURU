@@ -10,6 +10,7 @@ from app.models.crud import CRUDNotAllowedException
 from app.models.crud.asterisk import (
     create_asterisk_extension,
     delete_asterisk_extension,
+    update_asterisk_extension,
 )
 from app.models.user import User, UserRole
 from app.models.extension import (
@@ -62,6 +63,7 @@ def create_extension(
             create_asterisk_extension(
                 session_asterisk,
                 extension=db_obj.extension,
+                extension_name=db_obj.name,
                 password=db_obj.password,
                 type=db_obj.type,
                 autocommit=False,
@@ -107,6 +109,8 @@ def update_extension(
         extension.sqlmodel_update(data)
         session.add(extension)
 
+        update_asterisk_extension(session_asterisk, extension, autocommit=False)
+
         flavor.on_extension_update(session, session_asterisk, extension)
     except Exception as e:
         session.rollback()
@@ -116,6 +120,7 @@ def update_extension(
     if autocommit:
         session.commit()
         session.refresh(extension)
+        session_asterisk.commit()
 
     return extension
 

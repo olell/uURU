@@ -23,7 +23,11 @@ from app.telephoning.main import Telephoning
 
 
 def create_extension(
-    session: Session, session_asterisk: Session, user: User, extension: ExtensionCreate
+    session: Session,
+    session_asterisk: Session,
+    user: User,
+    extension: ExtensionCreate,
+    autocommit=True,
 ) -> Extension:
 
     flavor = Telephoning.get_flavor_by_type(extension.type)
@@ -53,8 +57,9 @@ def create_extension(
             },
         )
         session.add(db_obj)
-        session.commit()
-        session.refresh(db_obj)
+        if autocommit:
+            session.commit()
+            session.refresh(db_obj)
     except sqlalchemy.exc.IntegrityError:
         raise CRUDNotAllowedException("Extension not available")
 
@@ -76,6 +81,7 @@ def update_extension(
     user: User,
     extension: Extension,
     update_data: ExtensionUpdate,
+    autocommit=True,
 ) -> Extension:
 
     if not (extension.user_id == user.id or user.role == UserRole.ADMIN):
@@ -88,8 +94,9 @@ def update_extension(
     data = update_data.model_dump(exclude_unset=True)
     extension.sqlmodel_update(data)
     session.add(extension)
-    session.commit()
-    session.refresh(extension)
+    if autocommit:
+        session.commit()
+        session.refresh(extension)
 
     flavor.on_extension_update(session, session_asterisk, extension)
 
@@ -97,7 +104,11 @@ def update_extension(
 
 
 def delete_extension(
-    session: Session, session_asterisk: Session, user: User, extension: Extension
+    session: Session,
+    session_asterisk: Session,
+    user: User,
+    extension: Extension,
+    autocommit=True,
 ) -> None:
     if not (extension.user_id == user.id or user.role == UserRole.ADMIN):
         raise CRUDNotAllowedException("You're not allowed to delete this extension")
@@ -111,16 +122,21 @@ def delete_extension(
         delete_asterisk_extension(session_asterisk, extension)
 
     session.delete(extension)
-    session.commit()
-    session.refresh(user)  # todo: is this required to update the list of extensions?
+    if autocommit:
+        session.commit()
+        session.refresh(user)
 
 
 def delete_tmp_extension(
-    session: Session, session_asterisk: Session, tmp_extension: TemporaryExtensions
+    session: Session,
+    session_asterisk: Session,
+    tmp_extension: TemporaryExtensions,
+    autocommit=True,
 ) -> None:
     delete_asterisk_extension(session_asterisk, tmp_extension)
     session.delete(tmp_extension)
-    session.commit()
+    if autocommit:
+        session.commit()
 
 
 def get_extension_by_id(

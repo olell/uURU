@@ -19,6 +19,7 @@ def create_asterisk_extension(
     password: str,
     type: str,
     context="pjsip_internal",
+    autocommit=True,
 ) -> tuple[PSAor, PSAuth, PSEndpoint]:
 
     try:
@@ -50,10 +51,11 @@ def create_asterisk_extension(
         session_asterisk.add(ps_aor)
         session_asterisk.add(ps_auth)
         session_asterisk.add(ps_endpoint)
-        session_asterisk.commit()
-        session_asterisk.refresh(ps_aor)
-        session_asterisk.refresh(ps_auth)
-        session_asterisk.refresh(ps_endpoint)
+        if autocommit:
+            session_asterisk.commit()
+            session_asterisk.refresh(ps_aor)
+            session_asterisk.refresh(ps_auth)
+            session_asterisk.refresh(ps_endpoint)
     except Exception as e:
         print(f"exception {e}")
         raise CRUDNotAllowedException(f"could not configure endpoint in asterisk: {e}")
@@ -61,7 +63,9 @@ def create_asterisk_extension(
     return [ps_aor, ps_auth, ps_endpoint]
 
 
-def delete_asterisk_extension(session_asterisk: Session, extension: Extension) -> None:
+def delete_asterisk_extension(
+    session_asterisk: Session, extension: Extension, autocommit=True
+) -> None:
     try:
         for cls in [PSEndpoint, PSAuth, PSAor]:
             session_asterisk.exec(delete(cls).where(cls.id == extension.extension))
@@ -70,4 +74,5 @@ def delete_asterisk_extension(session_asterisk: Session, extension: Extension) -
         session_asterisk.rollback()
         raise e
 
-    session_asterisk.commit()
+    if autocommit:
+        session_asterisk.commit()

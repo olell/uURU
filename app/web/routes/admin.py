@@ -1,3 +1,4 @@
+from logging import getLogger
 from typing import Annotated, Optional
 from fastapi import APIRouter, Form, HTTPException, Request, status
 from fastapi.responses import HTMLResponse, RedirectResponse
@@ -13,6 +14,7 @@ from app.web.templates import templates
 from app.web.deps import AdminUser
 
 router = APIRouter(prefix="/admin")
+logger = getLogger(__name__)
 
 
 @router.get("/users", response_class=HTMLResponse)
@@ -57,10 +59,13 @@ def user_edit_handle(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="User not found!"
         )
-    
-    if data.password.strip() == "": data.password = None
-    if data.username.strip() == "": data.username = None
-    if data.role.strip() == "": data.role = None
+
+    if data.password.strip() == "":
+        data.password = None
+    if data.username.strip() == "":
+        data.username = None
+    if data.role.strip() == "":
+        data.role = None
 
     try:
         update_user(session, admin, user, data)
@@ -74,7 +79,6 @@ def user_edit_handle(
             {"message": f"Failed to update user: {str(e)}", "category": "error"},
         )
     except Exception as e:
-        print(e)
         MessageBroker.push(
             request, {"message": "Couldn't update user", "category": "error"}
         )
@@ -86,7 +90,6 @@ def user_edit_handle(
 def extensionlist(request: Request, session: SessionDep, user: AdminUser):
     extensions = filter_extensions_by_name(session, user, None, False)
 
-    return templates.TemplateResponse(request, "admin/extensionlist.j2.html", {
-        "user": user,
-        "extensions": extensions
-    })
+    return templates.TemplateResponse(
+        request, "admin/extensionlist.j2.html", {"user": user, "extensions": extensions}
+    )

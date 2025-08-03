@@ -1,3 +1,4 @@
+from logging import getLogger
 from sqlmodel import Session, col, select
 import uuid
 
@@ -6,6 +7,7 @@ from app.models.crud import CRUDNotAllowedException
 
 from app.core.security import get_password_hash, verify_password
 
+logger = getLogger(__name__)
 
 def create_user(
     session: Session,
@@ -54,6 +56,8 @@ def update_user(
         session.commit()
         session.refresh(target_user)
 
+    logger.info(f"{executing_user.username} updated user {target_user.username} ({target_user.role})")
+
     return target_user
 
 
@@ -66,6 +70,8 @@ def delete_user(
     session.delete(user_to_delete)
     if autocommit:
         session.commit()
+
+    logger.info(f"{executing_user.username} deleted user {user_to_delete.username}")
 
 
 def get_user_by_id(session: Session, user_id: uuid.UUID) -> User | None:
@@ -112,5 +118,7 @@ def change_password(
     if autocommit:
         session.commit()
         session.refresh(user)
+
+    logger.info(f"{user.username} changed password")
 
     return user

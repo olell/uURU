@@ -1,3 +1,4 @@
+from logging import getLogger
 from pydantic import BaseModel
 from sqlmodel import Session, delete, select
 
@@ -6,6 +7,7 @@ from app.models.crud import CRUDNotAllowedException
 from app.models.extension import Extension, TemporaryExtensions
 from app.telephoning.main import Telephoning
 
+logger = getLogger(__name__)
 
 class AsteriskExtension(BaseModel):
     extension: str
@@ -53,8 +55,9 @@ def create_asterisk_extension(
         session_asterisk.add(ps_auth)
         session_asterisk.add(ps_endpoint)
     except Exception as e:
-        session_asterisk.rollback()
-        print(f"exception {e}")
+        if autocommit:
+            session_asterisk.rollback()
+        logger.exception("Couldn't configure endpoint in asterisk:")
         raise CRUDNotAllowedException(f"could not configure endpoint in asterisk: {e}")
 
     if autocommit:
@@ -62,6 +65,8 @@ def create_asterisk_extension(
         session_asterisk.refresh(ps_aor)
         session_asterisk.refresh(ps_auth)
         session_asterisk.refresh(ps_endpoint)
+
+    logger.info(f"Created extension {extension_name} <{extension}> in asterisk DB")
 
     return [ps_aor, ps_auth, ps_endpoint]
 
@@ -79,11 +84,15 @@ def update_asterisk_extension(
         ps_endpoint.callerid = f"{extension.name} <{extension.extension}>"
         session_asterisk.add(ps_endpoint)
     except Exception as e:
-        session_asterisk.rollback()
+        logger.exception("Couldn't update extension in asterisk DB")
+        if autocommit:
+            session_asterisk.rollback()
         raise e
 
     if autocommit:
         session_asterisk.commit()
+
+    logger.info(f"Updated extension {extension.name} <{extension.extension}> in asterisk DB")
 
 
 def delete_asterisk_extension(
@@ -94,8 +103,12 @@ def delete_asterisk_extension(
             session_asterisk.exec(delete(cls).where(cls.id == extension.extension))
 
     except Exception as e:
-        session_asterisk.rollback()
+        logger.exception("Couldn't delete extension in asterisk DB")
+        if autocommit:
+            session_asterisk.rollback()
         raise e
 
     if autocommit:
         session_asterisk.commit()
+
+    logger.info(f"Deleted extension {extension.name} <{extension.extension}> in asterisk DB")

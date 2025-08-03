@@ -3,9 +3,12 @@ import pkgutil
 from fastapi import APIRouter, FastAPI
 from apscheduler.schedulers.background import BackgroundScheduler
 import json
+from logging import getLogger
 
 from app.core.config import settings
 from app.telephoning.flavor import PhoneFlavor
+
+logger = getLogger(__name__)
 
 def load_phone_flavors() -> list[PhoneFlavor]:
     """
@@ -61,12 +64,15 @@ class Telephoning(object):
             if flavor_name in self.flavors:
                 raise RuntimeError("Flavor classes must have unique names!")
 
+            logger.info(f"Discovered phone flavor: {flavor_name}")
+
             flavor: PhoneFlavor = cls()
 
             # 2nd: create routes
             router = APIRouter(prefix=f"/{flavor_name}")
             flavor.generate_routes(router)
             self.router.include_router(router)
+
 
             # 3rd: initiate job
             try:
@@ -75,6 +81,8 @@ class Telephoning(object):
                 pass # do not schedule job
             else:
                 self.scheduler.add_job(flavor.job, "interval", seconds=flavor.JOB_INTERVAL)
+            
+            logger.debug(f"Initiated router and job for {flavor_name}")
 
             self.flavors.update({flavor_name: flavor})
             self.flavor_by_type.update({
@@ -86,6 +94,8 @@ class Telephoning(object):
         flavors.sort(key=lambda f: -f.DISPLAY_INDEX)
         for flavor in flavors:
             self.all_types.extend(flavor.PHONE_TYPES)
+        
+        logger.info(f"Supported phone types are {', '.join(self.all_types)}")
 
         # start scheduler and include router
         self.scheduler.start()

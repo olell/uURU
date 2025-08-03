@@ -52,11 +52,21 @@ def create_extension_handle(
         create_extension(session, session_asterisk, user, data)
     except Exception as e:
         if isinstance(e, CRUDNotAllowedException):
-            MessageBroker.push(request, {"message": f"Failed to create extension: {str(e)}", "category": "error"})
+            MessageBroker.push(
+                request,
+                {
+                    "message": f"Failed to create extension: {str(e)}",
+                    "category": "error",
+                },
+            )
         else:
-            MessageBroker.push(request, {"message": "Failed to create extension", "category": "error"})
+            MessageBroker.push(
+                request, {"message": "Failed to create extension", "category": "error"}
+            )
         return "/extension/create"
-    MessageBroker.push(request, {"message": "Created extension!", "category": "success"})
+    MessageBroker.push(
+        request, {"message": "Created extension!", "category": "success"}
+    )
     return "/extension/own"
 
 
@@ -80,9 +90,13 @@ def delete_extension_handle(
             get_extension_by_id(session, extension, False),
         )
     except Exception as e:
-        MessageBroker.push(request, {"message": "Failed to delete extension!", "category": "error"})
-        pass
-    MessageBroker.push(request, {"message": "Deleted extension!", "category": "success"})
+        MessageBroker.push(
+            request, {"message": "Failed to delete extension!", "category": "error"}
+        )
+        return
+    MessageBroker.push(
+        request, {"message": "Deleted extension!", "category": "success"}
+    )
     return "/extension/own"
 
 
@@ -117,10 +131,11 @@ def edit_extension_handle(
     if extension is None:
         return f"/extension/edit/{extension_id}"
     try:
-        print(data)
         update_extension(session, session_asterisk, user, extension, data)
     except:
-        MessageBroker.push(request, {"message": "Failed to update extension!", "category": "error"})
+        MessageBroker.push(
+            request, {"message": "Failed to update extension!", "category": "error"}
+        )
         return "/extension/own"
     MessageBroker.push(request, {"message": "Saved!", "category": "success"})
     return f"/extension/edit/{extension_id}"

@@ -71,3 +71,10 @@ uv run fastapi dev
 ## ☎️ Phone specific documentation
 Read more about how to use uURU with the supported phone types here:
 * [Innovaphone](/docs/phones/innovaphone.md)
+
+## 🔑 License
+
+`uURU` is released under the `MIT` license - see `LICENSE` for more information.
+
+Javascript / CSS files in `/static/js` and `/static/css` may be released under different
+licenses. Please refer to the file's header for more information.

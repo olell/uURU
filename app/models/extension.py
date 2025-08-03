@@ -96,6 +96,9 @@ class Extension(ExtensionBase, table=True):
         if flavor.EXTRA_FIELDS is not None:
             print(flavor, flavor.EXTRA_FIELDS)
             flavor.EXTRA_FIELDS.model_validate(self.extra_fields)
+    
+    def get_extra_field(self, key):
+        return self.extra_fields.get(key, None)
 
 
 class ExtensionCreate(BaseModel):

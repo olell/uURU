@@ -9,6 +9,8 @@ jobs:
   build-and-push-images:
     runs-on: ubuntu-latest
 
+    if: ${{ !(contains(github.event.pull_request.title, 'SMALL') || contains(github.event.pull_request.title, 'WIP')) }}
+
     strategy:
         fail-fast: false
         matrix:

@@ -166,5 +166,8 @@ class Settings(BaseSettings):
     OMM_USER: str = "omm"
     OMM_PASSWORD: str | None = None
 
+    GRANDSTREAM_WIFI_SSID: str | None = None
+    GRANDSTREAM_WIFI_PASSWD: str | None = None
+
 
 settings = Settings()

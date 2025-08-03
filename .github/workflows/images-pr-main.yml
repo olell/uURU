@@ -2,12 +2,17 @@ name: uURU CI
 
 on:
   pull_request:
+    types:
+      - opened
+      - edited
     branches:
       - main
+    
 
 jobs:
   build-and-push-images:
     runs-on: ubuntu-latest
+    if: ${{ github.event.type == 'opened' || github.event.changes.title.from }}
 
     strategy:
         fail-fast: false

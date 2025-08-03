@@ -19,7 +19,8 @@ jobs:
                 - Dockerfile: ./asterisk/Dockerfile
                   image: olel/uuru-asterisk:PR-${{ github.event.number }}
                   context: ./asterisk/
-
+    
+    if: !contains(github.event.pull_request.title, 'SMALL') && !contains(github.event.pull_request.title, 'WIP')
     steps:
       - name: Checkout
         uses: actions/checkout@v3

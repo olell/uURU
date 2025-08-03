@@ -146,6 +146,9 @@ class Settings(BaseSettings):
     RESERVED_EXTENSIONS: list[int | tuple[int, int]] = []
     ALL_EXTENSION_TYPES_PUBLIC: bool = 0
 
+    # normal users may not add extension beginning with any string of this list
+    RESERVED_NAME_PREFIXES: list[str] = []
+
     # list of enabled phone flavors, should contains the names of
     # files in "app/telephoning/phonetypes/" without the .py suffix
     ENABLED_PHONE_FLAVORS: list[str] = ["sip"]

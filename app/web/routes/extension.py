@@ -12,6 +12,7 @@ from app.models.extension import ExtensionCreate, ExtensionUpdate
 from app.models.crud.extension import (
     create_extension,
     delete_extension,
+    generate_free_extension,
     get_extension_by_id,
     update_extension,
 )
@@ -30,11 +31,12 @@ def get_own_extensions(
 
 
 @router.get("/create", response_class=HTMLResponse)
-def create_extension_page(request: Request, current_user: CurrentUser):
+def create_extension_page(request: Request, session: SessionDep, current_user: CurrentUser):
+    free_extension = generate_free_extension(session, current_user, "random")
     return templates.TemplateResponse(
         request,
         "extension/create.j2.html",
-        {"user": current_user},
+        {"user": current_user, "free_extension": free_extension},
     )
 
 

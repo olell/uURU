@@ -1,5 +1,6 @@
 from logging import getLogger
-from typing import Optional
+import random
+from typing import Literal, Optional
 from sqlmodel import Session, select, col, or_
 import sqlalchemy
 
@@ -246,3 +247,38 @@ def filter_extensions_by_name(
         query = query.order_by(Extension.extension)
 
     return list(session.exec(query).all())
+
+def generate_free_extension(session: Session, user: Optional[User] = None, approach: Literal["first", "random"] = "random"):
+    if user and user.role == UserRole.USER:
+        blocked_numbers = settings.RESERVED_EXTENSIONS
+    else:
+        blocked_numbers = []
+
+    all_extensions = session.exec(select(Extension)).all()
+    for ext in all_extensions:
+        blocked_numbers.append(int(ext.extension))
+
+    expanded_block = set()
+    for item in blocked_numbers:
+        if isinstance(item, int):
+            expanded_block.add(item)
+        if isinstance(item, (list, tuple)) and len(item) == 2:
+            expanded_block.update(range(item[0], item[1]+1))
+
+    maximum_number = (10 ** settings.EXTENSION_DIGITS) - 1
+
+    if len(expanded_block) > maximum_number:
+        raise ValueError("No free extension available!")
+
+    selected_number = None
+    all_numbers = set(range(0, maximum_number)) - expanded_block
+    if approach == 'first':
+        selected_number = all_numbers[0]
+    else:
+        selected_number = random.choice(list(all_numbers))
+    
+    if selected_number is None:
+        raise ValueError("No free extension found!")
+    
+    extension = str(selected_number).rjust(settings.EXTENSION_DIGITS, "0")
+    return extension

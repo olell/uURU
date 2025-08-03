@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Grandstream XML Provisioning Configuration -->
+<gs_provision version="1">
+<mac>{{ extension.get_extra_field("mac") | upper | replace('-', '') }}</mac>
+  <config version="1">
+    <!-- Configuration Template Exmaple for testing the converting tool -->
+    <!-- Example P values -->
+
+    <!-- WIFI Settings-->
+    <!-- SSID -->
+    <P83000>{{ settings.GRANDSTREAM_WIFI_SSID }}</P83000>
+
+    <!-- Password -->
+    <P83003>{{ settings.GRANDSTREAM_WIFI_PASSWD }}</P83003>
+
+    <!-- Enabled -->
+    <!-- Enabled. 0 - Disabled, 1 - Enabled -->
+    <P83001>1</P83001>
+
+    <!-- SSID hidden ?-->
+    <!-- Hidden. 0 - No, 1 - Yes -->
+    <P83050>0</P83050>
+
+    <!-- Account 1: -->
+    <!-- Account Active. 0 - No, 1 - Yes. Default value is 0 -->
+    <!-- Number: 0, 1 -->
+    <P271>1</P271>
+
+    <!-- Account Name -->
+    <P270>{{ extension.name }}</P270>
+
+    <!-- SIP Server -->
+    <P47>{{ settings.ASTERISK_HOST }}</P47>
+
+    <!-- SIP Transport 0 - UDP, 1 - TCP, 2 - TLS/TCP. Default is 0 -->
+    <P130>0</P130>
+
+    <!-- SIP User ID -->
+    <P35>{{ extension.extension }}</P35>
+
+    <!-- SIP Authenticate ID -->
+    <P36>{{ extension.extension }}</P36>
+
+    <!-- SIP Authenticate Password -->
+    <P34>{{ extension.password }}</P34>
+
+    <!-- Name (Display Name, e.g., John Doe) -->
+    <P3>{{ extension.name }}</P3>
+
+    <!-- Time Zone -->
+    <P64>CET-1CEST-2,M3.5.0/02:00:00,M10.5.0/03:00:00</P64>
+
+    <!-- Date Display Format -->
+    <!-- 0: yyyy-mm-dd      eg. 2011-10-31 -->
+    <!-- 1: mm-dd-yyyy      eg. 10-31-2011 -->
+    <!-- 2: dd-mm-yyyy      eg. 31-10-2011 -->
+    <!-- Mandatory -->
+    <P102>2</P102>
+
+    <!-- Time Display Format. 0 - 12 Hour, 1 - 24 Hour -->
+    <P122>1</P122>
+  </config>
+</gs_provision>

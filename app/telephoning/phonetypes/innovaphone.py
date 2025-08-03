@@ -75,7 +75,7 @@ class Innovaphone(PhoneFlavor):
             return templates.TemplateResponse(
                 request,
                 "innovaphone.j2.cfg",
-                {"settings": settings, "extension": extension},
+                {"extension": extension},
             )
 
         @router.get("/service-discovery")

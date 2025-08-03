@@ -72,7 +72,7 @@ class MessageBroker(object):
         """
         sessid = request.cookies.get("session", None)
         if sessid is None:
-            return
+            return []
 
         response = MessageBroker.instance().queue.pop(sessid, [])
         return response

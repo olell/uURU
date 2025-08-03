@@ -46,6 +46,10 @@ def create_extension(
             ):
                 raise CRUDNotAllowedException("This extension is reserved!")
 
+        for prefix in settings.RESERVED_NAME_PREFIXES:
+            if extension.name.strip().lower().startswith(prefix.lower()):
+                raise CRUDNotAllowedException(f"You may not create an extension starting with {prefix}!")
+
         if not flavor.is_public():
             raise CRUDNotAllowedException(
                 "Normal users may not create this kind of extension!"
@@ -111,6 +115,13 @@ def update_extension(
     flavor = Telephoning.get_flavor_by_type(extension.type)
     if flavor is None:
         raise CRUDNotAllowedException("Unkown phone type!")
+    
+    if user.role != UserRole.ADMIN:
+        if update_data.name:
+            for prefix in settings.RESERVED_NAME_PREFIXES:
+                if update_data.name.strip().lower().startswith(prefix.lower()):
+                    raise CRUDNotAllowedException(f"You may not create an extension starting with {prefix}!")
+            
 
     try:
         data = update_data.model_dump(exclude_unset=True)

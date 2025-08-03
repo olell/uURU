@@ -55,20 +55,23 @@
       </div>
       <div>
         <label for="extensionInput" class="form-label">Extension</label>
-        <input
-          type="text"
-          class="form-control"
-          id="extensionInput"
-          placeholder="1234"
-          name="extension"
-          {% if edit %}value="{{ edit.extension }}" {% endif %}
-          minlength="{{ settings.EXTENSION_DIGITS }}"
-          maxlength="{{ settings.EXTENSION_DIGITS }}"
-          aria-describedby="extensionHelpBlock"
-          oninput="vanity_check_extension()"
-          {% if edit is defined %}disabled{% endif %}
-          required
-        />
+        <div class="input-group">
+          <input
+            type="text"
+            class="form-control"
+            id="extensionInput"
+            placeholder="1234"
+            name="extension"
+            {% if edit %}value="{{ edit.extension }}" {% endif %}
+            minlength="{{ settings.EXTENSION_DIGITS }}"
+            maxlength="{{ settings.EXTENSION_DIGITS }}"
+            aria-describedby="extensionHelpBlock"
+            oninput="vanity_check_extension()"
+            {% if edit is defined %}disabled{% endif %}
+            required
+          />
+          <button class="btn btn-outline-secondary" type="button" id="button-addon2" onclick="generateExtension();"><ion-icon name="flash"></ion-icon> Random</button>
+        </div>
         <div id="extensionHelpBlock" class="form-text">
           The extension must be {{ settings.EXTENSION_DIGITS }} digits long. If
           you enter letters they will automatically be converted to their vanity
@@ -330,6 +333,11 @@
     marker.setLatLng(new L.LatLng(0, 0));
     $("#locationForm").html("");
   })
+
+  function generateExtension() {
+    const extension = "{{ free_extension }}";
+    $("#extensionInput").val(extension);
+  }
 
 </script>
 

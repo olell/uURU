@@ -53,7 +53,8 @@ def create_asterisk_extension(
         session_asterisk.add(ps_auth)
         session_asterisk.add(ps_endpoint)
     except Exception as e:
-        session_asterisk.rollback()
+        if autocommit:
+            session_asterisk.rollback()
         print(f"exception {e}")
         raise CRUDNotAllowedException(f"could not configure endpoint in asterisk: {e}")
 
@@ -79,7 +80,8 @@ def update_asterisk_extension(
         ps_endpoint.callerid = f"{extension.name} <{extension.extension}>"
         session_asterisk.add(ps_endpoint)
     except Exception as e:
-        session_asterisk.rollback()
+        if autocommit:
+            session_asterisk.rollback()
         raise e
 
     if autocommit:
@@ -94,7 +96,8 @@ def delete_asterisk_extension(
             session_asterisk.exec(delete(cls).where(cls.id == extension.extension))
 
     except Exception as e:
-        session_asterisk.rollback()
+        if autocommit:
+            session_asterisk.rollback()
         raise e
 
     if autocommit:

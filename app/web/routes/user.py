@@ -1,4 +1,5 @@
 from datetime import timedelta
+from logging import getLogger
 from typing import Annotated
 
 from fastapi import APIRouter, Request, Form, status
@@ -16,6 +17,7 @@ from app.web.message import MessageBroker
 from app.web.templates import templates
 
 router = APIRouter(prefix="/user")
+logger = getLogger(__name__)
 
 
 @router.get("/login", response_class=HTMLResponse)
@@ -46,6 +48,7 @@ def login_handle(
 
     user = authenticate_user(session, username, password)
     if not user:
+        logger.info(f"Failed login attempt for {username}")
         MessageBroker.push(
             request,
             {
@@ -61,6 +64,9 @@ def login_handle(
     response = RedirectResponse("/", status_code=status.HTTP_303_SEE_OTHER)
     response.set_cookie("auth", token)
     MessageBroker.push(request, {"message": f"Hello {user.username} 👋"})
+
+    logger.debug(f"Authenticated user {user.username}")
+
     return response
 
 
@@ -75,6 +81,9 @@ def logout(request: Request, user: OptionalCurrentUser):
 
     response = RedirectResponse("/", status_code=status.HTTP_303_SEE_OTHER)
     response.delete_cookie("auth")
+
+    logger.debug(f"User {user.username} logged out")
+
     return response
 
 
@@ -93,6 +102,8 @@ def register_handle(
     MessageBroker.push(
         request, {"message": "Account successfully created!", "category": "success"}
     )
+    logger.info(f"Created new user account {data.username} ({data.role})")
+
     return "/user/login"
 
 
@@ -117,4 +128,7 @@ def settings_handle(
     except CRUDNotAllowedException as e:
         MessageBroker.push(request, {"message": str(e), "category": "error"})
     MessageBroker.push(request, {"message": "Password Changed!", "category": "success"})
+
+    logger.debug(f"User {user.username} changed password")
+
     return "/user/settings"

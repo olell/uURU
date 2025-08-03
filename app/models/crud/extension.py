@@ -1,3 +1,4 @@
+from logging import getLogger
 from typing import Optional
 from sqlmodel import Session, select, col, or_
 import sqlalchemy
@@ -22,6 +23,7 @@ from app.models.extension import (
 from app.core.config import settings
 from app.telephoning.main import Telephoning
 
+logger = getLogger(__name__)
 
 def create_extension(
     session: Session,
@@ -77,6 +79,7 @@ def create_extension(
         raise CRUDNotAllowedException("Extension not available")
 
     except Exception as e:
+        logger.exception("Failed creating extension")
         if autocommit:
             session.rollback()
             session_asterisk.rollback()
@@ -86,6 +89,8 @@ def create_extension(
         session.commit()
         session.refresh(db_obj)
         session_asterisk.commit()
+
+    logger.info(f"{user.username} created extension {extension.name} <{extension.extension}> in DB")
 
     return db_obj
 
@@ -115,6 +120,7 @@ def update_extension(
 
         flavor.on_extension_update(session, session_asterisk, extension)
     except Exception as e:
+        logger.exception("Failed updating extension")
         if autocommit:
             session.rollback()
             session_asterisk.rollback()
@@ -124,6 +130,8 @@ def update_extension(
         session.commit()
         session.refresh(extension)
         session_asterisk.commit()
+
+    logger.info(f"{user.username} updated extension {extension.name} <{extension.extension}> in DB")
 
     return extension
 
@@ -149,6 +157,7 @@ def delete_extension(
 
         session.delete(extension)
     except Exception as e:
+        logger.exception("Failed deleting extension")
         if autocommit:
             session.rollback()
             session_asterisk.rollback()
@@ -158,6 +167,8 @@ def delete_extension(
         session.commit()
         session.refresh(user)
         session_asterisk.commit()
+    
+    logger.info(f"{user.username} deleted extension {extension.name} <{extension.extension}> in DB")
 
 
 def delete_tmp_extension(
@@ -170,6 +181,7 @@ def delete_tmp_extension(
         delete_asterisk_extension(session_asterisk, tmp_extension, autocommit=False)
         session.delete(tmp_extension)
     except Exception as e:
+        logger.exception("Failed creating temporary extension")
         if autocommit:
             session.rollback()
             session_asterisk.rollback()
@@ -179,6 +191,7 @@ def delete_tmp_extension(
         session.commit()
         session_asterisk.commit()
 
+    logger.info(f"Deleted temporary extension {tmp_extension.extension} in DB")
 
 def get_extension_by_id(
     session: Session, extension_id: str, public=True

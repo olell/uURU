@@ -1,3 +1,4 @@
+from logging import getLogger
 from fastapi import HTTPException
 from fastapi import status
 from fastapi.responses import PlainTextResponse
@@ -24,6 +25,7 @@ from app.core.db import (
     engine_asterisk,
 )
 
+logger = getLogger(__name__)
 
 class MitelDECT(PhoneFlavor):
     PHONE_TYPES = ["DECT"]
@@ -43,6 +45,7 @@ class MitelDECT(PhoneFlavor):
             password=settings.OMM_PASSWORD,
             ommsync=True,
         )
+        logger.info("Created OMM client")
 
     def generate_routes(self, router):
         @router.post("/")
@@ -51,13 +54,13 @@ class MitelDECT(PhoneFlavor):
             session_asterisk: SessionAsteriskDep,
             data: dict,
         ) -> PlainTextResponse:
-            print(
+            logger.info(
                 f"registration attempt from tmp extension {data['tmp_extension']} via token {data['token']}"
             )
 
             extension = get_extension_by_token(session, data["token"])
             if not extension:
-                print("unknown extension")
+                logger.error("unknown extension")
                 raise HTTPException(
                     detail="could not find matching extension for token",
                     status_code=status.HTTP_404_NOT_FOUND,
@@ -65,7 +68,7 @@ class MitelDECT(PhoneFlavor):
 
             tmp_extension = get_tmp_extension_by_id(session, data["tmp_extension"])
             if not tmp_extension:
-                print("unknown tmp extension")
+                logger.error("unknown tmp extension")
                 raise HTTPException(
                     detail="could not identify temporary extension from caller",
                     status_code=status.HTTP_404_NOT_FOUND,
@@ -93,6 +96,8 @@ class MitelDECT(PhoneFlavor):
         for device in self.get_unbound_devices():
             tmp_ext_id = TemporaryExtensions.generate_extension()
             password = generate_extension_password()
+            
+            logger.info(f"OMM: new unbound device: {device.ppn} @ {tmp_ext_id}")
 
             user_id = self.configure_user_on_device(
                 tmp_ext_id, tmp_ext_id, password, (device.ppn)
@@ -123,7 +128,7 @@ class MitelDECT(PhoneFlavor):
         with self.lock:
             mode = self.ommclient.get_subscription_mode()
             if mode != "Configured":
-                print("enabled dect subscription mode")
+                logger.info("enabled dect subscription mode")
                 self.ommclient.set_subscription_mode("Configured")
 
     def get_unbound_devices(self):

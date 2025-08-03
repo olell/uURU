@@ -70,16 +70,17 @@ The database must be a mariadb / mysql db
 
 ### Telephoning
 
-| Key                             | Description                                            | Default      |
-| ------------------------------- | ------------------------------------------------------ | ------------ |
-| UURU_EXTENSION_DIGITS           | Required extension number length                       | 4            |
-| UURU_EXTENSION_PASSWORD_LENGTH  | Length of SIP password                                 | 20           |
-| UURU_EXTENSION_PASSWORD_CHARS   | Charset from which the password is generated           | digits (0-9) |
-| UURU_EXTENSION_TOKEN_PREFIX     | Prefix for generated token                             | 01990        |
-| UURU_EXTENSION_TOKEN_LENGTH     | Number of digits after the prefix                      | 8            |
-| UURU_RESERVED_EXTENSIONS        | List of reserved extensions, e.G. [1234, [1000, 2000]] | []           |
-| UURU_ALL_EXTENSION_TYPES_PUBLIC | May normal users create extension with all phone types | False        |
-| UURU_ENABLED_PHONE_FLAVORS      | A list of enabled phone flavors                        | ["sip"]      |
+| Key                             | Description                                                         | Default      |
+| ------------------------------- | ------------------------------------------------------------------- | ------------ |
+| UURU_EXTENSION_DIGITS           | Required extension number length                                    | 4            |
+| UURU_EXTENSION_PASSWORD_LENGTH  | Length of SIP password                                              | 20           |
+| UURU_EXTENSION_PASSWORD_CHARS   | Charset from which the password is generated                        | digits (0-9) |
+| UURU_EXTENSION_TOKEN_PREFIX     | Prefix for generated token                                          | 01990        |
+| UURU_EXTENSION_TOKEN_LENGTH     | Number of digits after the prefix                                   | 8            |
+| UURU_RESERVED_EXTENSIONS        | List of reserved extensions, e.G. [1234, [1000, 2000]]              | []           |
+| UURU_RESERVED_NAME_PREFIXES     | List of prefixes which normal users may not use for extension names | []           |
+| UURU_ALL_EXTENSION_TYPES_PUBLIC | May normal users create extension with all phone types              | False        |
+| UURU_ENABLED_PHONE_FLAVORS      | A list of enabled phone flavors                                     | ["sip"]      |
 
 ### Site
 

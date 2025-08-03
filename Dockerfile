@@ -41,4 +41,4 @@ COPY ./templates /app/templates
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync
 
-CMD ["uvicorn", "app.main:app", "--workers", "4", "--host", "0.0.0.0"]
+CMD ["uvicorn", "app.main:app", "--workers", "2", "--host", "0.0.0.0"]

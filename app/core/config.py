@@ -1,3 +1,4 @@
+from logging import INFO, getLevelNamesMapping
 import secrets
 from typing import Annotated, Any, Literal
 
@@ -124,8 +125,14 @@ class Settings(BaseSettings):
 
     ## BEHAVIOR
 
+    LOGLEVEL: Literal["CRITICAL", "FATAL", "ERROR", "WARNING", "INFO", "DEBUG"] = "INFO"
     ENVIRONMENT: Literal["local", "production"] = "local"
     LIFESPAN_DROP_DB: bool = False
+
+    @computed_field
+    @property
+    def logging_loglevel(self) -> int:
+        return getLevelNamesMapping().get(self.LOGLEVEL, INFO)
 
     ## TELEPHONE
 

@@ -71,13 +71,15 @@ def create_extension(
         flavor.on_extension_create(session, session_asterisk, db_obj)
 
     except sqlalchemy.exc.IntegrityError:
-        session.rollback()
-        session_asterisk.rollback()
+        if autocommit:
+            session.rollback()
+            session_asterisk.rollback()
         raise CRUDNotAllowedException("Extension not available")
 
     except Exception as e:
-        session.rollback()
-        session_asterisk.rollback()
+        if autocommit:
+            session.rollback()
+            session_asterisk.rollback()
         raise e
 
     if autocommit:
@@ -113,8 +115,9 @@ def update_extension(
 
         flavor.on_extension_update(session, session_asterisk, extension)
     except Exception as e:
-        session.rollback()
-        session_asterisk.rollback()
+        if autocommit:
+            session.rollback()
+            session_asterisk.rollback()
         raise e
 
     if autocommit:
@@ -146,8 +149,9 @@ def delete_extension(
 
         session.delete(extension)
     except Exception as e:
-        session.rollback()
-        session_asterisk.rollback()
+        if autocommit:
+            session.rollback()
+            session_asterisk.rollback()
         raise e
 
     if autocommit:
@@ -166,8 +170,9 @@ def delete_tmp_extension(
         delete_asterisk_extension(session_asterisk, tmp_extension, autocommit=False)
         session.delete(tmp_extension)
     except Exception as e:
-        session.rollback()
-        session_asterisk.rollback()
+        if autocommit:
+            session.rollback()
+            session_asterisk.rollback()
         raise e
 
     if autocommit:

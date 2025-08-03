@@ -21,6 +21,7 @@
         <th scope="col">#</th>
         <th scope="col">Name</th>
         <th scope="col">Location</th>
+        <th scope="col">Type</th>
         {% if user is defined and user.role == 'admin' %}
         <th scope="col">Public</th>
         <th scope="col">Created By</th>
@@ -35,6 +36,7 @@
         </td>
         <td>{{ extension.name }}</td>
         <td>{{ extension.location_name }}</td>
+        <td>{{ extension.type }}</td>
         {% if user is defined and user.role == 'admin' %}
         <td>{% if not extension.public %} Not Public{% endif %}</td>
         <td>{{ extension.user.username }}</td>

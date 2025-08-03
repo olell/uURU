@@ -4,8 +4,15 @@
   <h1 class="fs-3">Account Settings</h1>
   <hr />
   <h1 class="fs-4">Change Password</h1>
-  <form action="/user/change_password" method="post">
+  <form action="/user/change_password" method="post" id="passwordForm">
     <div class="modal-body d-grid gap-2">
+      <div class="form-group">
+        <div
+          id="formError"
+          class="text-danger"
+          style="display: none"
+        ></div>
+      </div>
       <div class="form-floating">
         <input
           type="password"
@@ -48,5 +55,17 @@
     </button>
   </form>
 </div>
+
+<script>
+$("#passwordForm").on("submit", (e) => {
+  let newpw = $("#inputNewPassword").val();
+  let reppw = $("#inputNewPasswordRepeat").val();
+  if (newpw !== reppw) {
+    e.preventDefault();
+    $("#formError").text(`Passwords do not match!`);
+    $("#formError").css("display", "block");
+  }
+})
+</script>
 
 {% endblock %}

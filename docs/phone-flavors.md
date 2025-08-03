@@ -17,7 +17,7 @@ base class to get more information about how to implement a new phone flavor.
 
 At application startup all classes inheriting `PhoneFlavor` are searched
 and checked if enabled.
-For enabled phone flavors then an instance will be created and stored. The will
+For enabled phone flavors then an instance will be created and stored. There will
 be exactly one instance of every enabled phone flavor call at every time.
 
 Then a router is created which is given to the class to implement custom http routes.

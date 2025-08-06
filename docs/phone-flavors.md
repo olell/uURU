@@ -80,7 +80,7 @@ And you can override some functions:
 ```python
 def on_extension_create(self, session: Session, asterisk_session: Session, extension: "Extension")
 
-on_extension_update(self, session: Session, asterisk_session: Session, extension: "Extension")
+def on_extension_update(self, session: Session, asterisk_session: Session, extension: "Extension")
 
 def on_extension_delete(self, session: Session, asterisk_session: Session, extension: "Extension")
 

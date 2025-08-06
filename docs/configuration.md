@@ -89,3 +89,10 @@ The database must be a mariadb / mysql db
 | UURU_SITE_NAME | Name of your uURU setup                           | "Default" |
 | UURU_SITE_LAT  | Optional latitude of your location, used for map  | 0         |
 | UURU_SITE_LON  | Optional longitude of your location, used for map | 0         |
+
+### Pages
+
+| Key               | Description                           | Default |
+| ----------------- | ------------------------------------- | ------- |
+| UURU_ENABLE_PAGES | True / False                          | True    |
+| UURU_PAGES_TITLE  | Title of the Pages dropdown in Navbar | Pages   |

@@ -161,6 +161,9 @@ class Settings(BaseSettings):
     SITE_LAT: float = 0
     SITE_LON: float = 0
 
+    ENABLE_PAGES: bool = True
+    PAGES_TITLE: str = "Pages"
+
     OMM_HOST: str | None = None
     OMM_PORT: int = 12621
     OMM_USER: str = "omm"

@@ -47,7 +47,26 @@
             >Your Extensions</a
           >
         </li>
-        {% endif %} {% if user is defined and user.role == "admin" %}
+        {% endif %}
+        {% if pages.available() %}
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            {{ settings.PAGES_TITLE }}
+          </a>
+          <ul class="dropdown-menu">
+            {% for page in pages.get_all() %}
+            <li><a class="dropdown-item" href="/pages/{{ page }}">{{ page }}</a></li>
+            {% endfor %}
+          </ul>
+        </li>
+        {% endif %}
+        {% if user is defined and user.role == "admin" %}
         <li class="nav-item dropdown">
           <a
             class="nav-link dropdown-toggle"

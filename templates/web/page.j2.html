@@ -1,0 +1,13 @@
+{% extends "bootstrap_base.j2.html" %}
+{% block head %}
+<style>
+    p {
+        font-family: unset;
+    }
+</style>
+{% endblock %}
+{% block body %}
+<div class="container">
+{{ content|safe }}
+</div>
+{% endblock %}

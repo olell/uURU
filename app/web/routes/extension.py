@@ -95,7 +95,7 @@ def delete_extension_handle(
         MessageBroker.push(
             request, {"message": "Failed to delete extension!", "category": "error"}
         )
-        return
+        raise
     MessageBroker.push(
         request, {"message": "Deleted extension!", "category": "success"}
     )

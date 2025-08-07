@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<settings>
+  <phone-settings>
+    <update_policy>auto_update</update_policy>
+
+    <language perm="">Deutsch</language>
+    <web_language perm="">Deutsch</web_language>
+    <date_us_format perm="">off</date_us_format>
+    <dialnumber_us_format perm="">off</dialnumber_us_format>
+    <timezone>GER+1</timezone>
+    <tone_scheme>GER</tone_scheme>
+    <provisioning_order perm="">dhcp:stop</provisioning_order>
+    <periodic_provisioning perm="">http://{{ settings.WEB_HOST }}/telephoning/snom/</periodic_provisioning>
+    <periodic_provisioning_interval perm="">30</periodic_provisioning_interval>
+
+    <user_active idx="1" perm="RW">on</user_active>
+
+    <user_realname idx="1" perm="R">{{ extension.name }}</user_realname>
+    <user_name idx="1" perm="">{{ extension.extension }}</user_name>
+    <user_host idx="1" perm="">{{ settings.ASTERISK_HOST }}</user_host>
+    <user_pass idx="1">{{ extension.password }}</user_pass>
+  </phone-settings>
+</settings>

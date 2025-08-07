@@ -1,6 +1,7 @@
 from logging import getLogger
 import random
 from typing import Literal, Optional
+from ldap3 import MODIFY_DELETE, MODIFY_REPLACE, Connection
 from sqlmodel import Session, select, col, or_
 import sqlalchemy
 
@@ -26,9 +27,49 @@ from app.telephoning.main import Telephoning
 
 logger = getLogger(__name__)
 
+def ldap_add(connection: Connection, extension: Extension):
+    ldap_data = {
+        "ou": settings.SITE_NAME,
+        "sn": extension.name,
+        "telephoneNumber": extension.extension,
+        "objectClass": "organizationalPerson"
+    }
+
+    if extension.location_name is not None and len(extension.location_name) > 0:
+        ldap_data["l"] = extension.location_name
+
+    connection.add(f'cn={extension.extension},{settings.LDAP_BASE_DN}', attributes=ldap_data)
+
+    if connection.result["result"] != 0:
+        logger.error(f"Failed to add extension {extension.name} <{extension.extension}> to ldap")
+        raise CRUDNotAllowedException("Failed to add extension to LDAP")
+    
+def ldap_delete(connection: Connection, extension: Extension):
+    connection.delete(f'cn={extension.extension},{settings.LDAP_BASE_DN}')
+
+    if connection.result["result"] != 0:
+        logger.error(f"Failed to delete extension {extension.name} <{extension.extension}> from ldap")
+        raise CRUDNotAllowedException("Failed to delete extension from ldap")
+
+def ldap_update(connection: Connection, extension: Extension, update_data):
+    ldap_data = {}
+    print(update_data)
+    if 'location_name' in update_data:
+        if update_data['location_name']:
+            ldap_data['l'] = [(MODIFY_REPLACE, [update_data['location_name']])]
+        else:
+            ldap_data['l'] = [(MODIFY_DELETE, [])]
+    if 'name' in update_data: ldap_data['sn'] = [(MODIFY_REPLACE, [update_data['name']])]
+    connection.modify(f'cn={extension.extension},{settings.LDAP_BASE_DN}', ldap_data)
+
+    if connection.result["result"] != 0:
+        logger.error(f"Failed to update extension {extension.name} <{extension.extension}> in ldap")
+        raise CRUDNotAllowedException("Failed to update extension in ldap")
+
 def create_extension(
     session: Session,
     session_asterisk: Session,
+    ldap: Connection,
     user: User,
     extension: ExtensionCreate,
     autocommit=True,
@@ -77,6 +118,9 @@ def create_extension(
             )
         flavor.on_extension_create(session, session_asterisk, db_obj)
 
+        if extension.public:
+            ldap_add(ldap, extension)
+
     except sqlalchemy.exc.IntegrityError:
         if autocommit:
             session.rollback()
@@ -103,6 +147,7 @@ def create_extension(
 def update_extension(
     session: Session,
     session_asterisk: Session,
+    ldap: Connection,
     user: User,
     extension: Extension,
     update_data: ExtensionUpdate,
@@ -124,6 +169,7 @@ def update_extension(
             
 
     try:
+        was_public = extension.public
         data = update_data.model_dump(exclude_unset=True)
         extension.sqlmodel_update(data)
         session.add(extension)
@@ -131,6 +177,14 @@ def update_extension(
         update_asterisk_extension(session_asterisk, extension, autocommit=False)
 
         flavor.on_extension_update(session, session_asterisk, extension)
+
+        if was_public and not extension.public: # user change to not public
+            ldap_delete(ldap, extension)
+        elif not was_public and extension.public: # changed to public
+            ldap_add(ldap, extension)
+        else: # modified
+            ldap_update(ldap, extension, data)
+
     except Exception as e:
         logger.exception("Failed updating extension")
         if autocommit:
@@ -151,6 +205,7 @@ def update_extension(
 def delete_extension(
     session: Session,
     session_asterisk: Session,
+    ldap: Connection,
     user: User,
     extension: Extension,
     autocommit=True,
@@ -168,6 +223,9 @@ def delete_extension(
             delete_asterisk_extension(session_asterisk, extension, autocommit=False)
 
         session.delete(extension)
+
+        if extension.public:
+            ldap_delete(ldap, extension)
     except Exception as e:
         logger.exception("Failed deleting extension")
         if autocommit:

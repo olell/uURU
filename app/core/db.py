@@ -6,6 +6,7 @@ from sqlmodel import Session, create_engine, SQLModel, func, select
 from app.core.config import settings
 
 from app.models import *
+from app.models.asterisk import DialPlanEntry
 from app.models.user import User
 from app.models.crud.user import create_user
 from app.models.user import UserCreate, UserRole
@@ -16,11 +17,30 @@ engine = create_engine(str(settings.SQLALCHEMY_DATABASE_URI))
 engine_asterisk = create_engine(str(settings.SQLACLCHEMY_ASTERISK_DATABASE_URI))
 
 
-def init_db(session, engine=engine) -> None:
-    SQLModel.metadata.create_all(engine, tables=[x.__table__ for x in tables])
+def init_asterisk_db(session_asterisk: Session) -> None:
     SQLModel.metadata.create_all(
         engine_asterisk, tables=[x.__table__ for x in asterisk_tables]
     )
+    logger.info(f"Created asterisk tables")
+
+    # check if we have a basic dialplan for pjsip_internal defined
+    num_dialplan_entries = session_asterisk.exec(
+        select(func.count("*")).select_from(DialPlanEntry)
+    ).first()
+    if num_dialplan_entries == 0:
+        # TODO: make exten based on extension lengths
+        dialplan_entry = DialPlanEntry(
+            exten="_" + ("X" * settings.EXTENSION_DIGITS),
+            priority=1,
+            app="Dial",
+            appdata="${PJSIP_DIAL_CONTACTS(${EXTEN})}",
+        )
+        session_asterisk.add(dialplan_entry)
+        session_asterisk.commit()
+
+
+def init_db(session: Session) -> None:
+    SQLModel.metadata.create_all(engine, tables=[x.__table__ for x in tables])
     logger.info(f"Created tables")
 
     # check if there are any users in the DB, if not create a root user with

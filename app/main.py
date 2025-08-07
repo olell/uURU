@@ -9,7 +9,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.exception_handlers import http_exception_handler
 from sqlmodel import Session
 
-from app.core.db import engine, init_db, drop_db
+from app.core.db import engine, engine_asterisk, init_asterisk_db, init_db, drop_db
 from app.core.config import settings
 
 from app.api.main import router as api_router
@@ -21,6 +21,9 @@ from app.telephoning.main import Telephoning
 async def lifespan(app: FastAPI):
     with Session(engine) as session:
         init_db(session)
+
+    with Session(engine_asterisk) as session_asterisk:
+        init_asterisk_db(session_asterisk)
 
     Telephoning.instance().start(app)
 

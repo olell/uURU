@@ -2,6 +2,17 @@ from typing import Optional
 from sqlmodel import Field, SQLModel
 
 
+class DialPlanEntry(SQLModel, table=True):
+    __tablename__ = "extensions"
+
+    id: int = Field(primary_key=True, sa_column_kwargs={"autoincrement": True})
+    context: str = "pjsip_internal"
+    exten: str
+    priority: int
+    app: str
+    appdata: str
+
+
 class PSEndpoint(SQLModel, table=True):
 
     __tablename__ = "ps_endpoints"

@@ -32,7 +32,7 @@ class Innovaphone(PhoneFlavor):
 
         self.prometheus_sd_target: dict[str, tuple[dict, IPvAnyAddress]] = {}
 
-    def on_extension_create(self, session, asterisk_session, extension):
+    def on_extension_create(self, session, asterisk_session, user, extension):
         print(
             f"A new {extension.type} was created. My extra_fields are {extension.extra_fields}"
         )

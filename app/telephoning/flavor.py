@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING, Literal
 
 if TYPE_CHECKING:
+    from app.models.user import User
     from app.models.extension import Extension
 
 from fastapi import APIRouter
@@ -69,17 +70,29 @@ class PhoneFlavor:
     PREVENT_SIP_CREATION = False
 
     def on_extension_create(
-        self, session: Session, asterisk_session: Session, extension: "Extension"
+        self,
+        session: Session,
+        asterisk_session: Session,
+        user: "User",
+        extension: "Extension",
     ):
         pass
 
     def on_extension_update(
-        self, session: Session, asterisk_session: Session, extension: "Extension"
+        self,
+        session: Session,
+        asterisk_session: Session,
+        user: "User",
+        extension: "Extension",
     ):
         pass
 
     def on_extension_delete(
-        self, session: Session, asterisk_session: Session, extension: "Extension"
+        self,
+        session: Session,
+        asterisk_session: Session,
+        user: "User",
+        extension: "Extension",
     ):
         pass
 

@@ -116,7 +116,7 @@ def create_extension(
                 type=db_obj.type,
                 autocommit=False,
             )
-        flavor.on_extension_create(session, session_asterisk, db_obj)
+        flavor.on_extension_create(session, session_asterisk, user, db_obj)
 
         if extension.public:
             ldap_add(ldap, extension)
@@ -176,7 +176,7 @@ def update_extension(
 
         update_asterisk_extension(session_asterisk, extension, autocommit=False)
 
-        flavor.on_extension_update(session, session_asterisk, extension)
+        flavor.on_extension_update(session, session_asterisk, user, extension)
 
         if was_public and not extension.public: # user change to not public
             ldap_delete(ldap, extension)
@@ -218,7 +218,7 @@ def delete_extension(
         raise CRUDNotAllowedException("Unkown phone type!")
 
     try:
-        flavor.on_extension_delete(session, session_asterisk, extension)
+        flavor.on_extension_delete(session, session_asterisk, user, extension)
         if not flavor.PREVENT_SIP_CREATION:
             delete_asterisk_extension(session_asterisk, extension, autocommit=False)
 

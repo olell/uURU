@@ -7,9 +7,15 @@ Telephone extension self registration utility for asterisk.
 ## ⚡️ Features:
 * Pluggable Phone-Flavor system, currently supporting
     * Basic SIP extensions
-    * Innovaphone autoprovisioning
+    * Innovaphone IP241, IP200A, IP112
     * Mitel DECT OMM integration
+    * Grandstream WP810 WiFi Phones
+    * SNOM 300
     * Dummy extensions
+* LDAP Phonebook
+* Callgroups
+* [Rendering of Markdown for (Help-)Pages](/docs/pages.md)
+* Prometheus HTTP Service-Discovery (**currently only for Innovaphones**)
 * Super-Simplified deployment of the whole PBX by using docker compose
 * Build with shiny stuff like FastAPI and SQLModel.
 
@@ -51,6 +57,11 @@ cp -av .env.sample .env
 
 ### Production
 
+> [!WARNING]
+> Set the LDAP admin password in your config and the docker-compose-base.yml file
+> to something secure! The LDAP server will be exposed to the public.
+
+
 ```
 docker compose up --build
 ```
@@ -64,13 +75,15 @@ uv run fastapi dev
 
 ### ports
 
-* app: `127.0.0.1:8000`
+* app: `0.0.0.0:8000`
 * mariadb app: `127.0.0.1:3307`
 * mariadb asterisk: `127.0.0.1:3306`
+* ldap server: `0.0.0.0:389`
 
 ## ☎️ Phone specific documentation
 Read more about how to use uURU with the supported phone types here:
 * [Innovaphone](/docs/phones/innovaphone.md)
+* [Callgroups](/docs/phones/callgroup.md)
 
 ## 🔑 License
 

@@ -166,6 +166,18 @@
 
   const schemas = {{ telephoning.get_schemas()|safe }};
 
+  JSONForm.fieldTypes["array"]["template"] =
+     `<div id="<%= id %>"><ul class="_jsonform-array-ul" style="list-style-type:none;"><%= children %></ul>
+      <span class="_jsonform-array-buttons">
+        <a href="#" class="btn btn-default _jsonform-array-addmore">
+          <ion-icon size="large" name="add-circle-outline"></ion-icon>
+        </a>
+        <a href="#" class="btn btn-default _jsonform-array-deletelast">
+          <ion-icon size="large" name="remove-circle-outline"></ion-icon>
+        </a>
+      </span>
+    </div>`;
+
   function generate_form () {
     // load / clear form for extra inputs
     let form_element = $("#extraForm");

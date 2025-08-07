@@ -51,13 +51,13 @@ def ldap_delete(connection: Connection, extension: Extension):
         logger.error(f"Failed to delete extension {extension.name} <{extension.extension}> from ldap")
         raise CRUDNotAllowedException("Failed to delete extension from ldap")
 
-def ldap_update(connection: Connection, extension: Extension, update_data):
+def ldap_update(connection: Connection, extension: Extension, update_data, prev_data):
     ldap_data = {}
     print(update_data)
     if 'location_name' in update_data:
         if update_data['location_name']:
             ldap_data['l'] = [(MODIFY_REPLACE, [update_data['location_name']])]
-        else:
+        elif prev_data['location_name']:
             ldap_data['l'] = [(MODIFY_DELETE, [])]
     if 'name' in update_data: ldap_data['sn'] = [(MODIFY_REPLACE, [update_data['name']])]
     connection.modify(f'cn={extension.extension},{settings.LDAP_BASE_DN}', ldap_data)
@@ -116,7 +116,7 @@ def create_extension(
                 type=db_obj.type,
                 autocommit=False,
             )
-        flavor.on_extension_create(session, session_asterisk, db_obj)
+        flavor.on_extension_create(session, session_asterisk, user, db_obj)
 
         if extension.public:
             ldap_add(ldap, extension)
@@ -169,21 +169,23 @@ def update_extension(
             
 
     try:
-        was_public = extension.public
+        prev_data = extension.model_dump()
+
         data = update_data.model_dump(exclude_unset=True)
         extension.sqlmodel_update(data)
         session.add(extension)
 
-        update_asterisk_extension(session_asterisk, extension, autocommit=False)
+        if not flavor.PREVENT_SIP_CREATION:
+            update_asterisk_extension(session_asterisk, extension, autocommit=False)
 
-        flavor.on_extension_update(session, session_asterisk, extension)
+        flavor.on_extension_update(session, session_asterisk, user, extension)
 
-        if was_public and not extension.public: # user change to not public
+        if prev_data["public"] and not extension.public: # user change to not public
             ldap_delete(ldap, extension)
-        elif not was_public and extension.public: # changed to public
+        elif not prev_data["public"] and extension.public: # changed to public
             ldap_add(ldap, extension)
         else: # modified
-            ldap_update(ldap, extension, data)
+            ldap_update(ldap, extension, data, prev_data)
 
     except Exception as e:
         logger.exception("Failed updating extension")
@@ -218,7 +220,7 @@ def delete_extension(
         raise CRUDNotAllowedException("Unkown phone type!")
 
     try:
-        flavor.on_extension_delete(session, session_asterisk, extension)
+        flavor.on_extension_delete(session, session_asterisk, user, extension)
         if not flavor.PREVENT_SIP_CREATION:
             delete_asterisk_extension(session_asterisk, extension, autocommit=False)
 

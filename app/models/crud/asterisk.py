@@ -2,12 +2,14 @@ from logging import getLogger
 from pydantic import BaseModel
 from sqlmodel import Session, delete, select
 
-from app.models.asterisk import PSAor, PSAuth, PSEndpoint
+from app.models.asterisk import DialPlanEntry, PSAor, PSAuth, PSEndpoint
 from app.models.crud import CRUDNotAllowedException
-from app.models.extension import Extension, TemporaryExtensions
+from app.models.extension import Extension
+from app.models.user import User, UserRole
 from app.telephoning.main import Telephoning
 
 logger = getLogger(__name__)
+
 
 class AsteriskExtension(BaseModel):
     extension: str
@@ -112,3 +114,94 @@ def delete_asterisk_extension(
         session_asterisk.commit()
 
     logger.info(f"Deleted extension {extension.name} <{extension.extension}> in asterisk DB")
+
+
+def create_or_update_asterisk_dialplan_entry(
+    session_asterisk: Session, entry: DialPlanEntry, autocommit=True
+) -> DialPlanEntry:
+    try:
+        session_asterisk.add(entry)
+        if autocommit:
+            session_asterisk.commit()
+            session_asterisk.refresh(entry)
+    except:
+        if autocommit:
+            session_asterisk.rollback()
+        raise
+
+    return entry
+
+
+def create_or_update_asterisk_dialplan_callgroup(
+    session: Session,
+    session_asterisk: Session,
+    creating_user: User,
+    extension: Extension,
+    autocommit=True,
+):
+    """
+    this function expects that the Extension object is sanity checked before!
+    """
+    if extension.type != "Callgroup":
+        raise CRUDNotAllowedException(
+            "You cannot create a callgroup for this type of extension!"
+        )
+
+    participants = extension.get_flavor_model.participants_list
+    if participants is None or len(participants) < 1:
+        raise CRUDNotAllowedException("No participants found!")
+
+    extensions = session.exec(
+        select(Extension).where(Extension.extension.in_(participants))
+    ).all()
+
+    if not all(extensions):
+        raise CRUDNotAllowedException("Unknown participants in list!")
+
+    if creating_user.role == UserRole.USER and not all(
+        [ext.user.id == creating_user.id for ext in extensions]
+    ):
+        raise CRUDNotAllowedException(
+            "You may only create callgroups with extension you've created!"
+        )
+
+    dialplan = session_asterisk.exec(
+        select(DialPlanEntry).where(DialPlanEntry.exten == extension.extension)
+    ).first()
+    if not dialplan:
+        dialplan = DialPlanEntry(
+            exten=extension.extension,
+            priority=1,
+            app="Dial",
+            appdata="&".join(
+                [f"${{PJSIP_DIAL_CONTACTS({e.extension})}}" for e in extensions]
+            ),
+        )
+    else:
+        dialplan.appdata = "&".join(
+            [f"${{PJSIP_DIAL_CONTACTS({e.extension})}}" for e in extensions]
+        )
+
+
+    logger.info(
+        f"Created callgroup at {extension.extension} with participants: {participants}"
+    )
+
+    return create_or_update_asterisk_dialplan_entry(session_asterisk, dialplan, autocommit)
+
+def delete_asterisk_dialplan_entry(session_asterisk: Session, extension: Extension, user: User, autocommit=True):
+    if not (user.role == UserRole.ADMIN or extension.user.id == user.id):
+        raise CRUDNotAllowedException("You're not permitted to delete this dialplan entry")
+
+    entry = session_asterisk.exec(select(DialPlanEntry).where(DialPlanEntry.exten==extension.extension)).first()
+    if entry is None:
+        raise CRUDNotAllowedException("Extension not found in dialplan database")
+
+    try:
+        session_asterisk.delete(entry)
+        if autocommit:
+            session_asterisk.commit()
+    except:
+        if autocommit:
+            session_asterisk.rollback()
+        raise

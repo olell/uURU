@@ -174,7 +174,8 @@ def update_extension(
         extension.sqlmodel_update(data)
         session.add(extension)
 
-        update_asterisk_extension(session_asterisk, extension, autocommit=False)
+        if not flavor.PREVENT_SIP_CREATION:
+            update_asterisk_extension(session_asterisk, extension, autocommit=False)
 
         flavor.on_extension_update(session, session_asterisk, user, extension)
 

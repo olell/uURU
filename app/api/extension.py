@@ -5,6 +5,7 @@ import sqlalchemy
 
 from app.api.deps import OptionalCurrentUser, SessionDep, CurrentUser
 from app.core.db import SessionAsteriskDep
+from app.core.ldap import LDAPDep
 from app.models.crud import CRUDNotAllowedException
 from app.models.extension import (
     Extension,
@@ -27,11 +28,12 @@ router = APIRouter(prefix="/extension", tags=["extension"])
 def create(
     session: SessionDep,
     session_asterisk: SessionAsteriskDep,
+    ldap: LDAPDep,
     user: CurrentUser,
     data: ExtensionCreate,
 ):
     try:
-        return create_extension(session, session_asterisk, user, data)
+        return create_extension(session, session_asterisk, ldap, user, data)
     except sqlalchemy.exc.IntegrityError:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT, detail="Extension already in use"
@@ -44,7 +46,7 @@ def create(
 
 @router.patch("/{extension}", response_model=ExtensionBase)
 def update(
-    session: SessionDep, session_asterisk: SessionAsteriskDep, user: CurrentUser, extension: str, data: ExtensionUpdate
+    session: SessionDep, session_asterisk: SessionAsteriskDep, ldap: LDAPDep, user: CurrentUser, extension: str, data: ExtensionUpdate
 ):
     ext = get_extension_by_id(session, extension, public=False)
 
@@ -54,7 +56,7 @@ def update(
         )
 
     try:
-        return update_extension(session, session_asterisk, user, ext, data)
+        return update_extension(session, session_asterisk, ldap, user, ext, data)
     except CRUDNotAllowedException as e:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
 
@@ -63,10 +65,11 @@ def update(
 def delete(
     session: SessionDep,
     session_asterisk: SessionAsteriskDep,
+    ldap: LDAPDep,
     user: CurrentUser,
     extension: str,
 ):
-    ext = get_extension_by_id(session, session_asterisk, extension, public=False)
+    ext = get_extension_by_id(session, session_asterisk, ldap, extension, public=False)
 
     if ext is None:
         raise HTTPException(

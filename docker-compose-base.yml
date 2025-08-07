@@ -37,3 +37,18 @@ services:
       MARIADB_USER: asterisk
       MARIADB_PASSWORD: asteriskpassword
     network_mode: host
+
+  ldap:
+    image: osixia/openldap:latest
+    environment:
+        - LDAP_ORGANISATION=uuru
+        - LDAP_DOMAIN=uuru
+        - LDAP_BASE_DN=dc=uuru
+        - LDAP_ADMIN_PASSWORD=password
+        - LDAP_CONFIG_PASSWORD=password
+        - LDAP_READONLY_USER=true
+        - LDAP_READONLY_USER_USERNAME=public
+        - LDAP_READONLY_USER_PASSWORD=public
+    ports:
+        - 389:389
+        - 636:636

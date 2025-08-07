@@ -10,6 +10,8 @@ services:
         condition: service_healthy
       asterisk:
         condition: service_healthy
+      ldap:
+        condition: service_healthy
     env_file: ".env"
     environment:
       UURU_DATABASE_PORT: 3306

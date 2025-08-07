@@ -61,6 +61,15 @@ The database must be a mariadb / mysql db
 | UURU_ASTERISK_DATABASE_PASSWORD | Password for the asterisk database |         |
 | UURU_ASTERISK_DATABASE_DB       | Database for the asterisk database |         |
 
+### LDAP
+
+| Key                | Description                   | Default              |
+| ------------------ | ----------------------------- | -------------------- |
+| UURU_LDAP_SERVER   | LDAP server connection string | ldap://localhost:389 |
+| UURU_LDAP_BASE_DN  | Base DN of the ldap server    | dc=uuru              |
+| UURU_LDAP_USER     | Admin user of the ldap server | cn=admin,dc=uuru     |
+| UURU_LDAP_PASSWORD | Password of the admin user    |                      |
+
 ### Application Behavior
 
 | Key                   | Description                                             | Default |

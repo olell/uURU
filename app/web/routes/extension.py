@@ -3,6 +3,7 @@ from fastapi import APIRouter, Request, status, Form, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse
 
 from app.core.db import SessionAsteriskDep, SessionDep
+from app.core.ldap import LDAPDep
 from app.models.crud import CRUDNotAllowedException
 from app.telephoning.main import Telephoning
 from app.web.deps import CurrentUser
@@ -47,11 +48,12 @@ def create_extension_handle(
     request: Request,
     session: SessionDep,
     session_asterisk: SessionAsteriskDep,
+    ldap: LDAPDep,
     data: Annotated[ExtensionCreate, Form()],
     user: CurrentUser,
 ):
     try:
-        create_extension(session, session_asterisk, user, data)
+        create_extension(session, session_asterisk, ldap, user, data)
     except Exception as e:
         if isinstance(e, CRUDNotAllowedException):
             MessageBroker.push(
@@ -81,6 +83,7 @@ def delete_extension_handle(
     request: Request,
     session: SessionDep,
     session_asterisk: SessionAsteriskDep,
+    ldap: LDAPDep,
     extension: str,
     user: CurrentUser,
 ):
@@ -88,6 +91,7 @@ def delete_extension_handle(
         delete_extension(
             session,
             session_asterisk,
+            ldap,
             user,
             get_extension_by_id(session, extension, False),
         )
@@ -125,6 +129,7 @@ def edit_extension_handle(
     request: Request,
     session: SessionDep,
     session_asterisk: SessionAsteriskDep,
+    ldap: LDAPDep,
     user: CurrentUser,
     extension_id: str,
     data: Annotated[ExtensionUpdate, Form()],
@@ -133,7 +138,7 @@ def edit_extension_handle(
     if extension is None:
         return f"/extension/edit/{extension_id}"
     try:
-        update_extension(session, session_asterisk, user, extension, data)
+        update_extension(session, session_asterisk, ldap, user, extension, data)
     except:
         MessageBroker.push(
             request, {"message": "Failed to update extension!", "category": "error"}

@@ -48,10 +48,10 @@ class Telephoning(object):
     
     def __init__(self):
         self.scheduler = BackgroundScheduler()
-        self.router = APIRouter(prefix=settings.TELEPHONING_PREFIX, tags=["telephoning"])
+        self.router = APIRouter(prefix=settings.TELEPHONING_PREFIX, tags=["phones"])
 
         self.flavor_classes = load_phone_flavors()
-        self.flavors = {}
+        self.flavors: dict[str, PhoneFlavor] = {}
 
         self.flavor_by_type = {}
         self.all_types = []

@@ -20,6 +20,7 @@ from app.models.crud.extension import (
     delete_extension,
     filter_extensions_by_name,
 )
+from app.models.user import UserRole
 
 router = APIRouter(prefix="/extension", tags=["extension"])
 
@@ -39,14 +40,17 @@ def create(
             status_code=status.HTTP_409_CONFLICT, detail="Extension already in use"
         )
     except CRUDNotAllowedException as e:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN, detail=str(e)
-        )
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
 
 
 @router.patch("/{extension}", response_model=ExtensionBase)
 def update(
-    session: SessionDep, session_asterisk: SessionAsteriskDep, ldap: LDAPDep, user: CurrentUser, extension: str, data: ExtensionUpdate
+    session: SessionDep,
+    session_asterisk: SessionAsteriskDep,
+    ldap: LDAPDep,
+    user: CurrentUser,
+    extension: str,
+    data: ExtensionUpdate,
 ):
     ext = get_extension_by_id(session, extension, public=False)
 
@@ -93,5 +97,12 @@ def phonebook(
     session: SessionDep,
     user: OptionalCurrentUser = None,
     query: Optional[str] = None,
+    public: bool = True,
 ):
-    return filter_extensions_by_name(session, user, query)
+    if not public and (user is None or user.role != UserRole.ADMIN):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You may not request non-public extension",
+        )
+
+    return filter_extensions_by_name(session, user, query, public)

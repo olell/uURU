@@ -35,7 +35,7 @@
           <a href="tel:{{ extension.extension }}">{{ extension.extension }}</a>
         </td>
         <td>{{ extension.name }}</td>
-        <td>{{ extension.location_name }}</td>
+        <td>{{ extension.location_name or '' }}</td>
         {% set display_name = extension.get_extra_field('displayname') %}
         {% if display_name %}
         <td>{{ display_name }}</td>

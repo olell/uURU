@@ -1,5 +1,5 @@
 [project]
-name = "uURU"
+name = "app"
 version = "0.1.0"
 description = "Micro User Registration Utility"
 license = "MIT"

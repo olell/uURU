@@ -1,7 +1,8 @@
 [project]
-name = "app"
+name = "uURU"
 version = "0.1.0"
-description = "Add your description here"
+description = "Micro User Registration Utility"
+license = "MIT"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [

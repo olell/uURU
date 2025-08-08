@@ -122,7 +122,7 @@ class Settings(BaseSettings):
                 path=self.ASTERISK_DATABASE_DB,
             )
         )
-    
+
     ## LDAP
     LDAP_SERVER: str = "ldap://localhost:389"
     LDAP_BASE_DN: str = "dc=uuru"

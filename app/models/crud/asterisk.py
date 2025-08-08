@@ -94,7 +94,9 @@ def update_asterisk_extension(
     if autocommit:
         session_asterisk.commit()
 
-    logger.info(f"Updated extension {extension.name} <{extension.extension}> in asterisk DB")
+    logger.info(
+        f"Updated extension {extension.name} <{extension.extension}> in asterisk DB"
+    )
 
 
 def delete_asterisk_extension(
@@ -113,7 +115,9 @@ def delete_asterisk_extension(
     if autocommit:
         session_asterisk.commit()
 
-    logger.info(f"Deleted extension {extension.name} <{extension.extension}> in asterisk DB")
+    logger.info(
+        f"Deleted extension {extension.name} <{extension.extension}> in asterisk DB"
+    )
 
 
 def create_or_update_asterisk_dialplan_entry(
@@ -182,18 +186,26 @@ def create_or_update_asterisk_dialplan_callgroup(
             [f"${{PJSIP_DIAL_CONTACTS({e.extension})}}" for e in extensions]
         )
 
-
     logger.info(
         f"Created callgroup at {extension.extension} with participants: {participants}"
     )
 
-    return create_or_update_asterisk_dialplan_entry(session_asterisk, dialplan, autocommit)
+    return create_or_update_asterisk_dialplan_entry(
+        session_asterisk, dialplan, autocommit
+    )
 
-def delete_asterisk_dialplan_entry(session_asterisk: Session, extension: Extension, user: User, autocommit=True):
+
+def delete_asterisk_dialplan_entry(
+    session_asterisk: Session, extension: Extension, user: User, autocommit=True
+):
     if not (user.role == UserRole.ADMIN or extension.user.id == user.id):
-        raise CRUDNotAllowedException("You're not permitted to delete this dialplan entry")
+        raise CRUDNotAllowedException(
+            "You're not permitted to delete this dialplan entry"
+        )
 
-    entry = session_asterisk.exec(select(DialPlanEntry).where(DialPlanEntry.exten==extension.extension)).first()
+    entry = session_asterisk.exec(
+        select(DialPlanEntry).where(DialPlanEntry.exten == extension.extension)
+    ).first()
     if entry is None:
         raise CRUDNotAllowedException("Extension not found in dialplan database")
 

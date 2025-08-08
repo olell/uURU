@@ -27,44 +27,57 @@ from app.telephoning.main import Telephoning
 
 logger = getLogger(__name__)
 
+
 def ldap_add(connection: Connection, extension: Extension):
     ldap_data = {
         "ou": settings.SITE_NAME,
         "sn": extension.name,
         "telephoneNumber": extension.extension,
-        "objectClass": "organizationalPerson"
+        "objectClass": "organizationalPerson",
     }
 
     if extension.location_name is not None and len(extension.location_name) > 0:
         ldap_data["l"] = extension.location_name
 
-    connection.add(f'cn={extension.extension},{settings.LDAP_BASE_DN}', attributes=ldap_data)
+    connection.add(
+        f"cn={extension.extension},{settings.LDAP_BASE_DN}", attributes=ldap_data
+    )
 
     if connection.result["result"] != 0:
-        logger.error(f"Failed to add extension {extension.name} <{extension.extension}> to ldap")
+        logger.error(
+            f"Failed to add extension {extension.name} <{extension.extension}> to ldap"
+        )
         raise CRUDNotAllowedException("Failed to add extension to LDAP")
-    
+
+
 def ldap_delete(connection: Connection, extension: Extension):
-    connection.delete(f'cn={extension.extension},{settings.LDAP_BASE_DN}')
+    connection.delete(f"cn={extension.extension},{settings.LDAP_BASE_DN}")
 
     if connection.result["result"] != 0:
-        logger.error(f"Failed to delete extension {extension.name} <{extension.extension}> from ldap")
+        logger.error(
+            f"Failed to delete extension {extension.name} <{extension.extension}> from ldap"
+        )
         raise CRUDNotAllowedException("Failed to delete extension from ldap")
+
 
 def ldap_update(connection: Connection, extension: Extension, update_data, prev_data):
     ldap_data = {}
     print(update_data)
-    if 'location_name' in update_data:
-        if update_data['location_name']:
-            ldap_data['l'] = [(MODIFY_REPLACE, [update_data['location_name']])]
-        elif prev_data['location_name']:
-            ldap_data['l'] = [(MODIFY_DELETE, [])]
-    if 'name' in update_data: ldap_data['sn'] = [(MODIFY_REPLACE, [update_data['name']])]
-    connection.modify(f'cn={extension.extension},{settings.LDAP_BASE_DN}', ldap_data)
+    if "location_name" in update_data:
+        if update_data["location_name"]:
+            ldap_data["l"] = [(MODIFY_REPLACE, [update_data["location_name"]])]
+        elif prev_data["location_name"]:
+            ldap_data["l"] = [(MODIFY_DELETE, [])]
+    if "name" in update_data:
+        ldap_data["sn"] = [(MODIFY_REPLACE, [update_data["name"]])]
+    connection.modify(f"cn={extension.extension},{settings.LDAP_BASE_DN}", ldap_data)
 
     if connection.result["result"] != 0:
-        logger.error(f"Failed to update extension {extension.name} <{extension.extension}> in ldap")
+        logger.error(
+            f"Failed to update extension {extension.name} <{extension.extension}> in ldap"
+        )
         raise CRUDNotAllowedException("Failed to update extension in ldap")
+
 
 def create_extension(
     session: Session,
@@ -89,7 +102,9 @@ def create_extension(
 
         for prefix in settings.RESERVED_NAME_PREFIXES:
             if extension.name.strip().lower().startswith(prefix.lower()):
-                raise CRUDNotAllowedException(f"You may not create an extension starting with {prefix}!")
+                raise CRUDNotAllowedException(
+                    f"You may not create an extension starting with {prefix}!"
+                )
 
         if not flavor.is_public():
             raise CRUDNotAllowedException(
@@ -139,7 +154,9 @@ def create_extension(
         session.refresh(db_obj)
         session_asterisk.commit()
 
-    logger.info(f"{user.username} created extension {extension.name} <{extension.extension}> in DB")
+    logger.info(
+        f"{user.username} created extension {extension.name} <{extension.extension}> in DB"
+    )
 
     return db_obj
 
@@ -160,13 +177,14 @@ def update_extension(
     flavor = Telephoning.get_flavor_by_type(extension.type)
     if flavor is None:
         raise CRUDNotAllowedException("Unkown phone type!")
-    
+
     if user.role != UserRole.ADMIN:
         if update_data.name:
             for prefix in settings.RESERVED_NAME_PREFIXES:
                 if update_data.name.strip().lower().startswith(prefix.lower()):
-                    raise CRUDNotAllowedException(f"You may not create an extension starting with {prefix}!")
-            
+                    raise CRUDNotAllowedException(
+                        f"You may not create an extension starting with {prefix}!"
+                    )
 
     try:
         prev_data = extension.model_dump()
@@ -180,11 +198,11 @@ def update_extension(
 
         flavor.on_extension_update(session, session_asterisk, user, extension)
 
-        if prev_data["public"] and not extension.public: # user change to not public
+        if prev_data["public"] and not extension.public:  # user change to not public
             ldap_delete(ldap, extension)
-        elif not prev_data["public"] and extension.public: # changed to public
+        elif not prev_data["public"] and extension.public:  # changed to public
             ldap_add(ldap, extension)
-        else: # modified
+        else:  # modified
             ldap_update(ldap, extension, data, prev_data)
 
     except Exception as e:
@@ -199,7 +217,9 @@ def update_extension(
         session.refresh(extension)
         session_asterisk.commit()
 
-    logger.info(f"{user.username} updated extension {extension.name} <{extension.extension}> in DB")
+    logger.info(
+        f"{user.username} updated extension {extension.name} <{extension.extension}> in DB"
+    )
 
     return extension
 
@@ -239,8 +259,10 @@ def delete_extension(
         session.commit()
         session.refresh(user)
         session_asterisk.commit()
-    
-    logger.info(f"{user.username} deleted extension {extension.name} <{extension.extension}> in DB")
+
+    logger.info(
+        f"{user.username} deleted extension {extension.name} <{extension.extension}> in DB"
+    )
 
 
 def delete_tmp_extension(
@@ -264,6 +286,7 @@ def delete_tmp_extension(
         session_asterisk.commit()
 
     logger.info(f"Deleted temporary extension {tmp_extension.extension} in DB")
+
 
 def get_extension_by_id(
     session: Session, extension_id: str, public=True
@@ -319,7 +342,12 @@ def filter_extensions_by_name(
 
     return list(session.exec(query).all())
 
-def generate_free_extension(session: Session, user: Optional[User] = None, approach: Literal["first", "random"] = "random"):
+
+def generate_free_extension(
+    session: Session,
+    user: Optional[User] = None,
+    approach: Literal["first", "random"] = "random",
+):
     if user and user.role == UserRole.USER:
         blocked_numbers = settings.RESERVED_EXTENSIONS
     else:
@@ -334,22 +362,22 @@ def generate_free_extension(session: Session, user: Optional[User] = None, appro
         if isinstance(item, int):
             expanded_block.add(item)
         if isinstance(item, (list, tuple)) and len(item) == 2:
-            expanded_block.update(range(item[0], item[1]+1))
+            expanded_block.update(range(item[0], item[1] + 1))
 
-    maximum_number = (10 ** settings.EXTENSION_DIGITS) - 1
+    maximum_number = (10**settings.EXTENSION_DIGITS) - 1
 
     if len(expanded_block) > maximum_number:
         raise ValueError("No free extension available!")
 
     selected_number = None
     all_numbers = set(range(0, maximum_number)) - expanded_block
-    if approach == 'first':
+    if approach == "first":
         selected_number = all_numbers[0]
     else:
         selected_number = random.choice(list(all_numbers))
-    
+
     if selected_number is None:
         raise ValueError("No free extension found!")
-    
+
     extension = str(selected_number).rjust(settings.EXTENSION_DIGITS, "0")
     return extension

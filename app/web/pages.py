@@ -13,15 +13,15 @@ def available(listing=False) -> bool:
         return False
 
     files = os.listdir("pages/")
-    md_files = list(filter(lambda f: f.endswith('.md'), files))
+    md_files = list(filter(lambda f: f.endswith(".md"), files))
     if not listing:
         return len(md_files) > 0
     return md_files
-    
+
 
 def get_all() -> list[str]:
     files = available(True)
     if not files:
         return []
-    
+
     return [f.split(".md")[0] for f in files]

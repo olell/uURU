@@ -27,6 +27,7 @@ from app.core.db import (
 
 logger = getLogger(__name__)
 
+
 class MitelDECT(PhoneFlavor):
     PHONE_TYPES = ["DECT"]
     DISPLAY_INDEX = 1001
@@ -96,7 +97,7 @@ class MitelDECT(PhoneFlavor):
         for device in self.get_unbound_devices():
             tmp_ext_id = TemporaryExtensions.generate_extension()
             password = generate_extension_password()
-            
+
             logger.info(f"OMM: new unbound device: {device.ppn} @ {tmp_ext_id}")
 
             user_id = self.configure_user_on_device(

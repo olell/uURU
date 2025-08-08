@@ -25,13 +25,10 @@ At last the job function of the flavor is called a first time to check if it
 raises an `NotImplementedError`, if it does _not_, the job is scheduled with the defined
 `JOB_INTERVAL` interval.
 
-
-
 ## How to implement?
 
 Your class should be called like the phone type or brand your implementing
 features for. The class must inherit `PhoneType`
-
 
 ```python filename="/app/telephoning/phonetypes/mitel_dect.py"
 class DECT(PhoneFlavor):
@@ -74,9 +71,10 @@ SUPPORTED_CODEC: CODEC | dict[str, CODEC] = "g722"
 # If this flag is set to true, on creation of such a phone type no SIP
 # account is created in the asterisk database
 PREVENT_SIP_CREATION = False
-``` 
+```
 
 And you can override some functions:
+
 ```python
 def on_extension_create(self, session: Session, asterisk_session: Session, extension: "Extension")
 

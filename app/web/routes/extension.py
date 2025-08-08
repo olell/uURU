@@ -32,7 +32,9 @@ def get_own_extensions(
 
 
 @router.get("/create", response_class=HTMLResponse)
-def create_extension_page(request: Request, session: SessionDep, current_user: CurrentUser):
+def create_extension_page(
+    request: Request, session: SessionDep, current_user: CurrentUser
+):
     free_extension = generate_free_extension(session, current_user, "random")
     return templates.TemplateResponse(
         request,

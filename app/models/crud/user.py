@@ -9,6 +9,7 @@ from app.core.security import get_password_hash, verify_password
 
 logger = getLogger(__name__)
 
+
 def create_user(
     session: Session,
     creating_user: User | None,
@@ -56,7 +57,9 @@ def update_user(
         session.commit()
         session.refresh(target_user)
 
-    logger.info(f"{executing_user.username} updated user {target_user.username} ({target_user.role})")
+    logger.info(
+        f"{executing_user.username} updated user {target_user.username} ({target_user.role})"
+    )
 
     return target_user
 

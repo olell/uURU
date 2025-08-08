@@ -128,7 +128,9 @@ def settings_handle(
     except CRUDNotAllowedException as e:
         MessageBroker.push(request, {"message": str(e), "category": "error"})
     else:
-        MessageBroker.push(request, {"message": "Password Changed!", "category": "success"})
+        MessageBroker.push(
+            request, {"message": "Password Changed!", "category": "success"}
+        )
 
     logger.debug(f"User {user.username} changed password")
 

@@ -22,7 +22,7 @@ class Innovaphone(PhoneFlavor):
     SUPPORTED_CODEC = {
         "Innovaphone 112": "g722",
         "Innovaphone 241": "g722",
-        "Innovaphone 200a": "alaw"
+        "Innovaphone 200a": "alaw",
     }
     EXTRA_FIELDS = InnovaphoneFields
     IS_SPECIAL = True

@@ -1,8 +1,10 @@
 from pydantic import BaseModel
 from app.telephoning.flavor import PhoneFlavor
 
+
 class DummyExtraFields(BaseModel):
     displayname: str = ""
+
 
 class Dummy(PhoneFlavor):
     PHONE_TYPES = ["Dummy"]

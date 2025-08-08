@@ -10,13 +10,14 @@ from app.telephoning.flavor import PhoneFlavor
 
 logger = getLogger(__name__)
 
+
 def load_phone_flavors() -> list[PhoneFlavor]:
     """
     loads all classes which inherit PhoneFlavor and are located in
     "app/telephoning/phonetypes/*" and returns them as a list
     """
     package = importlib.import_module("app.telephoning.phonetypes")
-    
+
     phone_flavors = []
 
     for _, module_name, _ in pkgutil.iter_modules(package.__path__):
@@ -36,6 +37,7 @@ def load_phone_flavors() -> list[PhoneFlavor]:
 
     return phone_flavors
 
+
 class Telephoning(object):
     _instance = None
 
@@ -43,9 +45,9 @@ class Telephoning(object):
     def instance():
         if Telephoning._instance is None:
             Telephoning._instance = Telephoning()
-        
+
         return Telephoning._instance
-    
+
     def __init__(self):
         self.scheduler = BackgroundScheduler()
         self.router = APIRouter(prefix=settings.TELEPHONING_PREFIX, tags=["phones"])
@@ -57,7 +59,7 @@ class Telephoning(object):
         self.all_types = []
 
     def start(self, app: FastAPI):
-        
+
         for cls in self.flavor_classes:
             # 1st: create instance
             flavor_name = cls.__name__.lower()
@@ -73,34 +75,34 @@ class Telephoning(object):
             flavor.generate_routes(router)
             self.router.include_router(router)
 
-
             # 3rd: initiate job
             try:
                 flavor.job()
             except NotImplementedError:
-                pass # do not schedule job
+                pass  # do not schedule job
             else:
-                self.scheduler.add_job(flavor.job, "interval", seconds=flavor.JOB_INTERVAL)
-            
+                self.scheduler.add_job(
+                    flavor.job, "interval", seconds=flavor.JOB_INTERVAL
+                )
+
             logger.debug(f"Initiated router and job for {flavor_name}")
 
             self.flavors.update({flavor_name: flavor})
-            self.flavor_by_type.update({
-                phone_type: flavor for phone_type in flavor.PHONE_TYPES
-            })
-        
+            self.flavor_by_type.update(
+                {phone_type: flavor for phone_type in flavor.PHONE_TYPES}
+            )
+
         # create list of all phone types
         flavors = list(self.flavors.values())
         flavors.sort(key=lambda f: -f.DISPLAY_INDEX)
         for flavor in flavors:
             self.all_types.extend(flavor.PHONE_TYPES)
-        
+
         logger.info(f"Supported phone types are {', '.join(self.all_types)}")
 
         # start scheduler and include router
         self.scheduler.start()
         app.include_router(self.router)
-
 
     def stop(self):
         # stop all jobs
@@ -113,14 +115,14 @@ class Telephoning(object):
         phone_type, if there isn't such instance, it returns None
         """
         return Telephoning.instance().flavor_by_type.get(phone_type)
-    
+
     @staticmethod
     def get_all_phone_types() -> list[str]:
         """
         returns a list of all supported phone types
         """
         return Telephoning.instance().all_types
-    
+
     @staticmethod
     def get_schemas(as_json=True) -> dict[str, dict] | str:
         """
@@ -133,7 +135,5 @@ class Telephoning(object):
             flavor: PhoneFlavor = self.flavor_by_type[phone_type]
             schema = flavor.get_schema()
             if schema is not None:
-                schemas.update({
-                    phone_type: schema
-                })
+                schemas.update({phone_type: schema})
         return schemas if not as_json else json.dumps(schemas)

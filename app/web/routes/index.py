@@ -35,6 +35,7 @@ def phonebook(
         context={"user": user, "phonebook": phonebook_data, "query": query},
     )
 
+
 @router.get("/map", response_class=HTMLResponse)
 def phonemap(
     *,
@@ -51,6 +52,7 @@ def phonemap(
         name="phonemap.j2.html",
         context={"user": user, "phonebook": phonebook_data},
     )
+
 
 @router.get("/error/{status_code}")
 def error(request: Request, status_code: Optional[int] = None):

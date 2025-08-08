@@ -8,6 +8,7 @@
       <tr>
         <th scope="col">#</th>
         <th scope="col">Name</th>
+        <th scope="col">Type</th>
         <th scope="col">Created By</th>
         <th scope="col">Actions</th>
       </tr>
@@ -19,6 +20,12 @@
           <a href="tel:{{ extension.extension }}">{{ extension.extension }}</a>
         </td>
         <td>{{ extension.name }}</td>
+        {% set display_name = extension.get_extra_field('displayname') %}
+        {% if display_name %}
+        <td>{{ display_name }}</td>
+        {% else %}
+        <td>{{ extension.type }}</td>
+        {% endif %}
         <td><a href="/admin/edit_user/{{ extension.user.id }}">{{ extension.user.username }}</a></td>
         <td>
           <a

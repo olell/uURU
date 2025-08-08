@@ -37,6 +37,7 @@ Licensed under the MIT license. See LICENSE file in the project root for details
         {% endif %}
         <td><a href="/admin/edit_user/{{ extension.user.id }}">{{ extension.user.username }}</a></td>
         <td>
+          {% if telephoning.get_flavor_by_type(extension.type) %}
           <a
             class="text-danger text-decoration-none me-4"
             href="/extension/delete/{{ extension.extension }}"
@@ -50,6 +51,10 @@ Licensed under the MIT license. See LICENSE file in the project root for details
           >
             <ion-icon name="pencil"></ion-icon>
           </a>
+          {% else %}
+          <span title="Cannot be deleted (unknown phone type!)" class="text-danger me-4"><ion-icon name="warning"></ion-icon></span>          
+          <span title="Cannot be modified (unknown phone type!)" class="text-danger me-4"><ion-icon name="warning"></ion-icon></span>
+          {% endif %}
 
           <a
             class="text-warning"

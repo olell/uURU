@@ -50,8 +50,8 @@ cp -av .env.sample .env
 # edit .env file
 
 # -> Required are at least
-# UURU_WEB_HOST
-# UURU_WEB_HOST
+# UURU_WEB_HOST <your_ip>:8000
+# UURU_ASTERISK_HOST <your_ip>
 # UURU_SECRET_KEY $(pwgen -1 30)
 ```
 

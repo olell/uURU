@@ -40,6 +40,12 @@ services:
 
   ldap:
     image: osixia/openldap:latest
+    healthcheck:
+      test: ["CMD", "ldapsearch", "-x", "-s", "base"]
+      interval: 60s
+      start_period: 30s
+      timeout: 5s
+      retries: 1
     environment:
       - LDAP_ORGANISATION=uuru
       - LDAP_DOMAIN=uuru

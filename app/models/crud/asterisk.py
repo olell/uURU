@@ -158,7 +158,7 @@ def create_or_update_asterisk_dialplan_callgroup(
             "You cannot create a callgroup for this type of extension!"
         )
 
-    participants = extension.get_flavor_model.participants_list
+    participants = extension.get_flavor_model().participants_list
     if participants is None or len(participants) < 1:
         raise CRUDNotAllowedException("No participants found!")
 

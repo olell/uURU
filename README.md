@@ -11,6 +11,7 @@ Telephone extension self registration utility for asterisk.
   - Grandstream WP810 WiFi Phones
   - SNOM 300
   - Dummy extensions
+  - IoT extensions
 - LDAP Phonebook
 - Callgroups
 - [Rendering of Markdown for (Help-)Pages](/docs/pages.md)
@@ -84,6 +85,7 @@ Read more about how to use uURU with the supported phone types here:
 
 - [Innovaphone](/docs/phones/innovaphone.md)
 - [Callgroups](/docs/phones/callgroup.md)
+- [IoT](/docs/phones/iot.md)
 
 ## 🔑 License
 

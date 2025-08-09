@@ -61,13 +61,13 @@ cp -av .env.sample .env
 > to something secure! The LDAP server will be exposed to the public.
 
 ```
-docker compose up --build
+docker compose up
 ```
 
 ### Development
 
 ```
-docker compose -f docker-compose-base.yml up --build -d
+docker compose -f docker-compose-base.yml up -d
 uv run fastapi dev
 ```
 

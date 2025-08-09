@@ -85,8 +85,6 @@ class Extension(ExtensionBase, table=True):
     type: str
     extra_fields: dict = Field(default_factory=dict, sa_column=Column(JSON))
 
-    @computed_field
-    @property
     def get_flavor_model(self) -> BaseModel:
         flavor = Telephoning.get_flavor_by_type(self.type)
         if flavor is None or flavor.EXTRA_FIELDS is None:

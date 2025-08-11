@@ -67,55 +67,56 @@ if settings.all_cors_origins:
     )
 
 
-@app.exception_handler(403)
-@app.exception_handler(404)
-@app.exception_handler(HTTPException)
-async def web_exception_handler(request: Request, exc: HTTPException):
-    # keep default handler for api
-    if str(request.url.path).startswith(settings.API_V1_STR):
-        return await http_exception_handler(request, exc)
-
-    logging.error(
-        f"Encountered unhandled HTTPException in {request.url.path}:\n    {str(exc)}"
-    )
-
-    return RedirectResponse(f"/error/{exc.status_code}")
-
-
 app.include_router(api_router, prefix=settings.API_V1_STR)
-app.include_router(web_router, prefix=settings.WEB_PREFIX)
-app.mount("/static", StaticFiles(directory="static"), name="static")
 
+if settings.LEGACY_FRONTEND:
+    app.include_router(web_router, prefix=settings.WEB_PREFIX)
+    app.mount("/static", StaticFiles(directory="static"), name="static")
 
-@app.middleware("http")
-async def add_session_cookie(request: Request, call_next):
-    sessid = None
-    set_sessid = False
-    if request.cookies.get("session", None) is None:
-        set_sessid = True
-        sessid = str(uuid.uuid4())
-        request.cookies.update({"session": sessid})
-    response = await call_next(request)
+    @app.middleware("http")
+    async def add_session_cookie(request: Request, call_next):
+        sessid = None
+        set_sessid = False
+        if request.cookies.get("session", None) is None:
+            set_sessid = True
+            sessid = str(uuid.uuid4())
+            request.cookies.update({"session": sessid})
+        response = await call_next(request)
 
-    if set_sessid:
-        response.set_cookie(key="session", value=sessid)
+        if set_sessid:
+            response.set_cookie(key="session", value=sessid)
 
-    return response
+        return response
 
+    @app.middleware("http")
+    async def handle_exception_web(request: Request, call_next):
+        try:
+            return await call_next(request)
+        except Exception as e:
+            if str(request.url.path).startswith(settings.API_V1_STR):
+                raise e
 
-@app.middleware("http")
-async def handle_exception_web(request: Request, call_next):
-    try:
-        return await call_next(request)
-    except Exception as e:
+            logger.exception(f"Encountered unhandled exception in {request.url.path}")
+
+            if isinstance(e, HTTPException):
+                return RedirectResponse(
+                    f"/error/{e.status_code}", status_code=status.HTTP_303_SEE_OTHER
+                )
+            else:
+                return RedirectResponse(
+                    "/error/0", status_code=status.HTTP_303_SEE_OTHER
+                )
+
+    @app.exception_handler(403)
+    @app.exception_handler(404)
+    @app.exception_handler(HTTPException)
+    async def web_exception_handler(request: Request, exc: HTTPException):
+        # keep default handler for api
         if str(request.url.path).startswith(settings.API_V1_STR):
-            raise e
+            return await http_exception_handler(request, exc)
 
-        logger.exception(f"Encountered unhandled exception in {request.url.path}")
+        logging.error(
+            f"Encountered unhandled HTTPException in {request.url.path}:\n    {str(exc)}"
+        )
 
-        if isinstance(e, HTTPException):
-            return RedirectResponse(
-                f"/error/{e.status_code}", status_code=status.HTTP_303_SEE_OTHER
-            )
-        else:
-            return RedirectResponse("/error/0", status_code=status.HTTP_303_SEE_OTHER)
+        return RedirectResponse(f"/error/{exc.status_code}")

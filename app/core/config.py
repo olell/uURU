@@ -177,6 +177,8 @@ class Settings(BaseSettings):
     ENABLE_PAGES: bool = True
     PAGES_TITLE: str = "Pages"
 
+    LEGACY_FRONTEND: bool = False
+
     OMM_HOST: str | None = None
     OMM_PORT: int = 12621
     OMM_USER: str = "omm"

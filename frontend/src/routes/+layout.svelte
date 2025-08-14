@@ -19,7 +19,7 @@
 		ToastBody,
 		ToastHeader
 	} from '@sveltestrap/sveltestrap';
-	import { getSiteInfoApiV1SiteGet, infoApiV1UserGet } from '../client';
+	import { getSiteInfoApiV1SiteGet, infoApiV1UserGet, logoutApiV1UserLogoutGet } from '../client';
 	import { site_info, user_info } from '../sharedState.svelte';
 	import Login from './login.svelte';
 	import { messages, push_message } from '../messageService.svelte';
@@ -46,13 +46,13 @@
 				}
 			})
 			.catch((e) => {
-				push_message({"color": "danger", "title": "Error!", "message": "Failed to read site data!"});
+				push_message({ color: 'danger', title: 'Error!', message: 'Failed to read site data!' });
 			});
 	});
 
 	// load user info
 	$effect(() => {
-		infoApiV1UserGet().then(({ data, error }) => {
+		infoApiV1UserGet({ credentials: 'include' }).then(({ data, error }) => {
 			if (error === undefined && data !== undefined) {
 				user_info.val = data;
 			}
@@ -71,6 +71,14 @@
 	$effect(() => {
 		$colorMode = theme;
 	});
+
+	function logout() {
+		logoutApiV1UserLogoutGet({credentials: "include"}).then(() => {
+			user_info.val = undefined;
+		}).catch((e) => {
+			push_message({"color": "danger", "message": "Failed to logout!", "title": "Error!"});
+		});
+	}
 </script>
 
 <svelte:head>
@@ -130,7 +138,7 @@
 					<DropdownToggle nav caret>{user_info.val?.username}</DropdownToggle>
 					<DropdownMenu>
 						<DropdownItem href="/user/settings">Settings</DropdownItem>
-						<DropdownItem href="/user/logout">Logout</DropdownItem>
+						<DropdownItem onclick={logout}>Logout</DropdownItem>
 					</DropdownMenu>
 				</Dropdown>
 			{/if}

@@ -12,7 +12,7 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"format": "prettier --write .",
 		"lint": "prettier --check . && eslint .",
-		"generate-client": "openapi-ts --input http://127.0.0.1:8000/api/v1/openapi.json --output ./src/client"
+		"generate-client": "openapi-ts --input http://localhost:8000/api/v1/openapi.json --output ./src/client"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.5",

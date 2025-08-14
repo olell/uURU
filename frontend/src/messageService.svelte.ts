@@ -20,3 +20,11 @@ export const push_message = (msg: Message) => {
 		messages.splice(idx, 1);
 	}, 5000);
 };
+
+export const push_api_error = (err: any, default_title: string) => {
+	const msg = { color: 'danger', title: default_title, message: 'An Error Occured!' };
+	if (typeof err.detail == 'string') {
+		msg.message = err.detail;
+	}
+	push_message(msg);
+};

@@ -9,6 +9,7 @@ from typing import Annotated
 import uuid
 from fastapi import APIRouter, Body, HTTPException, status
 from datetime import timedelta
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 import sqlalchemy
 
@@ -41,7 +42,9 @@ def login(session: SessionDep, credentials: Annotated[Credentials, Body()]) -> T
 
     expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     token = create_access_token(user.id, expires)
-    return Token(token=token)
+    response = JSONResponse({"detail": "OK"})
+    response.set_cookie("auth", token, max_age=expires.seconds, httponly=True)
+    return response
 
 
 @router.get("/", response_model=UserPublic)

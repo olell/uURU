@@ -115,7 +115,7 @@ def phonebook(
     return filter_extensions_by_name(session, user, query, public)
 
 
-@router.get("/phonebook/admin", response_model=list[Extension])
+@router.get("/phonebook/admin")
 def admin_phonebook(
     *,
     session: SessionDep,

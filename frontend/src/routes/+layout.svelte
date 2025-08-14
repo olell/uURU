@@ -20,7 +20,7 @@
 	import { site_info, user_info } from '../sharedState.svelte';
 
 	let { children } = $props();
-	let theme = $state();
+	let theme = $state<"dark" | "light">("dark");
 
 	let navbarOpen = $state(true);
 
@@ -69,7 +69,7 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<Navbar expand="md" container="md">
+<Navbar color={theme} expand="md" container="md">
 	<NavbarBrand href="/">
 		<img src={favicon} alt="" width="30" height="24" class="d-inline-block align-text-top" />
 		{site_info.val?.site_name} — µURU

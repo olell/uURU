@@ -14,13 +14,21 @@
 		NavbarBrand,
 		NavbarToggler,
 		NavItem,
-		NavLink
+		NavLink,
+		Toast,
+		ToastBody,
+		ToastHeader
 	} from '@sveltestrap/sveltestrap';
 	import { getSiteInfoApiV1SiteGet, infoApiV1UserGet } from '../client';
 	import { site_info, user_info } from '../sharedState.svelte';
+	import Login from './login.svelte';
+	import { messages, push_message } from '../messageService.svelte';
+	import { fade } from 'svelte/transition';
 
 	let { children } = $props();
-	let theme = $state<"dark" | "light">("dark");
+	let theme = $state<'dark' | 'light'>('dark');
+
+	let showLogin = $state(false);
 
 	let navbarOpen = $state(true);
 
@@ -38,7 +46,7 @@
 				}
 			})
 			.catch((e) => {
-				alert(e);
+				push_message({"color": "danger", "title": "Error!", "message": "Failed to read site data!"});
 			});
 	});
 
@@ -99,32 +107,49 @@
 			</Dropdown>
 			{% endif %} -->
 			{#if user_info.val && user_info.val.role == 'admin'}
-			<Dropdown>
-				<DropdownToggle nav caret>Admin</DropdownToggle>
-				<DropdownMenu>
-					<DropdownItem href="/admin/user">Users</DropdownItem>
-					<DropdownItem href="/admin/extensions">Extensions</DropdownItem>
-				</DropdownMenu>
-			</Dropdown>
+				<Dropdown>
+					<DropdownToggle nav caret>Admin</DropdownToggle>
+					<DropdownMenu>
+						<DropdownItem href="/admin/user">Users</DropdownItem>
+						<DropdownItem href="/admin/extensions">Extensions</DropdownItem>
+					</DropdownMenu>
+				</Dropdown>
 			{/if}
 		</Nav>
 		<Nav class="ms-auto" navbar>
 			{#if !user_info.val}
-			<NavItem>
-				<NavLink href="/user/login">Login</NavLink>
-			</NavItem>
+				<NavItem>
+					<NavLink
+						onclick={() => {
+							showLogin = true;
+						}}>Login</NavLink
+					>
+				</NavItem>
 			{:else}
-			<Dropdown>
-				<DropdownToggle nav caret>{user_info.val?.username}</DropdownToggle>
-				<DropdownMenu>
-					<DropdownItem href="/user/settings">Settings</DropdownItem>
-					<DropdownItem href="/user/logout">Logout</DropdownItem>
-				</DropdownMenu>
-			</Dropdown>
+				<Dropdown>
+					<DropdownToggle nav caret>{user_info.val?.username}</DropdownToggle>
+					<DropdownMenu>
+						<DropdownItem href="/user/settings">Settings</DropdownItem>
+						<DropdownItem href="/user/logout">Logout</DropdownItem>
+					</DropdownMenu>
+				</Dropdown>
 			{/if}
 		</Nav>
 	</Collapse>
 </Navbar>
+
+<Login bind:isOpen={showLogin} />
+
+<div style="bottom: 0; right: 0; position: fixed; z-index: 9001;">
+	{#each messages as message (message.key)}
+		<div class="p-3 mb-1" transition:fade>
+			<Toast class="me-1">
+				<ToastHeader icon={message.color}>{message.title}</ToastHeader>
+				<ToastBody>{message.message}</ToastBody>
+			</Toast>
+		</div>
+	{/each}
+</div>
 
 <div class="container mt-3">
 	{@render children?.()}

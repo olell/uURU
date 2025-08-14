@@ -1,10 +1,13 @@
 <script lang="ts">
 	import favicon from '$lib/assets/favicon.svg';
+	import { colorMode } from '@sveltestrap/sveltestrap';
 	import { getSiteInfoApiV1SiteGet } from '../client';
 	import { site_info } from '../sharedState.svelte';
 
 	let { children } = $props();
+	let theme = $state()
 
+	// load site info
 	$effect(() => {
 		getSiteInfoApiV1SiteGet().then(({data, error}) => {
 			console.log(data, error)
@@ -15,6 +18,20 @@
 			alert(e);
 		})
 	})
+
+	// set theme based on system preference
+	$effect(() => {
+		const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)')
+		theme = (prefersDarkMode.matches ? 'dark' : 'light')
+
+		prefersDarkMode.addEventListener('change', (event) => {
+			theme = (event.matches ? 'dark' : 'light');
+		});
+	});
+	$effect(() => {
+		$colorMode = theme;
+	})
+
 </script>
 
 <svelte:head>

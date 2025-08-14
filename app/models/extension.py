@@ -106,6 +106,11 @@ class Extension(ExtensionBase, table=True):
     def get_extra_field(self, key):
         return self.extra_fields.get(key, None)
 
+    @computed_field
+    @property
+    def created_by(self) -> str:
+        return self.user.username
+
 
 class ExtensionCreate(BaseModel):
     extension: str = PydanticField(

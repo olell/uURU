@@ -43,7 +43,18 @@ def login(session: SessionDep, credentials: Annotated[Credentials, Body()]) -> T
     expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     token = create_access_token(user.id, expires)
     response = JSONResponse({"detail": "OK"})
-    response.set_cookie("auth", token, max_age=expires.seconds, httponly=True)
+    response.set_cookie(
+        "auth",
+        token,
+        httponly=True,
+    )
+    return response
+
+
+@router.get("/logout")
+def logout():
+    response = JSONResponse({"detail": "Bye!"})
+    response.delete_cookie(key="auth", httponly=True)
     return response
 
 

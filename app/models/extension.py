@@ -41,6 +41,7 @@ class ExtensionBase(SQLModel):
     lat: Optional[int] = Field(default=None, ge=-900000000, le=900000000)
     lon: Optional[int] = Field(default=None, ge=-1800000000, le=1800000000)
 
+    public: bool = False
     type: str
 
     @field_validator("lat", "lon", mode="before")
@@ -79,7 +80,6 @@ class Extension(ExtensionBase, table=True):
     token: str
     password: str
     info: str
-    public: bool = False
 
     user_id: Optional[uuid.UUID] = Field(default=None, foreign_key="user.id")
     user: Optional["User"] = Relationship(back_populates="extensions")

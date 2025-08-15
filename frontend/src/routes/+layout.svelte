@@ -33,13 +33,14 @@
 	import { fade } from 'svelte/transition';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
+	import { navigating } from '$app/stores';
 
 	let { children } = $props();
 	let theme = $state<'dark' | 'light'>('dark');
 
 	let showLogin = $state(false);
 
-	let navbarOpen = $state(true);
+	let navbarOpen = $state(false);
 
 	function handleNavbarCollapse(event: any) {
 		navbarOpen = event.detail.isOpen;
@@ -106,6 +107,10 @@
 		return () => {
 			window.removeEventListener('resize', checkViewport);
 		};
+	});
+
+	$effect(() => {
+		if ($navigating) navbarOpen = false;
 	});
 </script>
 

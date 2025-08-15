@@ -115,7 +115,7 @@ def phonebook(
     return filter_extensions_by_name(session, user, query, public)
 
 
-@router.get("/phonebook/admin")
+@router.get("/all")
 def admin_phonebook(
     *,
     session: SessionDep,
@@ -126,6 +126,6 @@ def admin_phonebook(
     if user.role != UserRole.ADMIN:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="You may not request the admin phonebook!",
+            detail="You may not request the all extensions!",
         )
     return phonebook(session=session, user=user, query=query, public=public)

@@ -93,7 +93,7 @@ def delete(
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
 
 
-@router.get("/own", response_model=list[Extension])
+@router.get("/own")
 def get_own(session: SessionDep, user: CurrentUser):
     return user.extensions
 

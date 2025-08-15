@@ -34,6 +34,7 @@
 		"vite": "^7.0.4"
 	},
 	"dependencies": {
-		"@sveltestrap/sveltestrap": "^7.1.0"
+		"@sveltestrap/sveltestrap": "^7.1.0",
+		"sveaflet": "^0.1.4"
 	}
 }

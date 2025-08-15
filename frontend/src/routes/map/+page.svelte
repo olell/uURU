@@ -54,7 +54,7 @@
 				<Marker latLng={[extension.lat / 10000000.0, extension.lon / 10000000.0]}>
 					<Popup
 						options={{
-							content: `<b>${extension.extension}</b><br/>${extension.name}<br/>${extension.location_name && '-> '}${extension.location_name}`
+							content: `<b>${extension.extension}</b><br/>${extension.name}<br/>${extension.location_name && '&rarr; '}${extension.location_name}`
 						}}
 					/>
 				</Marker>
@@ -66,8 +66,6 @@
 <style>
 	#map-container {
 		position: relative;
-		border: 1px solid black;
-		border-radius: 8px;
 		height: 90vh; /* or as desired */
 		width: 100%; /* This means "100% of the width of its container", the .col-md-8 */
 	}

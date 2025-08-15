@@ -44,7 +44,6 @@
 	$effect(() => {
 		getSettingsApiV1SettingsGet()
 			.then(({ data, error }) => {
-				console.log(data, error);
 				if (error === undefined && data !== undefined) {
 					settings.val = data;
 				}
@@ -95,26 +94,27 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<Navbar color={theme} expand="md" container="md">
-	<NavbarBrand href="/">
-		<img src={favicon} alt="" width="30" height="24" class="d-inline-block align-text-top" />
-		{settings.val?.SITE_NAME} — µURU
-	</NavbarBrand>
-	<NavbarToggler on:click={() => (navbarOpen = !navbarOpen)} />
-	<Collapse isOpen={navbarOpen} expand="md" navbar on:update={handleNavbarCollapse}>
-		<Nav navbar>
-			<NavItem>
-				<NavLink href="/">Phonebook</NavLink>
-			</NavItem>
-			<NavItem>
-				<NavLink href="/map">Map</NavLink>
-			</NavItem>
-			{#if user_info.val}
+{#if settings.val}
+	<Navbar color={theme} expand="md" container="md">
+		<NavbarBrand href="/">
+			<img src={favicon} alt="" width="30" height="24" class="d-inline-block align-text-top" />
+			{settings.val?.SITE_NAME} — µURU
+		</NavbarBrand>
+		<NavbarToggler on:click={() => (navbarOpen = !navbarOpen)} />
+		<Collapse isOpen={navbarOpen} expand="md" navbar on:update={handleNavbarCollapse}>
+			<Nav navbar>
 				<NavItem>
-					<NavLink href="/extension/own">Your Extensions</NavLink>
+					<NavLink href="/">Phonebook</NavLink>
 				</NavItem>
-			{/if}
-			<!-- {% if pages.available() %}
+				<NavItem>
+					<NavLink href="/map">Map</NavLink>
+				</NavItem>
+				{#if user_info.val}
+					<NavItem>
+						<NavLink href="/extension/own">Your Extensions</NavLink>
+					</NavItem>
+				{/if}
+				<!-- {% if pages.available() %}
 			<Dropdown>
 				<DropdownToggle nav caret>Pages TODO: Title</DropdownToggle>
 				<DropdownMenu>
@@ -124,51 +124,52 @@
 				</DropdownMenu>
 			</Dropdown>
 			{% endif %} -->
-			{#if user_info.val && user_info.val.role == 'admin'}
-				<Dropdown>
-					<DropdownToggle nav caret>Admin</DropdownToggle>
-					<DropdownMenu>
-						<DropdownItem href="/admin/user">Users</DropdownItem>
-						<DropdownItem href="/admin/extensions">Extensions</DropdownItem>
-					</DropdownMenu>
-				</Dropdown>
-			{/if}
-		</Nav>
-		<Nav class="ms-auto" navbar>
-			{#if !user_info.val}
-				<NavItem>
-					<NavLink
-						onclick={() => {
-							showLogin = true;
-						}}>Login</NavLink
-					>
-				</NavItem>
-			{:else}
-				<Dropdown>
-					<DropdownToggle nav caret>{user_info.val?.username}</DropdownToggle>
-					<DropdownMenu>
-						<DropdownItem href="/user/settings">Settings</DropdownItem>
-						<DropdownItem onclick={logout}>Logout</DropdownItem>
-					</DropdownMenu>
-				</Dropdown>
-			{/if}
-		</Nav>
-	</Collapse>
-</Navbar>
+				{#if user_info.val && user_info.val.role == 'admin'}
+					<Dropdown>
+						<DropdownToggle nav caret>Admin</DropdownToggle>
+						<DropdownMenu>
+							<DropdownItem href="/admin/user">Users</DropdownItem>
+							<DropdownItem href="/admin/extensions">Extensions</DropdownItem>
+						</DropdownMenu>
+					</Dropdown>
+				{/if}
+			</Nav>
+			<Nav class="ms-auto" navbar>
+				{#if !user_info.val}
+					<NavItem>
+						<NavLink
+							onclick={() => {
+								showLogin = true;
+							}}>Login</NavLink
+						>
+					</NavItem>
+				{:else}
+					<Dropdown>
+						<DropdownToggle nav caret>{user_info.val?.username}</DropdownToggle>
+						<DropdownMenu>
+							<DropdownItem href="/user/settings">Settings</DropdownItem>
+							<DropdownItem onclick={logout}>Logout</DropdownItem>
+						</DropdownMenu>
+					</Dropdown>
+				{/if}
+			</Nav>
+		</Collapse>
+	</Navbar>
 
-<Login bind:isOpen={showLogin} />
+	<Login bind:isOpen={showLogin} />
 
-<div style="bottom: 0; right: 0; position: fixed; z-index: 9001;">
-	{#each messages as message (message.key)}
-		<div class="p-3 mb-1" transition:fade>
-			<Toast class="me-1">
-				<ToastHeader icon={message.color}>{message.title}</ToastHeader>
-				<ToastBody>{message.message}</ToastBody>
-			</Toast>
-		</div>
-	{/each}
-</div>
+	<div style="bottom: 0; right: 0; position: fixed; z-index: 9001;">
+		{#each messages as message (message.key)}
+			<div class="p-3 mb-1" transition:fade>
+				<Toast class="me-1">
+					<ToastHeader icon={message.color}>{message.title}</ToastHeader>
+					<ToastBody>{message.message}</ToastBody>
+				</Toast>
+			</div>
+		{/each}
+	</div>
 
-<div class="container mt-3">
-	{@render children?.()}
-</div>
+	<div class="container mt-3">
+		{@render children?.()}
+	</div>
+{/if}

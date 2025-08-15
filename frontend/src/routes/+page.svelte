@@ -15,7 +15,7 @@
 		type ExtensionBase
 	} from '../client';
 	import { push_api_error, push_message } from '../messageService.svelte';
-	import { user_info } from '../sharedState.svelte';
+	import { isMobile, user_info } from '../sharedState.svelte';
 	import { onMount } from 'svelte';
 
 	let query = $state('');
@@ -51,21 +51,6 @@
 				});
 			});
 	});
-
-	let isMobile = $state(false);
-
-	function checkViewport() {
-		isMobile = window.innerWidth < 768; // Bootstrap md breakpoint
-	}
-
-	onMount(() => {
-		checkViewport();
-		window.addEventListener('resize', checkViewport);
-
-		return () => {
-			window.removeEventListener('resize', checkViewport);
-		};
-	});
 </script>
 
 <Form class="row g-3">
@@ -74,7 +59,7 @@
 	</FormGroup>
 </Form>
 
-{#if !isMobile}
+{#if !isMobile.val}
 	<table class="table table-striped">
 		<thead>
 			<tr>

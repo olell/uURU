@@ -27,11 +27,12 @@
 		infoApiV1UserGet,
 		logoutApiV1UserLogoutGet
 	} from '../client';
-	import { settings, user_info } from '../sharedState.svelte';
+	import { isMobile, settings, user_info } from '../sharedState.svelte';
 	import Login from './login.svelte';
 	import { messages, push_message } from '../messageService.svelte';
 	import { fade } from 'svelte/transition';
 	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
 
 	let { children } = $props();
 	let theme = $state<'dark' | 'light'>('dark');
@@ -93,6 +94,19 @@
 				push_message({ color: 'danger', message: 'Failed to logout!', title: 'Error!' });
 			});
 	}
+
+	function checkViewport() {
+		isMobile.val = window.innerWidth < 768; // Bootstrap md breakpoint
+	}
+
+	onMount(() => {
+		checkViewport();
+		window.addEventListener('resize', checkViewport);
+
+		return () => {
+			window.removeEventListener('resize', checkViewport);
+		};
+	});
 </script>
 
 <svelte:head>

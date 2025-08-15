@@ -80,7 +80,7 @@ def delete(
     user: CurrentUser,
     extension: str,
 ):
-    ext = get_extension_by_id(session, session_asterisk, ldap, extension, public=False)
+    ext = get_extension_by_id(session, extension, public=False)
 
     if ext is None:
         raise HTTPException(
@@ -88,7 +88,7 @@ def delete(
         )
 
     try:
-        delete_extension(session, user, ext)
+        delete_extension(session, session_asterisk, ldap, user, ext)
     except CRUDNotAllowedException as e:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
 

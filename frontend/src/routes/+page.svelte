@@ -1,6 +1,7 @@
 <script lang="ts">
+	import { Form, FormGroup, Input } from '@sveltestrap/sveltestrap';
 	import {
-		adminPhonebookApiV1ExtensionPhonebookAdminGet,
+		adminPhonebookApiV1ExtensionAllGet,
 		phonebookApiV1ExtensionPhonebookGet,
 		type Extension,
 		type ExtensionBase
@@ -21,9 +22,9 @@
 	$effect(() => {
 		let handler:
 			| typeof phonebookApiV1ExtensionPhonebookGet
-			| typeof adminPhonebookApiV1ExtensionPhonebookAdminGet = phonebookApiV1ExtensionPhonebookGet;
+			| typeof adminPhonebookApiV1ExtensionAllGet = phonebookApiV1ExtensionPhonebookGet;
 		if (user_info.val?.role == 'admin') {
-			handler = adminPhonebookApiV1ExtensionPhonebookAdminGet;
+			handler = adminPhonebookApiV1ExtensionAllGet;
 		}
 
 		handler({ credentials: 'include' })
@@ -43,14 +44,11 @@
 	});
 </script>
 
-<form class="row g-3">
-	<div class="col-10">
-		<input type="text" class="form-control" name="query" bind:value={query} />
-	</div>
-	<div class="col-2">
-		<button type="submit" class="btn btn-primary">Search</button>
-	</div>
-</form>
+<Form class="row g-3">
+	<FormGroup>
+		<Input placeholder="Search extensions" bind:value={query} />
+	</FormGroup>
+</Form>
 
 <table class="table table-striped">
 	<thead>

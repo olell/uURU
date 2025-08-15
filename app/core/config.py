@@ -11,6 +11,7 @@ from typing import Annotated, Any, Literal
 
 from pydantic import (
     AnyUrl,
+    BaseModel,
     BeforeValidator,
     computed_field,
 )
@@ -27,6 +28,23 @@ def parse_cors(v: Any) -> list[str] | str:
     elif isinstance(v, list | str):
         return v
     raise ValueError(v)
+
+
+class PublicSettings(BaseModel):
+    # settings which are (public) exposed via the API
+    WEB_HOST: str
+    ASTERISK_HOST: str
+    LDAP_SERVER: str
+    EXTENSION_DIGITS: int
+    RESERVED_EXTENSIONS: list[int | tuple[int, int]]
+    RESERVED_NAME_PREFIXES: list[str]
+    SITE_NAME: str
+    SITE_SLOGAN: str
+    SHOW_SITE_SLOGAN: bool
+    SITE_LAT: float
+    SITE_LON: float
+    ENABLE_PAGES: bool
+    PAGES_TITLE: str
 
 
 class Settings(BaseSettings):

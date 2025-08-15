@@ -115,9 +115,13 @@
 					<NavLink href="/map">Map</NavLink>
 				</NavItem>
 				{#if user_info.val}
-					<NavItem>
-						<NavLink href="/extensions">Your Extensions</NavLink>
-					</NavItem>
+					<Dropdown>
+						<DropdownToggle nav caret>Extensions</DropdownToggle>
+						<DropdownMenu>
+							<DropdownItem href="/extensions">Your Extensions</DropdownItem>
+							<DropdownItem>Create a new Extension</DropdownItem>
+						</DropdownMenu>
+					</Dropdown>
 				{/if}
 				<!-- {% if pages.available() %}
 			<Dropdown>

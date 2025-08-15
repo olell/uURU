@@ -125,7 +125,7 @@
 			{settings.val?.SITE_NAME} — µURU
 		</NavbarBrand>
 		<NavbarToggler on:click={() => (navbarOpen = !navbarOpen)} />
-		<Collapse isOpen={navbarOpen} expand="md" navbar on:update={handleNavbarCollapse}>
+		<Collapse isOpen={navbarOpen || !isMobile} expand="md" navbar on:update={handleNavbarCollapse}>
 			<Nav navbar>
 				<NavItem>
 					<NavLink href="/">Phonebook</NavLink>

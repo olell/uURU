@@ -1,4 +1,7 @@
 <script lang="ts">
+	import 'halfmoon/css/halfmoon.min.css';
+	import 'halfmoon/css/cores/halfmoon.modern.css';
+
 	import favicon from '$lib/assets/favicon.svg';
 	import {
 		Button,
@@ -28,6 +31,7 @@
 	import Login from './login.svelte';
 	import { messages, push_message } from '../messageService.svelte';
 	import { fade } from 'svelte/transition';
+	import { goto } from '$app/navigation';
 
 	let { children } = $props();
 	let theme = $state<'dark' | 'light'>('dark');
@@ -83,6 +87,7 @@
 		logoutApiV1UserLogoutGet({ credentials: 'include' })
 			.then(() => {
 				user_info.val = undefined;
+				goto('/');
 			})
 			.catch((e) => {
 				push_message({ color: 'danger', message: 'Failed to logout!', title: 'Error!' });
@@ -111,7 +116,7 @@
 				</NavItem>
 				{#if user_info.val}
 					<NavItem>
-						<NavLink href="/extension/own">Your Extensions</NavLink>
+						<NavLink href="/extensions">Your Extensions</NavLink>
 					</NavItem>
 				{/if}
 				<!-- {% if pages.available() %}

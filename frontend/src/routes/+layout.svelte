@@ -19,8 +19,12 @@
 		ToastBody,
 		ToastHeader
 	} from '@sveltestrap/sveltestrap';
-	import { getSiteInfoApiV1SiteGet, infoApiV1UserGet, logoutApiV1UserLogoutGet } from '../client';
-	import { site_info, user_info } from '../sharedState.svelte';
+	import {
+		getSettingsApiV1SettingsGet,
+		infoApiV1UserGet,
+		logoutApiV1UserLogoutGet
+	} from '../client';
+	import { settings, user_info } from '../sharedState.svelte';
 	import Login from './login.svelte';
 	import { messages, push_message } from '../messageService.svelte';
 	import { fade } from 'svelte/transition';
@@ -38,15 +42,19 @@
 
 	// load site info
 	$effect(() => {
-		getSiteInfoApiV1SiteGet()
+		getSettingsApiV1SettingsGet()
 			.then(({ data, error }) => {
 				console.log(data, error);
 				if (error === undefined && data !== undefined) {
-					site_info.val = data;
+					settings.val = data;
 				}
 			})
 			.catch((e) => {
-				push_message({ color: 'danger', title: 'Error!', message: 'Failed to read site data!' });
+				push_message({
+					color: 'danger',
+					title: 'Error!',
+					message: 'Failed to read settings data!'
+				});
 			});
 	});
 
@@ -73,11 +81,13 @@
 	});
 
 	function logout() {
-		logoutApiV1UserLogoutGet({credentials: "include"}).then(() => {
-			user_info.val = undefined;
-		}).catch((e) => {
-			push_message({"color": "danger", "message": "Failed to logout!", "title": "Error!"});
-		});
+		logoutApiV1UserLogoutGet({ credentials: 'include' })
+			.then(() => {
+				user_info.val = undefined;
+			})
+			.catch((e) => {
+				push_message({ color: 'danger', message: 'Failed to logout!', title: 'Error!' });
+			});
 	}
 </script>
 
@@ -88,7 +98,7 @@
 <Navbar color={theme} expand="md" container="md">
 	<NavbarBrand href="/">
 		<img src={favicon} alt="" width="30" height="24" class="d-inline-block align-text-top" />
-		{site_info.val?.site_name} — µURU
+		{settings.val?.SITE_NAME} — µURU
 	</NavbarBrand>
 	<NavbarToggler on:click={() => (navbarOpen = !navbarOpen)} />
 	<Collapse isOpen={navbarOpen} expand="md" navbar on:update={handleNavbarCollapse}>

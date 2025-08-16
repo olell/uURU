@@ -11,6 +11,7 @@ from fastapi import APIRouter, Body, HTTPException, status
 from datetime import timedelta
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
+import sqlalchemy
 
 from app.api.deps import CurrentUser, OptionalCurrentUser
 from app.core.db import SessionDep

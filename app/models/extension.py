@@ -103,6 +103,8 @@ class Extension(ExtensionBase, table=True):
             print(flavor, flavor.EXTRA_FIELDS)
             flavor.EXTRA_FIELDS.model_validate(self.extra_fields)
 
+        return self
+
     def get_extra_field(self, key):
         return self.extra_fields.get(key, None)
 

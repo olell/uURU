@@ -24,6 +24,7 @@ from app.models.crud.user import (
     delete_user,
     filter_user_by_username,
     get_user_by_id,
+    update_user,
 )
 from app.models.crud.user import change_password as crud_change_password
 from app.models.user import (
@@ -32,6 +33,7 @@ from app.models.user import (
     UserPublic,
     UserCreate,
     UserRole,
+    UserUpdate,
 )
 
 router = APIRouter(prefix="/user", tags=["user"])
@@ -75,12 +77,29 @@ def info(*, user_id: str | None = None, session: SessionDep, user: CurrentUser):
 
 
 @router.delete("/", status_code=status.HTTP_204_NO_CONTENT)
-def info(*, user_id: str | None = None, session: SessionDep, user: CurrentUser):
+def delete(*, user_id: str | None = None, session: SessionDep, user: CurrentUser):
     try:
         if user_id is None:
             delete_user(session, user, user)
         else:
             delete_user(session, user, get_user_by_id(session, user_id))
+    except CRUDNotAllowedException as e:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+
+
+@router.patch("/")
+def update(
+    *,
+    user_id: str | None = None,
+    session: SessionDep,
+    user: CurrentUser,
+    data: UserUpdate,
+):
+    try:
+        if user_id is None:
+            update_user(session, user, user, data)
+        else:
+            update_user(session, user, get_user_by_id(session, user_id), data)
     except CRUDNotAllowedException as e:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
 

@@ -23,6 +23,7 @@
 	import SchemaForm from '../components/schemaForm.svelte';
 	import Ajv from 'ajv';
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 
 	const { extension }: { extension?: Extension } = $props();
 
@@ -232,7 +233,7 @@
 		}
 
 		console.log(data);
-		goto('/extensions');
+		goto(resolve('/extensions'));
 	};
 </script>
 

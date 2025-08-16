@@ -3,6 +3,7 @@
 	import { allUsersApiV1UserAllGet, type UserPublic } from '../../../client';
 	import { push_api_error, push_message } from '../../../messageService.svelte';
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 
 	let query = $state('');
 	let users = $state<UserPublic[]>([]);
@@ -38,7 +39,7 @@
 	</thead>
 	<tbody>
 		{#each filteredUser as user (user.id)}
-			<tr onclick={() => goto(`/admin/user/${user.id}`)}>
+			<tr onclick={() => goto(resolve(`/admin/user/${user.id}`))}>
 				<td>{user.username}</td>
 				<td>{user.role}</td>
 			</tr>

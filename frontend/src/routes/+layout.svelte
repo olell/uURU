@@ -138,7 +138,7 @@
 						<DropdownToggle nav caret>Extensions</DropdownToggle>
 						<DropdownMenu>
 							<DropdownItem href="/extensions">Your Extensions</DropdownItem>
-							<DropdownItem>Create a new Extension</DropdownItem>
+							<DropdownItem href="/extensions/new">Create a new Extension</DropdownItem>
 						</DropdownMenu>
 					</Dropdown>
 				{/if}

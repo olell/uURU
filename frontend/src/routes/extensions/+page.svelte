@@ -73,7 +73,9 @@
 					<td>{extension.type}</td>
 					<td>{extension.public ? '' : 'Not Public'}</td>
 					<td>
-						<a href={'#'} class="text-primary me-3"><Icon name="pencil-square" /></a>
+						<a href="/extensions/{extension.extension}" class="text-primary me-3"
+							><Icon name="pencil-square" /></a
+						>
 						<a
 							href={'#'}
 							class="text-danger me-3"
@@ -101,7 +103,7 @@
 {:else}
 	<ListGroup>
 		{#each extensions as extension (extension.extension)}
-			<ListGroupItem action>
+			<ListGroupItem action href="/extensions/{extension.extension}">
 				<div class="d-flex w-100 justify-content-between">
 					<h5 class="mb-1">{extension.name}</h5>
 
@@ -135,7 +137,9 @@
 						{/if}
 					</div>
 					<div>
-						<a href={'#'} class="text-primary me-3 fs-3"><Icon name="pencil-square" /></a>
+						<a href="/extensions/{extension.extension}" class="text-primary me-3 fs-3"
+							><Icon name="pencil-square" /></a
+						>
 						<a
 							href={'#'}
 							class="text-danger me-3 fs-3"

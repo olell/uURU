@@ -15,6 +15,7 @@
 	} from '../../client';
 	import { push_api_error, push_message } from '../../messageService.svelte';
 	import { isMobile } from '../../sharedState.svelte';
+	import { resolve } from '$app/paths';
 
 	let extensions = $state<Extension[]>([]);
 
@@ -72,7 +73,7 @@
 					<td>{extension.type}</td>
 					<td>{extension.public ? '' : 'Not Public'}</td>
 					<td>
-						<a href="/extensions/{extension.extension}" class="text-primary me-3"
+						<a href={resolve(`/extensions/${extension.extension}`)} class="text-primary me-3"
 							><Icon name="pencil-square" /></a
 						>
 						<a
@@ -102,7 +103,7 @@
 {:else}
 	<ListGroup>
 		{#each extensions as extension (extension.extension)}
-			<ListGroupItem action href="/extensions/{extension.extension}">
+			<ListGroupItem action href={resolve(`/extensions/${extension.extension}`)}>
 				<div class="d-flex w-100 justify-content-between">
 					<h5 class="mb-1">{extension.name}</h5>
 
@@ -136,7 +137,7 @@
 						{/if}
 					</div>
 					<div>
-						<a href="/extensions/{extension.extension}" class="text-primary me-3 fs-3"
+						<a href={resolve(`/extensions/${extension.extension}`)} class="text-primary me-3 fs-3"
 							><Icon name="pencil-square" /></a
 						>
 						<a

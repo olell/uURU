@@ -35,6 +35,7 @@
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import { navigating } from '$app/stores';
+	import { resolve } from '$app/paths';
 
 	let { children } = $props();
 	let theme = $state<'dark' | 'light'>('dark');
@@ -90,7 +91,7 @@
 		logoutApiV1UserLogoutGet({ credentials: 'include' })
 			.then(() => {
 				user_info.val = undefined;
-				goto('/');
+				goto(resolve('/'));
 			})
 			.catch((e) => {
 				push_message({ color: 'danger', message: 'Failed to logout!', title: 'Error!' });
@@ -121,7 +122,7 @@
 
 {#if settings.val}
 	<Navbar color={theme} expand="md" container="md">
-		<NavbarBrand href="/">
+		<NavbarBrand href={resolve('/')}>
 			<img src={favicon} alt="" width="30" height="24" class="d-inline-block align-text-top" />
 			{settings.val?.SITE_NAME} — µURU
 		</NavbarBrand>
@@ -129,17 +130,17 @@
 		<Collapse isOpen={navbarOpen || !isMobile} expand="md" navbar on:update={handleNavbarCollapse}>
 			<Nav navbar>
 				<NavItem>
-					<NavLink href="/">Phonebook</NavLink>
+					<NavLink href={resolve('/')}>Phonebook</NavLink>
 				</NavItem>
 				<NavItem>
-					<NavLink href="/map">Map</NavLink>
+					<NavLink href={resolve('/map')}>Map</NavLink>
 				</NavItem>
 				{#if user_info.val}
 					<Dropdown>
 						<DropdownToggle nav caret>Extensions</DropdownToggle>
 						<DropdownMenu>
-							<DropdownItem href="/extensions">Your Extensions</DropdownItem>
-							<DropdownItem href="/extensions/new">Create a new Extension</DropdownItem>
+							<DropdownItem href={resolve('/extensions')}>Your Extensions</DropdownItem>
+							<DropdownItem href={resolve('/extensions/new')}>Create a new Extension</DropdownItem>
 						</DropdownMenu>
 					</Dropdown>
 				{/if}
@@ -157,8 +158,8 @@
 					<Dropdown>
 						<DropdownToggle nav caret>Admin</DropdownToggle>
 						<DropdownMenu>
-							<DropdownItem href="/admin/user">Users</DropdownItem>
-							<DropdownItem href="/admin/extensions">Extensions</DropdownItem>
+							<DropdownItem href={resolve('/admin/user')}>Users</DropdownItem>
+							<DropdownItem href={resolve('/admin/extensions')}>Extensions</DropdownItem>
 						</DropdownMenu>
 					</Dropdown>
 				{/if}
@@ -179,7 +180,7 @@
 							{user_info.val?.username}
 						</DropdownToggle>
 						<DropdownMenu>
-							<DropdownItem href="/user/settings">Settings</DropdownItem>
+							<DropdownItem href={resolve('/user/settings')}>Settings</DropdownItem>
 							<DropdownItem onclick={logout}>Logout</DropdownItem>
 						</DropdownMenu>
 					</Dropdown>

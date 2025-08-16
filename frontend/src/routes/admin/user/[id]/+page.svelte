@@ -10,6 +10,7 @@
 	} from '../../../../client';
 	import { push_api_error, push_message } from '../../../../messageService.svelte';
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 
 	const { id } = page.params;
 	let user = $state<UserPublic>();
@@ -51,7 +52,7 @@
 			title: 'Success!',
 			message: `Updated user ${user?.username} successfully!`
 		});
-		goto('/admin/user');
+		goto(resolve('/admin/user'));
 	};
 
 	const handleDelete = async () => {
@@ -69,7 +70,7 @@
 			title: 'Success!',
 			message: `Deleted user ${user.username}!`
 		});
-		goto('/admin/user');
+		goto(resolve('/admin/user'));
 	};
 </script>
 

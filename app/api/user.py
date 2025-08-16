@@ -11,7 +11,6 @@ from fastapi import APIRouter, Body, HTTPException, status
 from datetime import timedelta
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
-import sqlalchemy
 
 from app.api.deps import CurrentUser, OptionalCurrentUser
 from app.core.db import SessionDep
@@ -22,10 +21,17 @@ from app.models.crud.user import (
     authenticate_user,
     create_user,
     delete_user,
+    filter_user_by_username,
     get_user_by_id,
 )
 from app.models.crud.user import change_password as crud_change_password
-from app.models.user import PasswordChange, Token, UserPublic, UserCreate
+from app.models.user import (
+    PasswordChange,
+    Token,
+    UserPublic,
+    UserCreate,
+    UserRole,
+)
 
 router = APIRouter(prefix="/user", tags=["user"])
 
@@ -107,3 +113,12 @@ def change_password(*, session: SessionDep, user: CurrentUser, data: PasswordCha
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
 
     return {"detail": "OK"}
+
+
+@router.get("/all")
+def all_users(*, session: SessionDep, user: CurrentUser) -> list[UserPublic]:
+    if user.role != UserRole.ADMIN:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin only!")
+
+    users = filter_user_by_username(session)
+    return users

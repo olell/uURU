@@ -7,8 +7,6 @@
 	const { id } = page.params;
 	let extension = $state<Extension>();
 
-	$inspect(extension);
-
 	$effect(() => {
 		console.log(id);
 		getApiV1ExtensionInfoExtensionGet({ credentials: 'include', path: { extension: id! } }).then(

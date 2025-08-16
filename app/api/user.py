@@ -24,7 +24,8 @@ from app.models.crud.user import (
     delete_user,
     get_user_by_id,
 )
-from app.models.user import Token, UserPublic, UserCreate
+from app.models.crud.user import change_password as crud_change_password
+from app.models.user import PasswordChange, Token, UserPublic, UserCreate
 
 router = APIRouter(prefix="/user", tags=["user"])
 
@@ -96,3 +97,13 @@ def register(
         )
 
     return user
+
+
+@router.patch("/password")
+def change_password(*, session: SessionDep, user: CurrentUser, data: PasswordChange):
+    try:
+        crud_change_password(session, user, data)
+    except CRUDNotAllowedException as e:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+
+    return {"detail": "OK"}

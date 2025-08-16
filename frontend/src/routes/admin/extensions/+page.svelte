@@ -17,7 +17,6 @@
 	import { isMobile } from '../../../sharedState.svelte';
 
 	let extensions = $state<Extension[]>([]);
-	$inspect(extensions);
 
 	$effect(() => {
 		refreshExtensions();

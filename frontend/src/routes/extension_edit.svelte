@@ -25,7 +25,6 @@
 	import { goto } from '$app/navigation';
 
 	const { extension }: { extension?: Extension } = $props();
-	$inspect(extension);
 
 	// inputs
 	let selectedType = $state<PhoneType>();
@@ -104,7 +103,6 @@
 
 	// extra data form
 	let extra_data = $state<any>(extension?.extra_fields || {});
-	$inspect(extra_data);
 	$effect(() => {
 		if (!selectedType || !selectedType.schema) {
 			extra_data = {};

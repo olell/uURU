@@ -93,6 +93,21 @@ def delete(
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
 
 
+@router.get("/info/{extension}")
+def get(session: SessionDep, user: CurrentUser, extension: str):
+    ext = get_extension_by_id(session, extension, False)
+
+    if ext is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Extension not found"
+        )
+
+    if user.role != UserRole.ADMIN and ext.user != user:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden!")
+
+    return ext
+
+
 @router.get("/own")
 def get_own(session: SessionDep, user: CurrentUser):
     return user.extensions

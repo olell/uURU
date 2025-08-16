@@ -12,6 +12,7 @@
 		DropdownItem,
 		DropdownMenu,
 		DropdownToggle,
+		Icon,
 		Nav,
 		Navbar,
 		NavbarBrand,
@@ -173,7 +174,10 @@
 					</NavItem>
 				{:else}
 					<Dropdown>
-						<DropdownToggle nav caret>{user_info.val?.username}</DropdownToggle>
+						<DropdownToggle nav caret>
+							<Icon name="person-circle" class="me-1"></Icon>
+							{user_info.val?.username}
+						</DropdownToggle>
 						<DropdownMenu>
 							<DropdownItem href="/user/settings">Settings</DropdownItem>
 							<DropdownItem onclick={logout}>Logout</DropdownItem>

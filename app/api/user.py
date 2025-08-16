@@ -67,7 +67,7 @@ def logout():
 
 
 @router.get("/", response_model=UserPublic)
-def info(*, user_id: uuid.UUID | None = None, session: SessionDep, user: CurrentUser):
+def info(*, user_id: str | None = None, session: SessionDep, user: CurrentUser):
     if user_id is None:
         return user
     else:
@@ -75,7 +75,7 @@ def info(*, user_id: uuid.UUID | None = None, session: SessionDep, user: Current
 
 
 @router.delete("/", status_code=status.HTTP_204_NO_CONTENT)
-def info(*, user_id: uuid.UUID | None = None, session: SessionDep, user: CurrentUser):
+def info(*, user_id: str | None = None, session: SessionDep, user: CurrentUser):
     try:
         if user_id is None:
             delete_user(session, user, user)

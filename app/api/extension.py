@@ -94,7 +94,7 @@ def delete(
 
 
 @router.get("/info/{extension}")
-def get(session: SessionDep, user: CurrentUser, extension: str):
+def get(session: SessionDep, user: CurrentUser, extension: str) -> Extension:
     ext = get_extension_by_id(session, extension, False)
 
     if ext is None:

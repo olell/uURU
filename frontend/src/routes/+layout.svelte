@@ -126,8 +126,13 @@
 			<img src={favicon} alt="" width="30" height="24" class="d-inline-block align-text-top" />
 			{settings.val?.SITE_NAME} — µURU
 		</NavbarBrand>
-		<NavbarToggler on:click={() => (navbarOpen = !navbarOpen)} />
-		<Collapse isOpen={navbarOpen || !isMobile} expand="md" navbar on:update={handleNavbarCollapse}>
+		<NavbarToggler onclick={() => (navbarOpen = !navbarOpen)} />
+		<Collapse
+			isOpen={navbarOpen || !isMobile.val}
+			expand="md"
+			navbar
+			on:update={handleNavbarCollapse}
+		>
 			<Nav navbar>
 				<NavItem>
 					<NavLink href={resolve('/')}>Phonebook</NavLink>

@@ -7,11 +7,13 @@ Licensed under the MIT license. See LICENSE file in the project root for details
 
 from contextlib import asynccontextmanager
 import logging
+import os
+from pathlib import Path
 import uuid
 
 from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import RedirectResponse
+from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.exception_handlers import http_exception_handler
 from sqlmodel import Session
@@ -120,3 +122,22 @@ if settings.LEGACY_FRONTEND:
         )
 
         return RedirectResponse(f"/error/{exc.status_code}")
+
+else:
+    build_path = Path("frontend/build")
+    app.mount("/app", StaticFiles(directory=build_path), name="static")
+
+    @app.middleware("http")
+    async def fallback(request: Request, call_next):
+        if request.url.path.startswith("/app"):
+            relative_path = request.url.path.removeprefix("/app/").strip("/")
+            target_file = build_path / relative_path
+
+            if not target_file.exists() or target_file == build_path:
+                return FileResponse(build_path / "index.html")
+
+        return await call_next(request)
+
+    @app.get("/")
+    def index():
+        return RedirectResponse("/app/")

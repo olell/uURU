@@ -1,3 +1,12 @@
+FROM node:24.6.0-alpine3.21 AS svelte
+
+WORKDIR /frontend/
+
+COPY ./frontend .
+
+RUN npm i
+RUN npm run build
+
 FROM python:3.13
 
 ENV PYTHONUNBUFFERED=1
@@ -35,6 +44,8 @@ COPY ./app /app/app
 
 COPY ./static /app/static
 COPY ./templates /app/templates
+
+COPY --from=svelte /frontend/build/ /app/frontend/build
 
 # Sync the project
 # Ref: https://docs.astral.sh/uv/guides/integration/docker/#intermediate-layers

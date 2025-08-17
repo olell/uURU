@@ -121,6 +121,7 @@
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
+	<title>{settings.val?.SITE_NAME} - uURU</title>
 </svelte:head>
 
 {#if settings.val}

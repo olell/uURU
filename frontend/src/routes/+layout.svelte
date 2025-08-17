@@ -36,6 +36,9 @@
 	import { onMount } from 'svelte';
 	import { navigating } from '$app/stores';
 	import { resolve } from '$app/paths';
+	import { client } from '../client/client.gen';
+
+	client.setConfig({ ...client.getConfig(), baseUrl: '/' });
 
 	let { children } = $props();
 	let theme = $state<'dark' | 'light'>('dark');

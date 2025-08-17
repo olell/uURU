@@ -75,8 +75,9 @@
 					<td>{extension.public ? '' : 'Not Public'}</td>
 					<td>{extension.created_by}</td>
 					<td>
-						<a href={resolve(`/extensions/${extension.extension}`)} class="text-primary me-3"
-							><Icon name="pencil-square" /></a
+						<a
+							href={resolve(`/extensions/edit?extension=${extension.extension}`)}
+							class="text-primary me-3"><Icon name="pencil-square" /></a
 						>
 						<a
 							href={'#'}
@@ -105,7 +106,7 @@
 {:else}
 	<ListGroup>
 		{#each extensions as extension (extension.extension)}
-			<ListGroupItem action href={resolve(`/extensions/${extension.extension}`)}>
+			<ListGroupItem action href={resolve(`/extensions/edit?extension=${extension.extension}`)}>
 				<div class="d-flex w-100 justify-content-between">
 					<h5 class="mb-1">{extension.name}</h5>
 
@@ -146,8 +147,9 @@
 						{/if}
 					</div>
 					<div>
-						<a href={resolve(`/extensions/${extension.extension}`)} class="text-primary me-3 fs-3"
-							><Icon name="pencil-square" /></a
+						<a
+							href={resolve(`/extensions/edit?extension=${extension.extension}`)}
+							class="text-primary me-3 fs-3"><Icon name="pencil-square" /></a
 						>
 						<a
 							href={'#'}

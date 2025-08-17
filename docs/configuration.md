@@ -76,6 +76,7 @@ The database must be a mariadb / mysql db
 | --------------------- | ------------------------------------------------------- | ------- |
 | UURU_LOGLEVEL         | One of CRITICAL, FATAL, ERROR, WARNING, INFO, DEBUG     | INFO    |
 | UURU_LIFESPAN_DROP_DB | (For dev!) drop the database after application shutdown | False   |
+| UURU_LEGACY_FRONTEND  | Enable legacy UI                                        | False   |
 
 ### Telephoning
 

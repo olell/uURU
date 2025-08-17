@@ -80,7 +80,7 @@ def delete(
     user: CurrentUser,
     extension: str,
 ):
-    ext = get_extension_by_id(session, session_asterisk, ldap, extension, public=False)
+    ext = get_extension_by_id(session, extension, public=False)
 
     if ext is None:
         raise HTTPException(
@@ -88,12 +88,27 @@ def delete(
         )
 
     try:
-        delete_extension(session, user, ext)
+        delete_extension(session, session_asterisk, ldap, user, ext)
     except CRUDNotAllowedException as e:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
 
 
-@router.get("/own", response_model=list[Extension])
+@router.get("/info/{extension}")
+def get(session: SessionDep, user: CurrentUser, extension: str) -> Extension:
+    ext = get_extension_by_id(session, extension, False)
+
+    if ext is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Extension not found"
+        )
+
+    if user.role != UserRole.ADMIN and ext.user != user:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden!")
+
+    return ext
+
+
+@router.get("/own")
 def get_own(session: SessionDep, user: CurrentUser):
     return user.extensions
 
@@ -113,3 +128,19 @@ def phonebook(
         )
 
     return filter_extensions_by_name(session, user, query, public)
+
+
+@router.get("/all")
+def admin_phonebook(
+    *,
+    session: SessionDep,
+    user: CurrentUser,
+    query: Optional[str] = None,
+    public: bool = False,
+):
+    if user.role != UserRole.ADMIN:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You may not request the all extensions!",
+        )
+    return phonebook(session=session, user=user, query=query, public=public)

@@ -7,7 +7,7 @@ Licensed under the MIT license. See LICENSE file in the project root for details
 
 from typing import Annotated
 from fastapi import HTTPException, Depends, status, Header
-from fastapi.security import APIKeyHeader
+from fastapi.security import APIKeyCookie
 import jwt
 from jwt import InvalidTokenError
 from pydantic import ValidationError
@@ -15,23 +15,26 @@ from pydantic import ValidationError
 from app.core.config import settings
 from app.core.db import SessionDep
 from app.core.security import JWT_ALGORITHM
-from app.models.user import TokenPayload, User
+from app.models.user import TokenPayload, User, UserRole
 from app.models.crud.user import get_user_by_id
 
 
 def get_current_user_optional(
     session: SessionDep,
-    token: str = Depends(APIKeyHeader(name="x-auth-token", auto_error=False)),
+    token: str = Depends(APIKeyCookie(name="auth", auto_error=False)),
 ) -> User | None:
     if token is None:
         return None
 
-    return get_current_user(session, token)
+    try:
+        return get_current_user(session, token)
+    except:
+        return None
 
 
 def get_current_user(
     session: SessionDep,
-    token: str = Depends(APIKeyHeader(name="x-auth-token")),
+    token: str = Depends(APIKeyCookie(name="auth")),
 ) -> User:
 
     try:

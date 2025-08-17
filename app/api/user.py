@@ -9,6 +9,7 @@ from typing import Annotated
 import uuid
 from fastapi import APIRouter, Body, HTTPException, status
 from datetime import timedelta
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 import sqlalchemy
 
@@ -21,9 +22,19 @@ from app.models.crud.user import (
     authenticate_user,
     create_user,
     delete_user,
+    filter_user_by_username,
     get_user_by_id,
+    update_user,
 )
-from app.models.user import Token, UserPublic, UserCreate
+from app.models.crud.user import change_password as crud_change_password
+from app.models.user import (
+    PasswordChange,
+    Token,
+    UserPublic,
+    UserCreate,
+    UserRole,
+    UserUpdate,
+)
 
 router = APIRouter(prefix="/user", tags=["user"])
 
@@ -41,11 +52,24 @@ def login(session: SessionDep, credentials: Annotated[Credentials, Body()]) -> T
 
     expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     token = create_access_token(user.id, expires)
-    return Token(token=token)
+    response = JSONResponse({"detail": "OK"})
+    response.set_cookie(
+        "auth",
+        token,
+        httponly=True,
+    )
+    return response
+
+
+@router.get("/logout")
+def logout():
+    response = JSONResponse({"detail": "Bye!"})
+    response.delete_cookie(key="auth", httponly=True)
+    return response
 
 
 @router.get("/", response_model=UserPublic)
-def info(*, user_id: uuid.UUID | None = None, session: SessionDep, user: CurrentUser):
+def info(*, user_id: str | None = None, session: SessionDep, user: CurrentUser):
     if user_id is None:
         return user
     else:
@@ -53,12 +77,29 @@ def info(*, user_id: uuid.UUID | None = None, session: SessionDep, user: Current
 
 
 @router.delete("/", status_code=status.HTTP_204_NO_CONTENT)
-def info(*, user_id: uuid.UUID | None = None, session: SessionDep, user: CurrentUser):
+def delete(*, user_id: str | None = None, session: SessionDep, user: CurrentUser):
     try:
         if user_id is None:
             delete_user(session, user, user)
         else:
             delete_user(session, user, get_user_by_id(session, user_id))
+    except CRUDNotAllowedException as e:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+
+
+@router.patch("/")
+def update(
+    *,
+    user_id: str | None = None,
+    session: SessionDep,
+    user: CurrentUser,
+    data: UserUpdate,
+):
+    try:
+        if user_id is None:
+            update_user(session, user, user, data)
+        else:
+            update_user(session, user, get_user_by_id(session, user_id), data)
     except CRUDNotAllowedException as e:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
 
@@ -82,3 +123,22 @@ def register(
         )
 
     return user
+
+
+@router.patch("/password")
+def change_password(*, session: SessionDep, user: CurrentUser, data: PasswordChange):
+    try:
+        crud_change_password(session, user, data)
+    except CRUDNotAllowedException as e:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+
+    return {"detail": "OK"}
+
+
+@router.get("/all")
+def all_users(*, session: SessionDep, user: CurrentUser) -> list[UserPublic]:
+    if user.role != UserRole.ADMIN:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin only!")
+
+    users = filter_user_by_username(session)
+    return users

@@ -41,6 +41,9 @@ class ExtensionBase(SQLModel):
     lat: Optional[int] = Field(default=None, ge=-900000000, le=900000000)
     lon: Optional[int] = Field(default=None, ge=-1800000000, le=1800000000)
 
+    public: bool = False
+    type: str
+
     @field_validator("lat", "lon", mode="before")
     @classmethod
     def validate_latlon(cls, value):
@@ -77,12 +80,10 @@ class Extension(ExtensionBase, table=True):
     token: str
     password: str
     info: str
-    public: bool = False
 
     user_id: Optional[uuid.UUID] = Field(default=None, foreign_key="user.id")
     user: Optional["User"] = Relationship(back_populates="extensions")
 
-    type: str
     extra_fields: dict = Field(default_factory=dict, sa_column=Column(JSON))
 
     def get_flavor_model(self) -> BaseModel:
@@ -102,8 +103,15 @@ class Extension(ExtensionBase, table=True):
             print(flavor, flavor.EXTRA_FIELDS)
             flavor.EXTRA_FIELDS.model_validate(self.extra_fields)
 
+        return self
+
     def get_extra_field(self, key):
         return self.extra_fields.get(key, None)
+
+    @computed_field
+    @property
+    def created_by(self) -> str:
+        return self.user.username
 
 
 class ExtensionCreate(BaseModel):

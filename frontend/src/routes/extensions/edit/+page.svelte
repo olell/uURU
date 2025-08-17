@@ -4,7 +4,7 @@
 	import { push_api_error } from '../../../messageService.svelte';
 	import ExtensionEdit from '../../extension_edit.svelte';
 
-	const { id } = page.params;
+	const id = page.url.searchParams.get('extension');
 	let extension = $state<Extension>();
 
 	$effect(() => {

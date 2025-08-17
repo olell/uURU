@@ -39,7 +39,7 @@
 	</thead>
 	<tbody>
 		{#each filteredUser as user (user.id)}
-			<tr onclick={() => goto(resolve(`/admin/user/${user.id}`))}>
+			<tr onclick={() => goto(resolve(`/admin/user/edit?user_id=${user.id}`))}>
 				<td>{user.username}</td>
 				<td>{user.role}</td>
 			</tr>

@@ -12,7 +12,7 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 
-	const { id } = page.params;
+	const id = page.url.searchParams.get('user_id');
 	let user = $state<UserPublic>();
 
 	let updateData = $state<UserUpdate>({});

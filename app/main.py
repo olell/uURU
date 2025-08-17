@@ -141,3 +141,9 @@ else:
     @app.get("/")
     def index():
         return RedirectResponse("/app/")
+
+    app.mount(
+        "/static/telephoning",
+        StaticFiles(directory="static/telephoning"),
+        name="static",
+    )

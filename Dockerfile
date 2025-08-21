@@ -52,4 +52,4 @@ COPY --from=svelte /frontend/build/ /app/frontend/build
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync
 
-CMD ["uvicorn", "app.main:app", "--workers", "4", "--host", "0.0.0.0"]
+CMD ["uvicorn", "app.main:app", "--workers", "1", "--host", "0.0.0.0"]

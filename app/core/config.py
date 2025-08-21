@@ -153,6 +153,9 @@ class Settings(BaseSettings):
     LDAP_BASE_DN: str = "dc=uuru"
     LDAP_USER: str = "cn=admin,dc=uuru"
     LDAP_PASSWORD: str
+    LDAP_PUBLIC_HOST: str = "127.0.0.1"
+    LDAP_PUBLIC_BIND_USER: str = "cn=public,dc=uuru"
+    LDAP_PUBLIC_BIND_PASSWORD: str = "public"
 
     ## BEHAVIOR
 

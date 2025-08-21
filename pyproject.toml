@@ -28,4 +28,4 @@ dependencies = [
 ]
 
 [tool.uv.sources]
-mitel-ommclient2 = { git = "https://github.com/hirnpfirsich/mitel_ommclient2.git", rev = "68650935ca5f33927e0bc1bed85838875b436f76" }
+mitel-ommclient2 = { git = "https://github.com/hirnpfirsich/mitel_ommclient2.git", rev = "e6f73b483f8e0356d4f6bb013bf5ed87dbaf9e69" }

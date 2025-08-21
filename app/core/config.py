@@ -198,9 +198,10 @@ class Settings(BaseSettings):
     LEGACY_FRONTEND: bool = False
 
     OMM_HOST: str | None = None
-    OMM_PORT: int = 12621
+    OMM_PORT: int = 12622
     OMM_USER: str = "omm"
     OMM_PASSWORD: str | None = None
+    OMM_VERIFY_CERT: bool = True
 
     GRANDSTREAM_WIFI_SSID: str | None = None
     GRANDSTREAM_WIFI_PASSWD: str | None = None

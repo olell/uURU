@@ -133,7 +133,7 @@ else:
             relative_path = request.url.path.removeprefix("/app/").strip("/")
             target_file = build_path / relative_path
 
-            if not target_file.exists() or target_file == build_path:
+            if not target_file.is_file() or target_file == build_path:
                 return FileResponse(build_path / "index.html")
 
         return await call_next(request)

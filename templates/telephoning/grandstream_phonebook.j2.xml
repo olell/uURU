@@ -1,0 +1,11 @@
+<AddressBook>
+{% for extension in extensions %}
+    <Contact>
+        <FirstName>{{ extension.name }}</FirstName>
+        <Phone>
+            <phonenumber>{{ extension.extension }}</phonenumber>
+            <accountindex>1</accountindex>
+        </Phone>
+    </Contact>
+{% endfor %}
+</AddressBook>

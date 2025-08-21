@@ -10,7 +10,7 @@ from fastapi import HTTPException, Request
 from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel, Field
 from app.core.db import SessionDep
-from app.models.crud.extension import get_extension_by_extra_field
+from app.models.crud.extension import get_extension_by_extra_field, filter_extensions_by_name
 from app.telephoning.templates import templates
 from app.telephoning.flavor import PhoneFlavor
 
@@ -43,4 +43,10 @@ class Grandstream(PhoneFlavor):
 
             return templates.TemplateResponse(
                 request, "grandstream_wp810.j2.xml", {"extension": extension}
+            )
+
+        @router.get("/phonebook.xml")
+        def get_phonebook(request: Request, session: SessionDep):
+            return templates.TemplateResponse(
+                request, "grandstream_phonebook.j2.xml", {"extensions": filter_extensions_by_name(session, public=True)}
             )

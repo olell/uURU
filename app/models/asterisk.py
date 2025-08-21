@@ -41,7 +41,7 @@ class PSAor(SQLModel, table=True):
     __tablename__ = "ps_aors"
 
     id: str = Field(primary_key=True)
-    max_contacts: int = 1
+    max_contacts: int = 5
 
 
 class PSAuth(SQLModel, table=True):

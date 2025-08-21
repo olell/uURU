@@ -52,6 +52,7 @@ class MitelDECT(PhoneFlavor):
             username=settings.OMM_USER,
             password=settings.OMM_PASSWORD,
             ommsync=True,
+            verify_cert=settings.OMM_VERIFY_CERT
         )
         logger.info("Created OMM client")
 

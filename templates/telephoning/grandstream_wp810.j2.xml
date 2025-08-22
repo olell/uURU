@@ -59,5 +59,24 @@
 
     <!-- Time Display Format. 0 - 12 Hour, 1 - 24 Hour -->
     <P122>1</P122>
+
+    <!-- Enable Phone Book XML Download -->
+    <!-- 0: Disabled -->
+    <!-- 1: HTTP -->
+    <!-- 2: TFTP -->
+    <!-- 3: HTTPS -->
+    <P330>1</P330>
+
+    <!-- Phone Book XML Server Path -->
+    <P331>{{ settings.WEB_HOST }}{{ settings.TELEPHONING_PREFIX }}/grandstream/</P331>
+
+    <!-- Phone Book Download Interval (in minutes)  -->
+    <!-- Possible values: 0, 5 - 720 -->
+    <P332>5</P332>
+
+    <!-- Remove Manually-edited entries on Download -->
+    <!-- 0: No -->
+    <!-- 1: Yes -->
+    <P333>0</P333>
   </config>
 </gs_provision>

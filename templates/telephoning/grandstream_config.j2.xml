@@ -6,7 +6,7 @@
     <!-- Configuration Template Exmaple for testing the converting tool -->
     <!-- Example P values -->
 
-{% if extension.get_flavor_model() == "Grandstream WP810" %}
+{% if extension.type == "Grandstream WP810" %}
     <!-- WIFI Settings-->
     <!-- SSID -->
     <P83000>{{ settings.GRANDSTREAM_WIFI_SSID }}</P83000>

@@ -23,7 +23,7 @@ class GrandstreamExtraFields(BaseModel):
 
 class Grandstream(PhoneFlavor):
 
-    PHONE_TYPES = ["Grandstream WP810"]
+    PHONE_TYPES = ["Grandstream WP810", "Grandstream GXP2160"]
     IS_SPECIAL = True
     EXTRA_FIELDS = GrandstreamExtraFields
     SUPPORTED_CODEC = "g722"
@@ -39,10 +39,10 @@ class Grandstream(PhoneFlavor):
             if not extension:
                 raise HTTPException(404, f"no extension found for mac {mac}")
 
-            logger.info(f"Send provisioning data to WP810 @ {mac}")
+            logger.info(f"Send provisioning data to Grandstream @ {mac}")
 
             return templates.TemplateResponse(
-                request, "grandstream_wp810.j2.xml", {"extension": extension}
+                request, "grandstream_config.j2.xml", {"extension": extension}
             )
 
         @router.get("/phonebook.xml")

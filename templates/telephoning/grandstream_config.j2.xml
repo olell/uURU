@@ -6,6 +6,7 @@
     <!-- Configuration Template Exmaple for testing the converting tool -->
     <!-- Example P values -->
 
+{% if extension.get_flavor_model() == "Grandstream WP810" %}
     <!-- WIFI Settings-->
     <!-- SSID -->
     <P83000>{{ settings.GRANDSTREAM_WIFI_SSID }}</P83000>
@@ -20,6 +21,7 @@
     <!-- SSID hidden ?-->
     <!-- Hidden. 0 - No, 1 - Yes -->
     <P83050>0</P83050>
+{% endif %}
 
     <!-- Account 1: -->
     <!-- Account Active. 0 - No, 1 - Yes. Default value is 0 -->

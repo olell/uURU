@@ -11,9 +11,11 @@ from app.api import user
 from app.api import extension
 from app.api import settings
 from app.api import telephoning
+from app.api import pages
 
 router = APIRouter()
 router.include_router(user.router)
 router.include_router(extension.router)
 router.include_router(settings.router)
 router.include_router(telephoning.router)
+router.include_router(pages.router)

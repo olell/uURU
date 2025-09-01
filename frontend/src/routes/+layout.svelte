@@ -26,9 +26,10 @@
 	import {
 		getSettingsApiV1SettingsGet,
 		infoApiV1UserGet,
-		logoutApiV1UserLogoutGet
+		logoutApiV1UserLogoutGet,
+		getPagesApiV1PagesGet
 	} from '../client';
-	import { isMobile, settings, user_info } from '../sharedState.svelte';
+	import { isMobile, pages, settings, user_info } from '../sharedState.svelte';
 	import Login from './login.svelte';
 	import { messages, push_message } from '../messageService.svelte';
 	import { fade } from 'svelte/transition';
@@ -37,8 +38,9 @@
 	import { navigating } from '$app/stores';
 	import { resolve } from '$app/paths';
 	import { client } from '../client/client.gen';
+	import { dev } from '$app/environment';
 
-	client.setConfig({ ...client.getConfig(), baseUrl: '/' });
+	if (!dev) client.setConfig({ ...client.getConfig(), baseUrl: '/' });
 
 	let { children } = $props();
 	let theme = $state<'dark' | 'light'>('dark');
@@ -66,6 +68,12 @@
 					message: 'Failed to read settings data!'
 				});
 			});
+		getPagesApiV1PagesGet().then(({ data, error }) => {
+			if (error === undefined && data !== undefined) {
+				pages.val = data;
+				console.log(pages);
+			}
+		});
 	});
 
 	// load user info
@@ -153,16 +161,16 @@
 						</DropdownMenu>
 					</Dropdown>
 				{/if}
-				<!-- {% if pages.available() %}
-			<Dropdown>
-				<DropdownToggle nav caret>Pages TODO: Title</DropdownToggle>
-				<DropdownMenu>
-					{#each ...}
-					<DropdownItem href="/pages?page=foo">page title</DropdownItem>
-					{/each}
-				</DropdownMenu>
-			</Dropdown>
-			{% endif %} -->
+				{#if Object.keys(pages.val).length !== 0}
+					<Dropdown>
+						<DropdownToggle nav caret>{settings.val.PAGES_TITLE}</DropdownToggle>
+						<DropdownMenu>
+							{#each Object.keys(pages.val) as title}
+								<DropdownItem href={resolve(`/pages?page=${title}`)}>{title}</DropdownItem>
+							{/each}
+						</DropdownMenu>
+					</Dropdown>
+				{/if}
 				{#if user_info.val && user_info.val.role == 'admin'}
 					<Dropdown>
 						<DropdownToggle nav caret>Admin</DropdownToggle>

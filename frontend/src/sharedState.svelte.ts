@@ -4,3 +4,5 @@ export const user_info = $state<{ val: UserPublic | undefined }>({ val: undefine
 export const settings = $state<{ val: PublicSettings | undefined }>({ val: undefined });
 
 export const isMobile = $state({ val: false });
+
+export const pages = $state<{ val: object }>({ val: {} });

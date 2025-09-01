@@ -792,6 +792,25 @@ export type GetPhoneTypesApiV1TelephoningTypesGetResponses = {
 
 export type GetPhoneTypesApiV1TelephoningTypesGetResponse = GetPhoneTypesApiV1TelephoningTypesGetResponses[keyof GetPhoneTypesApiV1TelephoningTypesGetResponses];
 
+export type GetPagesApiV1PagesGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/pages/';
+};
+
+export type GetPagesApiV1PagesGetResponses = {
+    /**
+     * Response Get Pages Api V1 Pages  Get
+     * Successful Response
+     */
+    200: {
+        [key: string]: string;
+    };
+};
+
+export type GetPagesApiV1PagesGetResponse = GetPagesApiV1PagesGetResponses[keyof GetPagesApiV1PagesGetResponses];
+
 export type IndexGetData = {
     body?: never;
     path?: never;

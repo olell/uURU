@@ -32,6 +32,7 @@ def create_asterisk_extension(
     password: str,
     codec: CODEC = "g722",
     context="pjsip_internal",
+    set_websip_fields: bool = False,
     autocommit=True,
 ) -> tuple[PSAor, PSAuth, PSEndpoint]:
 
@@ -53,6 +54,10 @@ def create_asterisk_extension(
             disallow="all",
             allow=codec,
             callerid=f"{extension_name} <{extension}>",
+            use_avpf="1" if set_websip_fields else None,
+            force_avpf="1" if set_websip_fields else None,
+            ice_support="1" if set_websip_fields else None,
+            rtcp_mux="1" if set_websip_fields else None,
         )
         session_asterisk.add(ps_aor)
         session_asterisk.add(ps_auth)

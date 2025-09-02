@@ -22,6 +22,7 @@ from app.core.db import engine, engine_asterisk, init_asterisk_db, init_db, drop
 from app.core.config import settings
 
 from app.api.main import router as api_router
+from app.telephoning.websip import WebSIPManager
 from app.web.main import router as web_router
 from app.telephoning.main import Telephoning
 
@@ -39,6 +40,9 @@ async def lifespan(app: FastAPI):
     yield
 
     Telephoning.instance().stop()
+
+    with Session(engine_asterisk) as session_asterisk:
+        WebSIPManager.instance().teardown(session_asterisk)
 
     if settings.LIFESPAN_DROP_DB:
         drop_db()

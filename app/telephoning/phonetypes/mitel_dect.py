@@ -52,7 +52,7 @@ class MitelDECT(PhoneFlavor):
             username=settings.OMM_USER,
             password=settings.OMM_PASSWORD,
             ommsync=True,
-            verify_cert=settings.OMM_VERIFY_CERT
+            verify_cert=settings.OMM_VERIFY_CERT,
         )
         logger.info("Created OMM client")
 
@@ -151,9 +151,7 @@ class MitelDECT(PhoneFlavor):
             users = list(self.ommclient.find_users(lambda u: u.num == extension))
 
         if len(users) != 1:
-            raise RuntimeError(
-                f"found {len(users)} for extension {extension.extension} in OMM"
-            )
+            raise RuntimeError(f"found {len(users)} for extension {extension} in OMM")
         return users[0]
 
     def configure_user_on_device(

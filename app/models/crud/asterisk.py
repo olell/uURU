@@ -123,7 +123,7 @@ def delete_asterisk_extension(
         session_asterisk.commit()
 
     logger.info(
-        f"Deleted extension {extension.name} <{extension.extension}> in asterisk DB"
+        f"Deleted extension <{extension.extension}> in asterisk DB"
     )
 
 

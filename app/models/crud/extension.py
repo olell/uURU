@@ -282,7 +282,7 @@ def delete_tmp_extension(
         delete_asterisk_extension(session_asterisk, tmp_extension, autocommit=False)
         session.delete(tmp_extension)
     except Exception as e:
-        logger.exception("Failed creating temporary extension")
+        logger.exception("Failed to delete temporary extension")
         if autocommit:
             session.rollback()
             session_asterisk.rollback()

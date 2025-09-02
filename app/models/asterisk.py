@@ -37,7 +37,7 @@ class PSEndpoint(SQLModel, table=True):
 
     # Fields required for websip
     use_avpf: str | None = None
-    force_avpf: str | None = None
+    force_avp: str | None = None
     ice_support: str | None = None
     rtcp_mux: str | None = None
 

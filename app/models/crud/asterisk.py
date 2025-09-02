@@ -55,7 +55,7 @@ def create_asterisk_extension(
             allow=codec,
             callerid=f"{extension_name} <{extension}>",
             use_avpf="1" if set_websip_fields else None,
-            force_avpf="1" if set_websip_fields else None,
+            force_avp="1" if set_websip_fields else None,
             ice_support="1" if set_websip_fields else None,
             rtcp_mux="1" if set_websip_fields else None,
         )
@@ -128,7 +128,7 @@ def delete_asterisk_extension(
     if autocommit:
         session_asterisk.commit()
 
-    logger.info(f"Deleted extension <{extension.extension}> in asterisk DB")
+    logger.info(f"Deleted extension <{extension}> in asterisk DB")
 
 
 def create_or_update_asterisk_dialplan_entry(

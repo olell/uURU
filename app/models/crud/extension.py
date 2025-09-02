@@ -256,7 +256,9 @@ def delete_extension(
     try:
         flavor.on_extension_delete(session, session_asterisk, user, extension)
         if not flavor.PREVENT_SIP_CREATION:
-            delete_asterisk_extension(session_asterisk, extension, autocommit=False)
+            delete_asterisk_extension(
+                session_asterisk, extension.extension, autocommit=False
+            )
 
         session.delete(extension)
 
@@ -286,7 +288,9 @@ def delete_tmp_extension(
     autocommit=True,
 ) -> None:
     try:
-        delete_asterisk_extension(session_asterisk, tmp_extension, autocommit=False)
+        delete_asterisk_extension(
+            session_asterisk, tmp_extension.extension, autocommit=False
+        )
         session.delete(tmp_extension)
     except Exception as e:
         logger.exception("Failed to delete temporary extension")

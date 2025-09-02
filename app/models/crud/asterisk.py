@@ -113,11 +113,11 @@ def update_asterisk_extension(
 
 
 def delete_asterisk_extension(
-    session_asterisk: Session, extension: Extension, autocommit=True
+    session_asterisk: Session, extension: str, autocommit=True
 ) -> None:
     try:
         for cls in [PSEndpoint, PSAuth, PSAor]:
-            session_asterisk.exec(delete(cls).where(cls.id == extension.extension))
+            session_asterisk.exec(delete(cls).where(cls.id == extension))
 
     except Exception as e:
         logger.exception("Couldn't delete extension in asterisk DB")

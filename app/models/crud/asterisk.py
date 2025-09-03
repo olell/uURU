@@ -83,8 +83,15 @@ def update_asterisk_extension(
     if not ps_endpoint:
         raise ValueError("no such endpoint in asterisk db")
 
+    flavor = Telephoning.get_flavor_by_type(extension.type)
+    codec = None
+    if flavor is not None:
+        codec = flavor.get_codec(extension)
+
     try:
         ps_endpoint.callerid = f"{extension.name} <{extension.extension}>"
+        if codec is not None:
+            ps_endpoint.allow = codec
         session_asterisk.add(ps_endpoint)
     except Exception as e:
         logger.exception("Couldn't update extension in asterisk DB")

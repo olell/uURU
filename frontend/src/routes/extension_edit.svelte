@@ -263,7 +263,12 @@
 	</FormGroup>
 	<FormGroup>
 		<Label>Name *</Label>
-		<Input bind:value={nameInput} placeholder="{user_info.val?.username}'s extension" required />
+		<Input
+			bind:value={nameInput}
+			placeholder="{user_info.val?.username}'s extension"
+			maxlength={selectedType?.max_extension_name_chars}
+			required
+		/>
 	</FormGroup>
 	<FormGroup>
 		<Label>Info</Label>

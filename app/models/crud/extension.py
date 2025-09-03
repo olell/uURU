@@ -119,6 +119,9 @@ def create_extension(
             )
 
     try:
+        if len(extension.name) > flavor.MAX_EXTENSION_NAME_CHARS:
+            raise CRUDNotAllowedException("Extension name too long!")
+
         db_obj = Extension.model_validate(
             extension,
             update={
@@ -198,6 +201,10 @@ def update_extension(
 
         data = update_data.model_dump(exclude_unset=True)
         extension.sqlmodel_update(data)
+
+        if len(extension.name) > flavor.MAX_EXTENSION_NAME_CHARS:
+            raise CRUDNotAllowedException("Extension name too long!")
+
         session.add(extension)
 
         if not flavor.PREVENT_SIP_CREATION:

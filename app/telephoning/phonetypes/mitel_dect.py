@@ -129,7 +129,7 @@ class MitelDECT(PhoneFlavor):
                         extension=tmp_ext_id,
                         extension_name="DECT TMP",
                         password=password,
-                        type="DECT",
+                        codec=self.get_codec(),
                         context="pjsip_dect_tmp",
                     )
 

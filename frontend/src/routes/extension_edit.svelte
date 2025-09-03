@@ -113,7 +113,6 @@
 		let schema: any = selectedType.schema['properties'] as object;
 		Object.keys(schema).forEach((element) => {
 			extra_data[element] = extension?.extra_fields[element] || schema[element].default;
-			console.log('extra', $state.snapshot(extra_data)[element], schema[element]);
 		});
 	});
 

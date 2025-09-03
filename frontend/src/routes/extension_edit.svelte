@@ -110,8 +110,10 @@
 			return;
 		}
 		// create empty extra_data object to bind form elements to
-		Object.keys(selectedType.schema['properties'] as object).forEach((element) => {
-			extra_data[element] = extension?.extra_fields[element] || undefined;
+		let schema: any = selectedType.schema['properties'] as object;
+		Object.keys(schema).forEach((element) => {
+			extra_data[element] = extension?.extra_fields[element] || schema[element].default;
+			console.log('extra', $state.snapshot(extra_data)[element], schema[element]);
 		});
 	});
 

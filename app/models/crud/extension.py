@@ -135,7 +135,7 @@ def create_extension(
                 extension=db_obj.extension,
                 extension_name=db_obj.name,
                 password=db_obj.password,
-                codec=flavor.get_codec(),
+                codec=flavor.get_codec(db_obj),
                 autocommit=False,
             )
         flavor.on_extension_create(session, session_asterisk, user, db_obj)

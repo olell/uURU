@@ -133,12 +133,14 @@ class PhoneFlavor:
         """
         raise NotImplementedError
 
-    def get_codec(self):
-        return (
-            self.SUPPORTED_CODEC
-            if isinstance(self.SUPPORTED_CODEC, str)
-            else self.SUPPORTED_CODEC[type]
-        )
+    def get_codec(self, extension: "Extension | None"):
+        if isinstance(self.SUPPORTED_CODEC, str):
+            return self.SUPPORTED_CODEC
+
+        if extension is None:
+            raise AttributeError("Cannot get codec for unknown phonetype")
+
+        return self.SUPPORTED_CODEC[extension.type]
 
     ## DO NOT OVERWRITE THOSE METHODS
     def is_public(self):

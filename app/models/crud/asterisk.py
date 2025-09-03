@@ -13,6 +13,7 @@ from app.models.asterisk import DialPlanEntry, PSAor, PSAuth, PSEndpoint
 from app.models.crud import CRUDNotAllowedException
 from app.models.extension import Extension
 from app.models.user import User, UserRole
+from app.telephoning.flavor import CODEC
 from app.telephoning.main import Telephoning
 
 logger = getLogger(__name__)
@@ -29,7 +30,7 @@ def create_asterisk_extension(
     extension: str,
     extension_name: str,
     password: str,
-    type: str,
+    codec: CODEC = "g722",
     context="pjsip_internal",
     autocommit=True,
 ) -> tuple[PSAor, PSAuth, PSEndpoint]:
@@ -43,13 +44,6 @@ def create_asterisk_extension(
         )
 
         # TODO: fix hard coded transport
-        flavor = Telephoning.get_flavor_by_type(type)
-        codec = (
-            flavor.SUPPORTED_CODEC
-            if isinstance(flavor.SUPPORTED_CODEC, str)
-            else flavor.SUPPORTED_CODEC[type]
-        )
-
         ps_endpoint = PSEndpoint(
             id=extension,
             transport="transport-udp",
@@ -89,8 +83,15 @@ def update_asterisk_extension(
     if not ps_endpoint:
         raise ValueError("no such endpoint in asterisk db")
 
+    flavor = Telephoning.get_flavor_by_type(extension.type)
+    codec = None
+    if flavor is not None:
+        codec = flavor.get_codec(extension)
+
     try:
         ps_endpoint.callerid = f"{extension.name} <{extension.extension}>"
+        if codec is not None:
+            ps_endpoint.allow = codec
         session_asterisk.add(ps_endpoint)
     except Exception as e:
         logger.exception("Couldn't update extension in asterisk DB")
@@ -122,9 +123,7 @@ def delete_asterisk_extension(
     if autocommit:
         session_asterisk.commit()
 
-    logger.info(
-        f"Deleted extension <{extension.extension}> in asterisk DB"
-    )
+    logger.info(f"Deleted extension <{extension.extension}> in asterisk DB")
 
 
 def create_or_update_asterisk_dialplan_entry(

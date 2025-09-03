@@ -17,6 +17,8 @@ from sqlmodel import Session
 
 from app.core.config import settings
 
+CODEC = Literal["g722", "alaw", "ulaw", "g726", "gsm", "lpc10"]
+
 
 class PhoneFlavor:
     """
@@ -69,7 +71,6 @@ class PhoneFlavor:
     # in this flavor class. If it is a dict, it has to configure values for
     # all phone types from this class.
     # Supported codecs:
-    CODEC = Literal["g722", "alaw", "ulaw", "g726", "gsm", "lpc10"]
     SUPPORTED_CODEC: CODEC | dict[str, CODEC] = "g722"
 
     # If this flag is set to true, on creation of such a phone type no SIP
@@ -131,6 +132,15 @@ class PhoneFlavor:
         If itraises an NotImplementedError it will not be scheduled.
         """
         raise NotImplementedError
+
+    def get_codec(self, extension: "Extension | None"):
+        if isinstance(self.SUPPORTED_CODEC, str):
+            return self.SUPPORTED_CODEC
+
+        if extension is None:
+            raise AttributeError("Cannot get codec for unknown phonetype")
+
+        return self.SUPPORTED_CODEC[extension.type]
 
     ## DO NOT OVERWRITE THOSE METHODS
     def is_public(self):

@@ -21,6 +21,7 @@ class PhoneType(BaseModel):
     schema: Optional[dict] = None
     display_index: int
     name: str
+    max_extension_name_chars: int
 
 
 @router.get("/types")
@@ -33,6 +34,7 @@ def get_phone_types(user: CurrentUser) -> list[PhoneType]:
                     schema=flavor.get_schema(),
                     display_index=flavor.DISPLAY_INDEX,
                     name=phone_type,
+                    max_extension_name_chars=flavor.MAX_EXTENSION_NAME_CHARS,
                 )
                 schemas.append(pt)
     return schemas

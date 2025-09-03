@@ -77,6 +77,9 @@ class PhoneFlavor:
     # account is created in the asterisk database
     PREVENT_SIP_CREATION = False
 
+    # This limits the maximum amount of characters for the extension name
+    MAX_EXTENSION_NAME_CHARS = 20
+
     def on_extension_create(
         self,
         session: Session,

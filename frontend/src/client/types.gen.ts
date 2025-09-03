@@ -230,6 +230,10 @@ export type PhoneType = {
      * Name
      */
     name: string;
+    /**
+     * Max Extension Name Chars
+     */
+    max_extension_name_chars: number;
 };
 
 /**

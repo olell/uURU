@@ -70,7 +70,7 @@ class PhoneFlavor:
     # on this value. If its a string, the value is applied for all phone types
     # in this flavor class. If it is a dict, it has to configure values for
     # all phone types from this class.
-    # Supported codecs:
+    # Supported codecs: "g722", "alaw", "ulaw", "g726", "gsm", "lpc10"
     SUPPORTED_CODEC: CODEC | dict[str, CODEC] = "g722"
 
     # If this flag is set to true, on creation of such a phone type no SIP

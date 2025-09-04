@@ -64,25 +64,47 @@ JOB_INTERVAL: int = 60
 # on this value. If its a string, the value is applied for all phone types
 # in this flavor class. If it is a dict, it has to configure values for
 # all phone types from this class.
-# Supported codecs:
-CODEC = Literal["g722", "alaw", "ulaw", "g726", "gsm", "lpc10"]
+# Supported codecs: "g722", "alaw", "ulaw", "g726", "gsm", "lpc10"
 SUPPORTED_CODEC: CODEC | dict[str, CODEC] = "g722"
 
 # If this flag is set to true, on creation of such a phone type no SIP
 # account is created in the asterisk database
 PREVENT_SIP_CREATION = False
+
+# This limits the maximum amount of characters for the extension name
+MAX_EXTENSION_NAME_CHARS = 20
 ```
 
 And you can override some functions:
 
 ```python
-def on_extension_create(self, session: Session, asterisk_session: Session, extension: "Extension")
+def on_extension_create(
+    self,
+    session: Session,
+    asterisk_session: Session,
+    user: "User",
+    extension: "Extension",
+): ...
 
-def on_extension_update(self, session: Session, asterisk_session: Session, extension: "Extension")
+def on_extension_update(
+    self,
+    session: Session,
+    asterisk_session: Session,
+    user: "User",
+    extension: "Extension",
+): ...
 
-def on_extension_delete(self, session: Session, asterisk_session: Session, extension: "Extension")
+def on_extension_delete(
+    self,
+    session: Session,
+    asterisk_session: Session,
+    user: "User",
+    extension: "Extension",
+): ...
 
 def generate_routes(self, router: APIRouter)
 
 def job(self)
+
+def get_codec(self, extension: "Extension | None")
 ```

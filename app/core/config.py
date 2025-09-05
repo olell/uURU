@@ -154,10 +154,6 @@ class Settings(BaseSettings):
             )
         )
 
-    ## ASTERISK MANAGER
-    AGI_USERNAME: str
-    AGI_SECRET: str
-
     ## LDAP
     LDAP_SERVER: str = "ldap://localhost:389"
     LDAP_BASE_DN: str = "dc=uuru"

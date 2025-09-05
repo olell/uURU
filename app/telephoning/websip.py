@@ -90,7 +90,7 @@ class WebSIPManager(object):
                 free_extension,
                 name,
                 pwd,
-                "SIP",
+                "opus,ulaw",
                 set_websip_fields=True,
             )
         except Exception as e:

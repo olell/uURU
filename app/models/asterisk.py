@@ -36,10 +36,8 @@ class PSEndpoint(SQLModel, table=True):
     send_pai: str = "1"
 
     # Fields required for websip
-    use_avpf: str | None = None
-    force_avp: str | None = None
-    ice_support: str | None = None
-    rtcp_mux: str | None = None
+    dtls_auto_generate_cert: str = "0"
+    webrtc: str = "0"
 
 
 class PSAor(SQLModel, table=True):

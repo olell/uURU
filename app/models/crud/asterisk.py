@@ -54,10 +54,8 @@ def create_asterisk_extension(
             disallow="all",
             allow=codec,
             callerid=f"{extension_name} <{extension}>",
-            use_avpf="1" if set_websip_fields else None,
-            force_avp="1" if set_websip_fields else None,
-            ice_support="1" if set_websip_fields else None,
-            rtcp_mux="1" if set_websip_fields else None,
+            dtls_auto_generate_cert="1" if set_websip_fields else None,
+            webrtc="1" if set_websip_fields else None,
         )
         session_asterisk.add(ps_aor)
         session_asterisk.add(ps_auth)

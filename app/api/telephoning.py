@@ -45,7 +45,9 @@ def get_phone_types(user: CurrentUser) -> list[PhoneType]:
 
 
 @router.get("/websip")
-def create_websip(session_asterisk: SessionAsteriskDep, user: OptionalCurrentUser):
+def create_websip(
+    session_asterisk: SessionAsteriskDep, user: OptionalCurrentUser
+) -> WebSIPExtension:
     if not settings.ENABLE_WEBSIP:
         raise HTTPException(
             status_code=status.HTTP_406_NOT_ACCEPTABLE, detail="WebSIP is disabled"

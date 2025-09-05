@@ -15,7 +15,7 @@
 		type ExtensionBase
 	} from '../client';
 	import { push_api_error, push_message } from '../messageService.svelte';
-	import { isMobile, user_info } from '../sharedState.svelte';
+	import { isMobile, settings, user_info } from '../sharedState.svelte';
 	import { Web } from 'sip.js';
 	import Webphone from '../components/webphone.svelte';
 
@@ -57,8 +57,12 @@
 	let webphoneTarget = $state<ExtensionBase | null>(null);
 
 	const handleWebSIP = (target: ExtensionBase) => {
-		showWebphone = true;
-		webphoneTarget = target;
+		if (settings.val?.ENABLE_WEBSIP) {
+			showWebphone = true;
+			webphoneTarget = target;
+		} else {
+			alert('Direct calling is disabled in this µURU instance!');
+		}
 	};
 </script>
 
@@ -129,4 +133,6 @@
 	</ListGroup>
 {/if}
 
-<Webphone bind:isOpen={showWebphone} bind:target={webphoneTarget} />
+{#if settings.val?.ENABLE_WEBSIP}
+	<Webphone bind:isOpen={showWebphone} bind:target={webphoneTarget} />
+{/if}

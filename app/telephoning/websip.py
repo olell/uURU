@@ -51,6 +51,7 @@ class WebSIPManager(object):
     def delete_extension(self, session_asterisk: Session, extension: WebSIPExtension):
         try:
             delete_asterisk_extension(session_asterisk, extension.extension)
+            self.active_extensions.pop(self.active_extensions.index(extension))
         except Exception as e:
             logger.error(
                 f"Failed to delete WebSIP extension from asterisk DB: {str(e)}"

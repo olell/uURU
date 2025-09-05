@@ -39,6 +39,7 @@
 		"@sveltestrap/sveltestrap": "^7.1.0",
 		"ajv": "^8.17.1",
 		"halfmoon": "^2.0.2",
+		"sip.js": "^0.21.2",
 		"sveaflet": "^0.1.4"
 	}
 }

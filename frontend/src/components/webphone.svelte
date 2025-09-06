@@ -73,6 +73,13 @@
 		},
 		onCallHold: (held: boolean): void => {
 			console.log(`Call hold ${held}`);
+			if (held) {
+				statusText = 'Your call is on hold';
+				statusColor = 'warning';
+			} else {
+				statusText = `Talking to ${target.name}`;
+				statusColor = 'success';
+			}
 		}
 	};
 

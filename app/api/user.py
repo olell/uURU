@@ -6,17 +6,17 @@ Licensed under the MIT license. See LICENSE file in the project root for details
 """
 
 from typing import Annotated
-import uuid
 from fastapi import APIRouter, Body, HTTPException, status
-from datetime import timedelta
+from datetime import datetime, timedelta
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 import sqlalchemy
+from sqlmodel import select, delete as sql_delete
 
 from app.api.deps import CurrentUser, OptionalCurrentUser
 from app.core.db import SessionDep
 from app.core.config import settings
-from app.core.security import create_access_token
+from app.core.security import create_access_token, generate_invite_code
 from app.models.crud import CRUDNotAllowedException
 from app.models.crud.user import (
     authenticate_user,
@@ -28,6 +28,9 @@ from app.models.crud.user import (
 )
 from app.models.crud.user import change_password as crud_change_password
 from app.models.user import (
+    Invite,
+    InviteCreate,
+    InviteVariant,
     PasswordChange,
     Token,
     UserPublic,
@@ -112,10 +115,10 @@ def register(
 ):
     try:
         user = create_user(session, executing, new)
-    except CRUDNotAllowedException:
+    except CRUDNotAllowedException as e:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="You're not allowed to create this user",
+            detail=f"You're not allowed to create this user ({str(e)})",
         )
     except sqlalchemy.exc.IntegrityError:
         raise HTTPException(
@@ -142,3 +145,48 @@ def all_users(*, session: SessionDep, user: CurrentUser) -> list[UserPublic]:
 
     users = filter_user_by_username(session)
     return users
+
+
+@router.post("/invite")
+def create_invite(
+    *, session: SessionDep, user: CurrentUser, data: InviteCreate
+) -> Invite:
+    if user.role != UserRole.ADMIN:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin only!")
+
+    code = generate_invite_code()
+    invite = Invite(
+        invite=code,
+        variant=data.variant,
+        use_count=None if data.variant == InviteVariant.TIME else 0,
+        max_uses=data.max_uses,
+        valid_until=(
+            None
+            if data.variant == InviteVariant.COUNT
+            else datetime.now()
+            + timedelta(days=data.valid_days, hours=data.valid_hours)
+        ),
+    )
+    session.add(invite)
+    session.commit()
+
+    return invite
+
+
+@router.delete("/invite", status_code=status.HTTP_204_NO_CONTENT)
+def delete_invite(*, session: SessionDep, user: CurrentUser, invite: str):
+    if user.role != UserRole.ADMIN:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin only!")
+
+    session.exec(sql_delete(Invite).where(Invite.invite == invite))
+    session.commit()
+    return {}
+
+
+@router.get("/invite")
+def get_invites(*, session: SessionDep, user: CurrentUser) -> list[Invite]:
+    if user.role != UserRole.ADMIN:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin only!")
+
+    invites = session.exec(select(Invite)).all()
+    return list(invites)

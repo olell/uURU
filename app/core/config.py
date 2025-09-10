@@ -45,6 +45,7 @@ class PublicSettings(BaseModel):
     SITE_LON: float
     ENABLE_PAGES: bool
     PAGES_TITLE: str
+    LIMIT_REGISTRATION: bool
 
 
 class Settings(BaseSettings):
@@ -61,6 +62,7 @@ class Settings(BaseSettings):
     DEFAULT_ROOT_PASSWORD: str = "rootpasswd"
     SECRET_KEY: str = secrets.token_urlsafe(32)
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 11520  # 8 days
+    LIMIT_REGISTRATION: bool = False
 
     ## NETWORK
     WEB_PREFIX: str = ""

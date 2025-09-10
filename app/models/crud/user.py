@@ -9,7 +9,15 @@ from logging import getLogger
 from sqlmodel import Session, col, select
 import uuid
 
-from app.models.user import PasswordChange, User, UserCreate, UserRole, UserUpdate
+from app.core.config import settings
+from app.models.user import (
+    Invite,
+    PasswordChange,
+    User,
+    UserCreate,
+    UserRole,
+    UserUpdate,
+)
 from app.models.crud import CRUDNotAllowedException
 
 from app.core.security import get_password_hash, verify_password
@@ -24,6 +32,21 @@ def create_user(
     created_by_system=False,
     autocommit=True,
 ) -> User:
+
+    if settings.LIMIT_REGISTRATION:
+        if new_user.invite is None:
+            raise CRUDNotAllowedException(
+                "An invite code is required to create a new account!"
+            )
+
+        invite = session.exec(
+            select(Invite).where(Invite.invite == new_user.invite.lower())
+        ).first()
+        if invite is None or not invite.is_valid():
+            raise CRUDNotAllowedException("The invite code is not valid!")
+
+        invite.use()
+        session.add(invite)
 
     if new_user.role != UserRole.USER and not created_by_system:
         if creating_user is None or creating_user.role != UserRole.ADMIN:

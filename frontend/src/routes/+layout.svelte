@@ -177,6 +177,9 @@
 						<DropdownMenu>
 							<DropdownItem href={resolve('/admin/user')}>Users</DropdownItem>
 							<DropdownItem href={resolve('/admin/extensions')}>Extensions</DropdownItem>
+							{#if settings.val.LIMIT_REGISTRATION}
+								<DropdownItem href={resolve('/admin/invites')}>Invites</DropdownItem>
+							{/if}
 						</DropdownMenu>
 					</Dropdown>
 				{/if}

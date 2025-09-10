@@ -199,6 +199,57 @@ export type HttpValidationError = {
 };
 
 /**
+ * Invite
+ */
+export type Invite = {
+    /**
+     * Id
+     */
+    id?: string;
+    /**
+     * Invite
+     */
+    invite: string;
+    variant?: InviteVariant;
+    /**
+     * Use Count
+     */
+    use_count?: number | null;
+    /**
+     * Max Uses
+     */
+    max_uses?: number | null;
+    /**
+     * Valid Until
+     */
+    valid_until?: string | null;
+};
+
+/**
+ * InviteCreate
+ */
+export type InviteCreate = {
+    variant: InviteVariant;
+    /**
+     * Max Uses
+     */
+    max_uses?: number | null;
+    /**
+     * Valid Days
+     */
+    valid_days?: number | null;
+    /**
+     * Valid Hours
+     */
+    valid_hours?: number | null;
+};
+
+/**
+ * InviteVariant
+ */
+export type InviteVariant = 'count' | 'time' | 'time+count';
+
+/**
  * PasswordChange
  */
 export type PasswordChange = {
@@ -295,6 +346,10 @@ export type PublicSettings = {
      * Pages Title
      */
     PAGES_TITLE: string;
+    /**
+     * Limit Registration
+     */
+    LIMIT_REGISTRATION: boolean;
 };
 
 /**
@@ -320,6 +375,10 @@ export type UserCreate = {
      * Password
      */
     password: string;
+    /**
+     * Invite
+     */
+    invite?: string | null;
 };
 
 /**
@@ -566,6 +625,78 @@ export type AllUsersApiV1UserAllGetResponses = {
 };
 
 export type AllUsersApiV1UserAllGetResponse = AllUsersApiV1UserAllGetResponses[keyof AllUsersApiV1UserAllGetResponses];
+
+export type DeleteInviteApiV1UserInviteDeleteData = {
+    body?: never;
+    path?: never;
+    query: {
+        /**
+         * Invite
+         */
+        invite: string;
+    };
+    url: '/api/v1/user/invite';
+};
+
+export type DeleteInviteApiV1UserInviteDeleteErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DeleteInviteApiV1UserInviteDeleteError = DeleteInviteApiV1UserInviteDeleteErrors[keyof DeleteInviteApiV1UserInviteDeleteErrors];
+
+export type DeleteInviteApiV1UserInviteDeleteResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type DeleteInviteApiV1UserInviteDeleteResponse = DeleteInviteApiV1UserInviteDeleteResponses[keyof DeleteInviteApiV1UserInviteDeleteResponses];
+
+export type GetInvitesApiV1UserInviteGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/user/invite';
+};
+
+export type GetInvitesApiV1UserInviteGetResponses = {
+    /**
+     * Response Get Invites Api V1 User Invite Get
+     * Successful Response
+     */
+    200: Array<Invite>;
+};
+
+export type GetInvitesApiV1UserInviteGetResponse = GetInvitesApiV1UserInviteGetResponses[keyof GetInvitesApiV1UserInviteGetResponses];
+
+export type CreateInviteApiV1UserInvitePostData = {
+    body: InviteCreate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/user/invite';
+};
+
+export type CreateInviteApiV1UserInvitePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateInviteApiV1UserInvitePostError = CreateInviteApiV1UserInvitePostErrors[keyof CreateInviteApiV1UserInvitePostErrors];
+
+export type CreateInviteApiV1UserInvitePostResponses = {
+    /**
+     * Successful Response
+     */
+    200: Invite;
+};
+
+export type CreateInviteApiV1UserInvitePostResponse = CreateInviteApiV1UserInvitePostResponses[keyof CreateInviteApiV1UserInvitePostResponses];
 
 export type CreateApiV1ExtensionPostData = {
     body: ExtensionCreate;

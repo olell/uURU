@@ -7,7 +7,7 @@
 
 	let { isOpen = $bindable() } = $props();
 
-	let showRegister = $state(false);
+	let showRegister = $state(window.location.hash.includes('register'));
 
 	const toggle = () => (isOpen = !isOpen);
 	let username = $state('');

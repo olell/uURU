@@ -45,7 +45,9 @@
 	let { children } = $props();
 	let theme = $state<'dark' | 'light'>('dark');
 
-	let showLogin = $state(false);
+	let showLogin = $state(
+		window.location.hash.includes('register') || window.location.hash.includes('login')
+	);
 
 	let navbarOpen = $state(false);
 

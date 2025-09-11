@@ -23,6 +23,17 @@
 	let password_rep = $state('');
 
 	let invite = $state('');
+	let inviteDisabled = $state(false);
+
+	$effect(() => {
+		if (window.location.hash.includes('#register?invite=')) {
+			invite = window.location.hash.split('#register?invite=')[1];
+			inviteDisabled = true;
+		} else {
+			invite = '';
+			inviteDisabled = false;
+		}
+	});
 
 	let passwords_match = $derived<boolean | undefined>(
 		password ? password == password_rep : undefined
@@ -62,6 +73,7 @@
 		password_rep = '';
 
 		isOpen = false;
+		window.location.hash = '';
 	}
 </script>
 
@@ -80,7 +92,13 @@
 			{#if settings.val?.LIMIT_REGISTRATION}
 				<hr />
 				<FormGroup floating label="Invite Code">
-					<Input bind:value={invite} type="text" required minlength={10} />
+					<Input
+						disabled={inviteDisabled}
+						bind:value={invite}
+						type="text"
+						required
+						minlength={10}
+					/>
 					<FormText>
 						This instance requires an invite code to create a new account, please ask an
 						administrator to obtain such a code!

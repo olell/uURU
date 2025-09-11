@@ -4,244 +4,244 @@
  * Credentials
  */
 export type Credentials = {
-	/**
-	 * Username
-	 */
-	username: string;
-	/**
-	 * Password
-	 */
-	password: string;
+    /**
+     * Username
+     */
+    username: string;
+    /**
+     * Password
+     */
+    password: string;
 };
 
 /**
  * Extension
  */
 export type Extension = {
-	/**
-	 * Extension
-	 */
-	extension: string;
-	/**
-	 * Name
-	 */
-	name: string;
-	/**
-	 * Location Name
-	 */
-	location_name?: string | null;
-	/**
-	 * Lat
-	 */
-	lat?: number | null;
-	/**
-	 * Lon
-	 */
-	lon?: number | null;
-	/**
-	 * Public
-	 */
-	public?: boolean;
-	/**
-	 * Type
-	 */
-	type: string;
-	/**
-	 * Token
-	 */
-	token: string;
-	/**
-	 * Password
-	 */
-	password: string;
-	/**
-	 * Info
-	 */
-	info: string;
-	/**
-	 * User Id
-	 */
-	user_id?: string | null;
-	/**
-	 * Extra Fields
-	 */
-	extra_fields?: {
-		[key: string]: unknown;
-	};
-	/**
-	 * Created By
-	 */
-	readonly created_by: string;
+    /**
+     * Extension
+     */
+    extension: string;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Location Name
+     */
+    location_name?: string | null;
+    /**
+     * Lat
+     */
+    lat?: number | null;
+    /**
+     * Lon
+     */
+    lon?: number | null;
+    /**
+     * Public
+     */
+    public?: boolean;
+    /**
+     * Type
+     */
+    type: string;
+    /**
+     * Token
+     */
+    token: string;
+    /**
+     * Password
+     */
+    password: string;
+    /**
+     * Info
+     */
+    info: string;
+    /**
+     * User Id
+     */
+    user_id?: string | null;
+    /**
+     * Extra Fields
+     */
+    extra_fields?: {
+        [key: string]: unknown;
+    };
+    /**
+     * Created By
+     */
+    readonly created_by: string;
 };
 
 /**
  * ExtensionBase
  */
 export type ExtensionBase = {
-	/**
-	 * Extension
-	 */
-	extension: string;
-	/**
-	 * Name
-	 */
-	name: string;
-	/**
-	 * Location Name
-	 */
-	location_name?: string | null;
-	/**
-	 * Lat
-	 */
-	lat?: number | null;
-	/**
-	 * Lon
-	 */
-	lon?: number | null;
-	/**
-	 * Public
-	 */
-	public?: boolean;
-	/**
-	 * Type
-	 */
-	type: string;
+    /**
+     * Extension
+     */
+    extension: string;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Location Name
+     */
+    location_name?: string | null;
+    /**
+     * Lat
+     */
+    lat?: number | null;
+    /**
+     * Lon
+     */
+    lon?: number | null;
+    /**
+     * Public
+     */
+    public?: boolean;
+    /**
+     * Type
+     */
+    type: string;
 };
 
 /**
  * ExtensionCreate
  */
 export type ExtensionCreate = {
-	/**
-	 * Extension
-	 */
-	extension: string;
-	/**
-	 * Name
-	 */
-	name: string;
-	/**
-	 * Info
-	 */
-	info: string;
-	/**
-	 * Public
-	 */
-	public?: boolean;
-	/**
-	 * Type
-	 */
-	type: string;
-	/**
-	 * Extra Fields
-	 */
-	extra_fields?: {
-		[key: string]: unknown;
-	};
-	/**
-	 * Location Name
-	 */
-	location_name?: string | null;
-	/**
-	 * Lat
-	 */
-	lat?: number | null;
-	/**
-	 * Lon
-	 */
-	lon?: number | null;
+    /**
+     * Extension
+     */
+    extension: string;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Info
+     */
+    info: string;
+    /**
+     * Public
+     */
+    public?: boolean;
+    /**
+     * Type
+     */
+    type: string;
+    /**
+     * Extra Fields
+     */
+    extra_fields?: {
+        [key: string]: unknown;
+    };
+    /**
+     * Location Name
+     */
+    location_name?: string | null;
+    /**
+     * Lat
+     */
+    lat?: number | null;
+    /**
+     * Lon
+     */
+    lon?: number | null;
 };
 
 /**
  * ExtensionUpdate
  */
 export type ExtensionUpdate = {
-	/**
-	 * Name
-	 */
-	name?: string | null;
-	/**
-	 * Info
-	 */
-	info?: string | null;
-	/**
-	 * Public
-	 */
-	public?: boolean | null;
-	/**
-	 * Location Name
-	 */
-	location_name?: string | null;
-	/**
-	 * Lat
-	 */
-	lat?: number | null;
-	/**
-	 * Lon
-	 */
-	lon?: number | null;
-	/**
-	 * Extra Fields
-	 */
-	extra_fields?: {
-		[key: string]: unknown;
-	};
+    /**
+     * Name
+     */
+    name?: string | null;
+    /**
+     * Info
+     */
+    info?: string | null;
+    /**
+     * Public
+     */
+    public?: boolean | null;
+    /**
+     * Location Name
+     */
+    location_name?: string | null;
+    /**
+     * Lat
+     */
+    lat?: number | null;
+    /**
+     * Lon
+     */
+    lon?: number | null;
+    /**
+     * Extra Fields
+     */
+    extra_fields?: {
+        [key: string]: unknown;
+    };
 };
 
 /**
  * HTTPValidationError
  */
 export type HttpValidationError = {
-	/**
-	 * Detail
-	 */
-	detail?: Array<ValidationError>;
+    /**
+     * Detail
+     */
+    detail?: Array<ValidationError>;
 };
 
 /**
  * Invite
  */
 export type Invite = {
-	/**
-	 * Id
-	 */
-	id?: string;
-	/**
-	 * Invite
-	 */
-	invite: string;
-	variant?: InviteVariant;
-	/**
-	 * Use Count
-	 */
-	use_count?: number | null;
-	/**
-	 * Max Uses
-	 */
-	max_uses?: number | null;
-	/**
-	 * Valid Until
-	 */
-	valid_until?: string | null;
+    /**
+     * Id
+     */
+    id?: string;
+    /**
+     * Invite
+     */
+    invite: string;
+    variant?: InviteVariant;
+    /**
+     * Use Count
+     */
+    use_count?: number | null;
+    /**
+     * Max Uses
+     */
+    max_uses?: number | null;
+    /**
+     * Valid Until
+     */
+    valid_until?: string | null;
 };
 
 /**
  * InviteCreate
  */
 export type InviteCreate = {
-	variant: InviteVariant;
-	/**
-	 * Max Uses
-	 */
-	max_uses?: number | null;
-	/**
-	 * Valid Days
-	 */
-	valid_days?: number | null;
-	/**
-	 * Valid Hours
-	 */
-	valid_hours?: number | null;
+    variant: InviteVariant;
+    /**
+     * Max Uses
+     */
+    max_uses?: number | null;
+    /**
+     * Valid Days
+     */
+    valid_days?: number | null;
+    /**
+     * Valid Hours
+     */
+    valid_hours?: number | null;
 };
 
 /**
@@ -253,140 +253,166 @@ export type InviteVariant = 'count' | 'time' | 'time+count';
  * PasswordChange
  */
 export type PasswordChange = {
-	/**
-	 * Current Password
-	 */
-	current_password: string;
-	/**
-	 * New Password
-	 */
-	new_password: string;
+    /**
+     * Current Password
+     */
+    current_password: string;
+    /**
+     * New Password
+     */
+    new_password: string;
 };
 
 /**
  * PhoneType
  */
 export type PhoneType = {
-	/**
-	 * Schema
-	 */
-	schema?: {
-		[key: string]: unknown;
-	} | null;
-	/**
-	 * Display Index
-	 */
-	display_index: number;
-	/**
-	 * Name
-	 */
-	name: string;
-	/**
-	 * Max Extension Name Chars
-	 */
-	max_extension_name_chars: number;
+    /**
+     * Schema
+     */
+    schema?: {
+        [key: string]: unknown;
+    } | null;
+    /**
+     * Display Index
+     */
+    display_index: number;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Max Extension Name Chars
+     */
+    max_extension_name_chars: number;
 };
 
 /**
  * PublicSettings
  */
 export type PublicSettings = {
-	/**
-	 * Web Host
-	 */
-	WEB_HOST: string;
-	/**
-	 * Asterisk Host
-	 */
-	ASTERISK_HOST: string;
-	/**
-	 * Ldap Server
-	 */
-	LDAP_SERVER: string;
-	/**
-	 * Extension Digits
-	 */
-	EXTENSION_DIGITS: number;
-	/**
-	 * Reserved Extensions
-	 */
-	RESERVED_EXTENSIONS: Array<number | [number, number]>;
-	/**
-	 * Reserved Name Prefixes
-	 */
-	RESERVED_NAME_PREFIXES: Array<string>;
-	/**
-	 * Site Name
-	 */
-	SITE_NAME: string;
-	/**
-	 * Site Slogan
-	 */
-	SITE_SLOGAN: string;
-	/**
-	 * Show Site Slogan
-	 */
-	SHOW_SITE_SLOGAN: boolean;
-	/**
-	 * Site Lat
-	 */
-	SITE_LAT: number;
-	/**
-	 * Site Lon
-	 */
-	SITE_LON: number;
-	/**
-	 * Enable Pages
-	 */
-	ENABLE_PAGES: boolean;
-	/**
-	 * Pages Title
-	 */
-	PAGES_TITLE: string;
+    /**
+     * Web Host
+     */
+    WEB_HOST: string;
+    /**
+     * Asterisk Host
+     */
+    ASTERISK_HOST: string;
+    /**
+     * Ldap Server
+     */
+    LDAP_SERVER: string;
+    /**
+     * Extension Digits
+     */
+    EXTENSION_DIGITS: number;
+    /**
+     * Reserved Extensions
+     */
+    RESERVED_EXTENSIONS: Array<number | [
+        number,
+        number
+    ]>;
+    /**
+     * Reserved Name Prefixes
+     */
+    RESERVED_NAME_PREFIXES: Array<string>;
+    /**
+     * Site Name
+     */
+    SITE_NAME: string;
+    /**
+     * Site Slogan
+     */
+    SITE_SLOGAN: string;
+    /**
+     * Show Site Slogan
+     */
+    SHOW_SITE_SLOGAN: boolean;
+    /**
+     * Site Lat
+     */
+    SITE_LAT: number;
+    /**
+     * Site Lon
+     */
+    SITE_LON: number;
+    /**
+     * Enable Pages
+     */
+    ENABLE_PAGES: boolean;
+    /**
+     * Pages Title
+     */
+    PAGES_TITLE: string;
+    /**
+     * Limit Registration
+     */
+    LIMIT_REGISTRATION: boolean;
+    /**
+     * Enable Websip
+     */
+    ENABLE_WEBSIP: boolean;
+    /**
+     * Websip Public
+     */
+    WEBSIP_PUBLIC: boolean;
+    /**
+     * Websip Extension Range
+     */
+    WEBSIP_EXTENSION_RANGE: [
+        number,
+        number
+    ];
+    /**
+     * Websip Ws Host
+     */
+    WEBSIP_WS_HOST: string;
 };
 
 /**
  * Token
  */
 export type Token = {
-	/**
-	 * Token
-	 */
-	token: string;
+    /**
+     * Token
+     */
+    token: string;
 };
 
 /**
  * UserCreate
  */
 export type UserCreate = {
-	/**
-	 * Username
-	 */
-	username: string;
-	role?: UserRole;
-	/**
-	 * Password
-	 */
-	password: string;
-	/**
-	 * Invite
-	 */
-	invite?: string | null;
+    /**
+     * Username
+     */
+    username: string;
+    role?: UserRole;
+    /**
+     * Password
+     */
+    password: string;
+    /**
+     * Invite
+     */
+    invite?: string | null;
 };
 
 /**
  * UserPublic
  */
 export type UserPublic = {
-	/**
-	 * Username
-	 */
-	username: string;
-	role?: UserRole;
-	/**
-	 * Id
-	 */
-	id: string;
+    /**
+     * Username
+     */
+    username: string;
+    role?: UserRole;
+    /**
+     * Id
+     */
+    id: string;
 };
 
 /**
@@ -398,808 +424,774 @@ export type UserRole = 'admin' | 'user';
  * UserUpdate
  */
 export type UserUpdate = {
-	/**
-	 * Username
-	 */
-	username?: string | null;
-	/**
-	 * Password
-	 */
-	password?: string | null;
-	role?: UserRole | null;
+    /**
+     * Username
+     */
+    username?: string | null;
+    /**
+     * Password
+     */
+    password?: string | null;
+    role?: UserRole | null;
 };
 
 /**
  * ValidationError
  */
 export type ValidationError = {
-	/**
-	 * Location
-	 */
-	loc: Array<string | number>;
-	/**
-	 * Message
-	 */
-	msg: string;
-	/**
-	 * Error Type
-	 */
-	type: string;
+    /**
+     * Location
+     */
+    loc: Array<string | number>;
+    /**
+     * Message
+     */
+    msg: string;
+    /**
+     * Error Type
+     */
+    type: string;
 };
 
 /**
  * WebSIPExtension
  */
 export type WebSipExtension = {
-	/**
-	 * Aor
-	 */
-	aor: string;
-	/**
-	 * Extension
-	 */
-	extension: string;
-	/**
-	 * Auth User
-	 */
-	auth_user: string;
-	/**
-	 * Auth Pass
-	 */
-	auth_pass: string;
-	/**
-	 * Display Name
-	 */
-	display_name: string;
-	/**
-	 * Created At
-	 */
-	created_at: string;
+    /**
+     * Aor
+     */
+    aor: string;
+    /**
+     * Extension
+     */
+    extension: string;
+    /**
+     * Auth User
+     */
+    auth_user: string;
+    /**
+     * Auth Pass
+     */
+    auth_pass: string;
+    /**
+     * Display Name
+     */
+    display_name: string;
+    /**
+     * Created At
+     */
+    created_at: string;
 };
 
 export type LoginApiV1UserLoginPostData = {
-	body: Credentials;
-	path?: never;
-	query?: never;
-	url: '/api/v1/user/login';
+    body: Credentials;
+    path?: never;
+    query?: never;
+    url: '/api/v1/user/login';
 };
 
 export type LoginApiV1UserLoginPostErrors = {
-	/**
-	 * Validation Error
-	 */
-	422: HttpValidationError;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
 };
 
-export type LoginApiV1UserLoginPostError =
-	LoginApiV1UserLoginPostErrors[keyof LoginApiV1UserLoginPostErrors];
+export type LoginApiV1UserLoginPostError = LoginApiV1UserLoginPostErrors[keyof LoginApiV1UserLoginPostErrors];
 
 export type LoginApiV1UserLoginPostResponses = {
-	/**
-	 * Successful Response
-	 */
-	200: Token;
+    /**
+     * Successful Response
+     */
+    200: Token;
 };
 
-export type LoginApiV1UserLoginPostResponse =
-	LoginApiV1UserLoginPostResponses[keyof LoginApiV1UserLoginPostResponses];
+export type LoginApiV1UserLoginPostResponse = LoginApiV1UserLoginPostResponses[keyof LoginApiV1UserLoginPostResponses];
 
 export type LogoutApiV1UserLogoutGetData = {
-	body?: never;
-	path?: never;
-	query?: never;
-	url: '/api/v1/user/logout';
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/user/logout';
 };
 
 export type LogoutApiV1UserLogoutGetResponses = {
-	/**
-	 * Successful Response
-	 */
-	200: unknown;
+    /**
+     * Successful Response
+     */
+    200: unknown;
 };
 
 export type DeleteApiV1UserDeleteData = {
-	body?: never;
-	path?: never;
-	query?: {
-		/**
-		 * User Id
-		 */
-		user_id?: string | null;
-	};
-	url: '/api/v1/user/';
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * User Id
+         */
+        user_id?: string | null;
+    };
+    url: '/api/v1/user/';
 };
 
 export type DeleteApiV1UserDeleteErrors = {
-	/**
-	 * Validation Error
-	 */
-	422: HttpValidationError;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
 };
 
-export type DeleteApiV1UserDeleteError =
-	DeleteApiV1UserDeleteErrors[keyof DeleteApiV1UserDeleteErrors];
+export type DeleteApiV1UserDeleteError = DeleteApiV1UserDeleteErrors[keyof DeleteApiV1UserDeleteErrors];
 
 export type DeleteApiV1UserDeleteResponses = {
-	/**
-	 * Successful Response
-	 */
-	204: void;
+    /**
+     * Successful Response
+     */
+    204: void;
 };
 
-export type DeleteApiV1UserDeleteResponse =
-	DeleteApiV1UserDeleteResponses[keyof DeleteApiV1UserDeleteResponses];
+export type DeleteApiV1UserDeleteResponse = DeleteApiV1UserDeleteResponses[keyof DeleteApiV1UserDeleteResponses];
 
 export type InfoApiV1UserGetData = {
-	body?: never;
-	path?: never;
-	query?: {
-		/**
-		 * User Id
-		 */
-		user_id?: string | null;
-	};
-	url: '/api/v1/user/';
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * User Id
+         */
+        user_id?: string | null;
+    };
+    url: '/api/v1/user/';
 };
 
 export type InfoApiV1UserGetErrors = {
-	/**
-	 * Validation Error
-	 */
-	422: HttpValidationError;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
 };
 
 export type InfoApiV1UserGetError = InfoApiV1UserGetErrors[keyof InfoApiV1UserGetErrors];
 
 export type InfoApiV1UserGetResponses = {
-	/**
-	 * Successful Response
-	 */
-	200: UserPublic;
+    /**
+     * Successful Response
+     */
+    200: UserPublic;
 };
 
 export type InfoApiV1UserGetResponse = InfoApiV1UserGetResponses[keyof InfoApiV1UserGetResponses];
 
 export type UpdateApiV1UserPatchData = {
-	body: UserUpdate;
-	path?: never;
-	query?: {
-		/**
-		 * User Id
-		 */
-		user_id?: string | null;
-	};
-	url: '/api/v1/user/';
+    body: UserUpdate;
+    path?: never;
+    query?: {
+        /**
+         * User Id
+         */
+        user_id?: string | null;
+    };
+    url: '/api/v1/user/';
 };
 
 export type UpdateApiV1UserPatchErrors = {
-	/**
-	 * Validation Error
-	 */
-	422: HttpValidationError;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
 };
 
-export type UpdateApiV1UserPatchError =
-	UpdateApiV1UserPatchErrors[keyof UpdateApiV1UserPatchErrors];
+export type UpdateApiV1UserPatchError = UpdateApiV1UserPatchErrors[keyof UpdateApiV1UserPatchErrors];
 
 export type UpdateApiV1UserPatchResponses = {
-	/**
-	 * Successful Response
-	 */
-	200: unknown;
+    /**
+     * Successful Response
+     */
+    200: unknown;
 };
 
 export type RegisterApiV1UserRegisterPostData = {
-	body: UserCreate;
-	path?: never;
-	query?: never;
-	url: '/api/v1/user/register';
+    body: UserCreate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/user/register';
 };
 
 export type RegisterApiV1UserRegisterPostErrors = {
-	/**
-	 * Validation Error
-	 */
-	422: HttpValidationError;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
 };
 
-export type RegisterApiV1UserRegisterPostError =
-	RegisterApiV1UserRegisterPostErrors[keyof RegisterApiV1UserRegisterPostErrors];
+export type RegisterApiV1UserRegisterPostError = RegisterApiV1UserRegisterPostErrors[keyof RegisterApiV1UserRegisterPostErrors];
 
 export type RegisterApiV1UserRegisterPostResponses = {
-	/**
-	 * Successful Response
-	 */
-	201: UserPublic;
+    /**
+     * Successful Response
+     */
+    201: UserPublic;
 };
 
-export type RegisterApiV1UserRegisterPostResponse =
-	RegisterApiV1UserRegisterPostResponses[keyof RegisterApiV1UserRegisterPostResponses];
+export type RegisterApiV1UserRegisterPostResponse = RegisterApiV1UserRegisterPostResponses[keyof RegisterApiV1UserRegisterPostResponses];
 
 export type ChangePasswordApiV1UserPasswordPatchData = {
-	body: PasswordChange;
-	path?: never;
-	query?: never;
-	url: '/api/v1/user/password';
+    body: PasswordChange;
+    path?: never;
+    query?: never;
+    url: '/api/v1/user/password';
 };
 
 export type ChangePasswordApiV1UserPasswordPatchErrors = {
-	/**
-	 * Validation Error
-	 */
-	422: HttpValidationError;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
 };
 
-export type ChangePasswordApiV1UserPasswordPatchError =
-	ChangePasswordApiV1UserPasswordPatchErrors[keyof ChangePasswordApiV1UserPasswordPatchErrors];
+export type ChangePasswordApiV1UserPasswordPatchError = ChangePasswordApiV1UserPasswordPatchErrors[keyof ChangePasswordApiV1UserPasswordPatchErrors];
 
 export type ChangePasswordApiV1UserPasswordPatchResponses = {
-	/**
-	 * Successful Response
-	 */
-	200: unknown;
+    /**
+     * Successful Response
+     */
+    200: unknown;
 };
 
 export type AllUsersApiV1UserAllGetData = {
-	body?: never;
-	path?: never;
-	query?: never;
-	url: '/api/v1/user/all';
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/user/all';
 };
 
 export type AllUsersApiV1UserAllGetResponses = {
-	/**
-	 * Response All Users Api V1 User All Get
-	 * Successful Response
-	 */
-	200: Array<UserPublic>;
+    /**
+     * Response All Users Api V1 User All Get
+     * Successful Response
+     */
+    200: Array<UserPublic>;
 };
 
-export type AllUsersApiV1UserAllGetResponse =
-	AllUsersApiV1UserAllGetResponses[keyof AllUsersApiV1UserAllGetResponses];
+export type AllUsersApiV1UserAllGetResponse = AllUsersApiV1UserAllGetResponses[keyof AllUsersApiV1UserAllGetResponses];
 
 export type DeleteInviteApiV1UserInviteDeleteData = {
-	body?: never;
-	path?: never;
-	query: {
-		/**
-		 * Invite
-		 */
-		invite: string;
-	};
-	url: '/api/v1/user/invite';
+    body?: never;
+    path?: never;
+    query: {
+        /**
+         * Invite
+         */
+        invite: string;
+    };
+    url: '/api/v1/user/invite';
 };
 
 export type DeleteInviteApiV1UserInviteDeleteErrors = {
-	/**
-	 * Validation Error
-	 */
-	422: HttpValidationError;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
 };
 
-export type DeleteInviteApiV1UserInviteDeleteError =
-	DeleteInviteApiV1UserInviteDeleteErrors[keyof DeleteInviteApiV1UserInviteDeleteErrors];
+export type DeleteInviteApiV1UserInviteDeleteError = DeleteInviteApiV1UserInviteDeleteErrors[keyof DeleteInviteApiV1UserInviteDeleteErrors];
 
 export type DeleteInviteApiV1UserInviteDeleteResponses = {
-	/**
-	 * Successful Response
-	 */
-	204: void;
+    /**
+     * Successful Response
+     */
+    204: void;
 };
 
-export type DeleteInviteApiV1UserInviteDeleteResponse =
-	DeleteInviteApiV1UserInviteDeleteResponses[keyof DeleteInviteApiV1UserInviteDeleteResponses];
+export type DeleteInviteApiV1UserInviteDeleteResponse = DeleteInviteApiV1UserInviteDeleteResponses[keyof DeleteInviteApiV1UserInviteDeleteResponses];
 
 export type GetInvitesApiV1UserInviteGetData = {
-	body?: never;
-	path?: never;
-	query?: never;
-	url: '/api/v1/user/invite';
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/user/invite';
 };
 
 export type GetInvitesApiV1UserInviteGetResponses = {
-	/**
-	 * Response Get Invites Api V1 User Invite Get
-	 * Successful Response
-	 */
-	200: Array<Invite>;
+    /**
+     * Response Get Invites Api V1 User Invite Get
+     * Successful Response
+     */
+    200: Array<Invite>;
 };
 
-export type GetInvitesApiV1UserInviteGetResponse =
-	GetInvitesApiV1UserInviteGetResponses[keyof GetInvitesApiV1UserInviteGetResponses];
+export type GetInvitesApiV1UserInviteGetResponse = GetInvitesApiV1UserInviteGetResponses[keyof GetInvitesApiV1UserInviteGetResponses];
 
 export type CreateInviteApiV1UserInvitePostData = {
-	body: InviteCreate;
-	path?: never;
-	query?: never;
-	url: '/api/v1/user/invite';
+    body: InviteCreate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/user/invite';
 };
 
 export type CreateInviteApiV1UserInvitePostErrors = {
-	/**
-	 * Validation Error
-	 */
-	422: HttpValidationError;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
 };
 
-export type CreateInviteApiV1UserInvitePostError =
-	CreateInviteApiV1UserInvitePostErrors[keyof CreateInviteApiV1UserInvitePostErrors];
+export type CreateInviteApiV1UserInvitePostError = CreateInviteApiV1UserInvitePostErrors[keyof CreateInviteApiV1UserInvitePostErrors];
 
 export type CreateInviteApiV1UserInvitePostResponses = {
-	/**
-	 * Successful Response
-	 */
-	200: Invite;
+    /**
+     * Successful Response
+     */
+    200: Invite;
 };
 
-export type CreateInviteApiV1UserInvitePostResponse =
-	CreateInviteApiV1UserInvitePostResponses[keyof CreateInviteApiV1UserInvitePostResponses];
+export type CreateInviteApiV1UserInvitePostResponse = CreateInviteApiV1UserInvitePostResponses[keyof CreateInviteApiV1UserInvitePostResponses];
 
 export type CreateApiV1ExtensionPostData = {
-	body: ExtensionCreate;
-	path?: never;
-	query?: never;
-	url: '/api/v1/extension/';
+    body: ExtensionCreate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/extension/';
 };
 
 export type CreateApiV1ExtensionPostErrors = {
-	/**
-	 * Validation Error
-	 */
-	422: HttpValidationError;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
 };
 
-export type CreateApiV1ExtensionPostError =
-	CreateApiV1ExtensionPostErrors[keyof CreateApiV1ExtensionPostErrors];
+export type CreateApiV1ExtensionPostError = CreateApiV1ExtensionPostErrors[keyof CreateApiV1ExtensionPostErrors];
 
 export type CreateApiV1ExtensionPostResponses = {
-	/**
-	 * Successful Response
-	 */
-	201: ExtensionBase;
+    /**
+     * Successful Response
+     */
+    201: ExtensionBase;
 };
 
-export type CreateApiV1ExtensionPostResponse =
-	CreateApiV1ExtensionPostResponses[keyof CreateApiV1ExtensionPostResponses];
+export type CreateApiV1ExtensionPostResponse = CreateApiV1ExtensionPostResponses[keyof CreateApiV1ExtensionPostResponses];
 
 export type DeleteApiV1ExtensionExtensionDeleteData = {
-	body?: never;
-	path: {
-		/**
-		 * Extension
-		 */
-		extension: string;
-	};
-	query?: never;
-	url: '/api/v1/extension/{extension}';
+    body?: never;
+    path: {
+        /**
+         * Extension
+         */
+        extension: string;
+    };
+    query?: never;
+    url: '/api/v1/extension/{extension}';
 };
 
 export type DeleteApiV1ExtensionExtensionDeleteErrors = {
-	/**
-	 * Validation Error
-	 */
-	422: HttpValidationError;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
 };
 
-export type DeleteApiV1ExtensionExtensionDeleteError =
-	DeleteApiV1ExtensionExtensionDeleteErrors[keyof DeleteApiV1ExtensionExtensionDeleteErrors];
+export type DeleteApiV1ExtensionExtensionDeleteError = DeleteApiV1ExtensionExtensionDeleteErrors[keyof DeleteApiV1ExtensionExtensionDeleteErrors];
 
 export type DeleteApiV1ExtensionExtensionDeleteResponses = {
-	/**
-	 * Successful Response
-	 */
-	204: void;
+    /**
+     * Successful Response
+     */
+    204: void;
 };
 
-export type DeleteApiV1ExtensionExtensionDeleteResponse =
-	DeleteApiV1ExtensionExtensionDeleteResponses[keyof DeleteApiV1ExtensionExtensionDeleteResponses];
+export type DeleteApiV1ExtensionExtensionDeleteResponse = DeleteApiV1ExtensionExtensionDeleteResponses[keyof DeleteApiV1ExtensionExtensionDeleteResponses];
 
 export type UpdateApiV1ExtensionExtensionPatchData = {
-	body: ExtensionUpdate;
-	path: {
-		/**
-		 * Extension
-		 */
-		extension: string;
-	};
-	query?: never;
-	url: '/api/v1/extension/{extension}';
+    body: ExtensionUpdate;
+    path: {
+        /**
+         * Extension
+         */
+        extension: string;
+    };
+    query?: never;
+    url: '/api/v1/extension/{extension}';
 };
 
 export type UpdateApiV1ExtensionExtensionPatchErrors = {
-	/**
-	 * Validation Error
-	 */
-	422: HttpValidationError;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
 };
 
-export type UpdateApiV1ExtensionExtensionPatchError =
-	UpdateApiV1ExtensionExtensionPatchErrors[keyof UpdateApiV1ExtensionExtensionPatchErrors];
+export type UpdateApiV1ExtensionExtensionPatchError = UpdateApiV1ExtensionExtensionPatchErrors[keyof UpdateApiV1ExtensionExtensionPatchErrors];
 
 export type UpdateApiV1ExtensionExtensionPatchResponses = {
-	/**
-	 * Successful Response
-	 */
-	200: ExtensionBase;
+    /**
+     * Successful Response
+     */
+    200: ExtensionBase;
 };
 
-export type UpdateApiV1ExtensionExtensionPatchResponse =
-	UpdateApiV1ExtensionExtensionPatchResponses[keyof UpdateApiV1ExtensionExtensionPatchResponses];
+export type UpdateApiV1ExtensionExtensionPatchResponse = UpdateApiV1ExtensionExtensionPatchResponses[keyof UpdateApiV1ExtensionExtensionPatchResponses];
 
 export type GetApiV1ExtensionInfoExtensionGetData = {
-	body?: never;
-	path: {
-		/**
-		 * Extension
-		 */
-		extension: string;
-	};
-	query?: never;
-	url: '/api/v1/extension/info/{extension}';
+    body?: never;
+    path: {
+        /**
+         * Extension
+         */
+        extension: string;
+    };
+    query?: never;
+    url: '/api/v1/extension/info/{extension}';
 };
 
 export type GetApiV1ExtensionInfoExtensionGetErrors = {
-	/**
-	 * Validation Error
-	 */
-	422: HttpValidationError;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
 };
 
-export type GetApiV1ExtensionInfoExtensionGetError =
-	GetApiV1ExtensionInfoExtensionGetErrors[keyof GetApiV1ExtensionInfoExtensionGetErrors];
+export type GetApiV1ExtensionInfoExtensionGetError = GetApiV1ExtensionInfoExtensionGetErrors[keyof GetApiV1ExtensionInfoExtensionGetErrors];
 
 export type GetApiV1ExtensionInfoExtensionGetResponses = {
-	/**
-	 * Successful Response
-	 */
-	200: Extension;
+    /**
+     * Successful Response
+     */
+    200: Extension;
 };
 
-export type GetApiV1ExtensionInfoExtensionGetResponse =
-	GetApiV1ExtensionInfoExtensionGetResponses[keyof GetApiV1ExtensionInfoExtensionGetResponses];
+export type GetApiV1ExtensionInfoExtensionGetResponse = GetApiV1ExtensionInfoExtensionGetResponses[keyof GetApiV1ExtensionInfoExtensionGetResponses];
 
 export type GetOwnApiV1ExtensionOwnGetData = {
-	body?: never;
-	path?: never;
-	query?: never;
-	url: '/api/v1/extension/own';
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/extension/own';
 };
 
 export type GetOwnApiV1ExtensionOwnGetResponses = {
-	/**
-	 * Successful Response
-	 */
-	200: unknown;
+    /**
+     * Successful Response
+     */
+    200: unknown;
 };
 
 export type PhonebookApiV1ExtensionPhonebookGetData = {
-	body?: never;
-	path?: never;
-	query?: {
-		/**
-		 * Query
-		 */
-		query?: string | null;
-		/**
-		 * Public
-		 */
-		public?: boolean;
-	};
-	url: '/api/v1/extension/phonebook';
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Query
+         */
+        query?: string | null;
+        /**
+         * Public
+         */
+        public?: boolean;
+    };
+    url: '/api/v1/extension/phonebook';
 };
 
 export type PhonebookApiV1ExtensionPhonebookGetErrors = {
-	/**
-	 * Validation Error
-	 */
-	422: HttpValidationError;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
 };
 
-export type PhonebookApiV1ExtensionPhonebookGetError =
-	PhonebookApiV1ExtensionPhonebookGetErrors[keyof PhonebookApiV1ExtensionPhonebookGetErrors];
+export type PhonebookApiV1ExtensionPhonebookGetError = PhonebookApiV1ExtensionPhonebookGetErrors[keyof PhonebookApiV1ExtensionPhonebookGetErrors];
 
 export type PhonebookApiV1ExtensionPhonebookGetResponses = {
-	/**
-	 * Response Phonebook Api V1 Extension Phonebook Get
-	 * Successful Response
-	 */
-	200: Array<ExtensionBase>;
+    /**
+     * Response Phonebook Api V1 Extension Phonebook Get
+     * Successful Response
+     */
+    200: Array<ExtensionBase>;
 };
 
-export type PhonebookApiV1ExtensionPhonebookGetResponse =
-	PhonebookApiV1ExtensionPhonebookGetResponses[keyof PhonebookApiV1ExtensionPhonebookGetResponses];
+export type PhonebookApiV1ExtensionPhonebookGetResponse = PhonebookApiV1ExtensionPhonebookGetResponses[keyof PhonebookApiV1ExtensionPhonebookGetResponses];
 
 export type AdminPhonebookApiV1ExtensionAllGetData = {
-	body?: never;
-	path?: never;
-	query?: {
-		/**
-		 * Query
-		 */
-		query?: string | null;
-		/**
-		 * Public
-		 */
-		public?: boolean;
-	};
-	url: '/api/v1/extension/all';
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Query
+         */
+        query?: string | null;
+        /**
+         * Public
+         */
+        public?: boolean;
+    };
+    url: '/api/v1/extension/all';
 };
 
 export type AdminPhonebookApiV1ExtensionAllGetErrors = {
-	/**
-	 * Validation Error
-	 */
-	422: HttpValidationError;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
 };
 
-export type AdminPhonebookApiV1ExtensionAllGetError =
-	AdminPhonebookApiV1ExtensionAllGetErrors[keyof AdminPhonebookApiV1ExtensionAllGetErrors];
+export type AdminPhonebookApiV1ExtensionAllGetError = AdminPhonebookApiV1ExtensionAllGetErrors[keyof AdminPhonebookApiV1ExtensionAllGetErrors];
 
 export type AdminPhonebookApiV1ExtensionAllGetResponses = {
-	/**
-	 * Successful Response
-	 */
-	200: unknown;
+    /**
+     * Successful Response
+     */
+    200: unknown;
 };
 
 export type GetSettingsApiV1SettingsGetData = {
-	body?: never;
-	path?: never;
-	query?: never;
-	url: '/api/v1/settings/';
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/settings/';
 };
 
 export type GetSettingsApiV1SettingsGetResponses = {
-	/**
-	 * Successful Response
-	 */
-	200: PublicSettings;
+    /**
+     * Successful Response
+     */
+    200: PublicSettings;
 };
 
-export type GetSettingsApiV1SettingsGetResponse =
-	GetSettingsApiV1SettingsGetResponses[keyof GetSettingsApiV1SettingsGetResponses];
+export type GetSettingsApiV1SettingsGetResponse = GetSettingsApiV1SettingsGetResponses[keyof GetSettingsApiV1SettingsGetResponses];
 
 export type GetPhoneTypesApiV1TelephoningTypesGetData = {
-	body?: never;
-	path?: never;
-	query?: never;
-	url: '/api/v1/telephoning/types';
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/telephoning/types';
 };
 
 export type GetPhoneTypesApiV1TelephoningTypesGetResponses = {
-	/**
-	 * Response Get Phone Types Api V1 Telephoning Types Get
-	 * Successful Response
-	 */
-	200: Array<PhoneType>;
+    /**
+     * Response Get Phone Types Api V1 Telephoning Types Get
+     * Successful Response
+     */
+    200: Array<PhoneType>;
 };
 
-export type GetPhoneTypesApiV1TelephoningTypesGetResponse =
-	GetPhoneTypesApiV1TelephoningTypesGetResponses[keyof GetPhoneTypesApiV1TelephoningTypesGetResponses];
+export type GetPhoneTypesApiV1TelephoningTypesGetResponse = GetPhoneTypesApiV1TelephoningTypesGetResponses[keyof GetPhoneTypesApiV1TelephoningTypesGetResponses];
 
 export type DeleteWebsipApiV1TelephoningWebsipDeleteData = {
-	body?: never;
-	path?: never;
-	query: {
-		/**
-		 * Extension
-		 */
-		extension: string;
-		/**
-		 * Password
-		 */
-		password: string;
-	};
-	url: '/api/v1/telephoning/websip';
+    body?: never;
+    path?: never;
+    query: {
+        /**
+         * Extension
+         */
+        extension: string;
+        /**
+         * Password
+         */
+        password: string;
+    };
+    url: '/api/v1/telephoning/websip';
 };
 
 export type DeleteWebsipApiV1TelephoningWebsipDeleteErrors = {
-	/**
-	 * Validation Error
-	 */
-	422: HttpValidationError;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
 };
 
-export type DeleteWebsipApiV1TelephoningWebsipDeleteError =
-	DeleteWebsipApiV1TelephoningWebsipDeleteErrors[keyof DeleteWebsipApiV1TelephoningWebsipDeleteErrors];
+export type DeleteWebsipApiV1TelephoningWebsipDeleteError = DeleteWebsipApiV1TelephoningWebsipDeleteErrors[keyof DeleteWebsipApiV1TelephoningWebsipDeleteErrors];
 
 export type DeleteWebsipApiV1TelephoningWebsipDeleteResponses = {
-	/**
-	 * Successful Response
-	 */
-	200: unknown;
+    /**
+     * Successful Response
+     */
+    200: unknown;
 };
 
 export type CreateWebsipApiV1TelephoningWebsipGetData = {
-	body?: never;
-	path?: never;
-	query?: never;
-	url: '/api/v1/telephoning/websip';
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/telephoning/websip';
 };
 
 export type CreateWebsipApiV1TelephoningWebsipGetResponses = {
-	/**
-	 * Successful Response
-	 */
-	200: WebSipExtension;
+    /**
+     * Successful Response
+     */
+    200: WebSipExtension;
 };
 
-export type CreateWebsipApiV1TelephoningWebsipGetResponse =
-	CreateWebsipApiV1TelephoningWebsipGetResponses[keyof CreateWebsipApiV1TelephoningWebsipGetResponses];
+export type CreateWebsipApiV1TelephoningWebsipGetResponse = CreateWebsipApiV1TelephoningWebsipGetResponses[keyof CreateWebsipApiV1TelephoningWebsipGetResponses];
 
 export type GetPagesApiV1PagesGetData = {
-	body?: never;
-	path?: never;
-	query?: never;
-	url: '/api/v1/pages/';
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/pages/';
 };
 
 export type GetPagesApiV1PagesGetResponses = {
-	/**
-	 * Response Get Pages Api V1 Pages  Get
-	 * Successful Response
-	 */
-	200: {
-		[key: string]: string;
-	};
+    /**
+     * Response Get Pages Api V1 Pages  Get
+     * Successful Response
+     */
+    200: {
+        [key: string]: string;
+    };
 };
 
-export type GetPagesApiV1PagesGetResponse =
-	GetPagesApiV1PagesGetResponses[keyof GetPagesApiV1PagesGetResponses];
+export type GetPagesApiV1PagesGetResponse = GetPagesApiV1PagesGetResponses[keyof GetPagesApiV1PagesGetResponses];
 
 export type IndexGetData = {
-	body?: never;
-	path?: never;
-	query?: never;
-	url: '/';
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/';
 };
 
 export type IndexGetResponses = {
-	/**
-	 * Successful Response
-	 */
-	200: unknown;
+    /**
+     * Successful Response
+     */
+    200: unknown;
 };
 
 export type GetUpdateTelephoningInnovaphoneUpdateGetData = {
-	body?: never;
-	path?: never;
-	query: {
-		/**
-		 * Mac
-		 */
-		mac: string;
-		/**
-		 * Localip
-		 */
-		localip: string;
-	};
-	url: '/telephoning/innovaphone/update';
+    body?: never;
+    path?: never;
+    query: {
+        /**
+         * Mac
+         */
+        mac: string;
+        /**
+         * Localip
+         */
+        localip: string;
+    };
+    url: '/telephoning/innovaphone/update';
 };
 
 export type GetUpdateTelephoningInnovaphoneUpdateGetErrors = {
-	/**
-	 * Validation Error
-	 */
-	422: HttpValidationError;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
 };
 
-export type GetUpdateTelephoningInnovaphoneUpdateGetError =
-	GetUpdateTelephoningInnovaphoneUpdateGetErrors[keyof GetUpdateTelephoningInnovaphoneUpdateGetErrors];
+export type GetUpdateTelephoningInnovaphoneUpdateGetError = GetUpdateTelephoningInnovaphoneUpdateGetErrors[keyof GetUpdateTelephoningInnovaphoneUpdateGetErrors];
 
 export type GetUpdateTelephoningInnovaphoneUpdateGetResponses = {
-	/**
-	 * Successful Response
-	 */
-	200: unknown;
+    /**
+     * Successful Response
+     */
+    200: unknown;
 };
 
 export type GetConfigTelephoningInnovaphoneConfigGetData = {
-	body?: never;
-	path?: never;
-	query: {
-		/**
-		 * Mac
-		 */
-		mac: string;
-	};
-	url: '/telephoning/innovaphone/config';
+    body?: never;
+    path?: never;
+    query: {
+        /**
+         * Mac
+         */
+        mac: string;
+    };
+    url: '/telephoning/innovaphone/config';
 };
 
 export type GetConfigTelephoningInnovaphoneConfigGetErrors = {
-	/**
-	 * Validation Error
-	 */
-	422: HttpValidationError;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
 };
 
-export type GetConfigTelephoningInnovaphoneConfigGetError =
-	GetConfigTelephoningInnovaphoneConfigGetErrors[keyof GetConfigTelephoningInnovaphoneConfigGetErrors];
+export type GetConfigTelephoningInnovaphoneConfigGetError = GetConfigTelephoningInnovaphoneConfigGetErrors[keyof GetConfigTelephoningInnovaphoneConfigGetErrors];
 
 export type GetConfigTelephoningInnovaphoneConfigGetResponses = {
-	/**
-	 * Successful Response
-	 */
-	200: unknown;
+    /**
+     * Successful Response
+     */
+    200: unknown;
 };
 
 export type GetServiceDiscoveryTelephoningInnovaphoneServiceDiscoveryGetData = {
-	body?: never;
-	path?: never;
-	query?: never;
-	url: '/telephoning/innovaphone/service-discovery';
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/telephoning/innovaphone/service-discovery';
 };
 
 export type GetServiceDiscoveryTelephoningInnovaphoneServiceDiscoveryGetResponses = {
-	/**
-	 * Successful Response
-	 */
-	200: unknown;
+    /**
+     * Successful Response
+     */
+    200: unknown;
 };
 
 export type GetSipCredentialsTelephoningIotSecretGetData = {
-	body?: never;
-	path: {
-		/**
-		 * Secret
-		 */
-		secret: string;
-	};
-	query?: {
-		/**
-		 * Format
-		 */
-		format?: 'json' | 'csv' | 'xml';
-	};
-	url: '/telephoning/iot/{secret}';
+    body?: never;
+    path: {
+        /**
+         * Secret
+         */
+        secret: string;
+    };
+    query?: {
+        /**
+         * Format
+         */
+        format?: 'json' | 'csv' | 'xml';
+    };
+    url: '/telephoning/iot/{secret}';
 };
 
 export type GetSipCredentialsTelephoningIotSecretGetErrors = {
-	/**
-	 * Validation Error
-	 */
-	422: HttpValidationError;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
 };
 
-export type GetSipCredentialsTelephoningIotSecretGetError =
-	GetSipCredentialsTelephoningIotSecretGetErrors[keyof GetSipCredentialsTelephoningIotSecretGetErrors];
+export type GetSipCredentialsTelephoningIotSecretGetError = GetSipCredentialsTelephoningIotSecretGetErrors[keyof GetSipCredentialsTelephoningIotSecretGetErrors];
 
 export type GetSipCredentialsTelephoningIotSecretGetResponses = {
-	/**
-	 * Successful Response
-	 */
-	200: unknown;
+    /**
+     * Successful Response
+     */
+    200: unknown;
 };
 
 export type GetConfigTelephoningSnomSnomMacGetData = {
-	body?: never;
-	path: {
-		/**
-		 * Mac
-		 */
-		mac: string;
-	};
-	query?: never;
-	url: '/telephoning/snom/snom-{mac}';
+    body?: never;
+    path: {
+        /**
+         * Mac
+         */
+        mac: string;
+    };
+    query?: never;
+    url: '/telephoning/snom/snom-{mac}';
 };
 
 export type GetConfigTelephoningSnomSnomMacGetErrors = {
-	/**
-	 * Validation Error
-	 */
-	422: HttpValidationError;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
 };
 
-export type GetConfigTelephoningSnomSnomMacGetError =
-	GetConfigTelephoningSnomSnomMacGetErrors[keyof GetConfigTelephoningSnomSnomMacGetErrors];
+export type GetConfigTelephoningSnomSnomMacGetError = GetConfigTelephoningSnomSnomMacGetErrors[keyof GetConfigTelephoningSnomSnomMacGetErrors];
 
 export type GetConfigTelephoningSnomSnomMacGetResponses = {
-	/**
-	 * Successful Response
-	 */
-	200: unknown;
+    /**
+     * Successful Response
+     */
+    200: unknown;
 };
 
 export type ClientOptions = {
-	baseUrl: 'http://localhost:8000' | (string & {});
+    baseUrl: 'http://localhost:8000' | (string & {});
 };

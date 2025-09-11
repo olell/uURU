@@ -7,6 +7,8 @@
 		InputGroup,
 		InputGroupText,
 		Label,
+		Modal,
+		ModalBody,
 		Table
 	} from '@sveltestrap/sveltestrap';
 	import {
@@ -17,12 +19,18 @@
 		type InviteVariant
 	} from '../../../client';
 	import { push_api_error } from '../../../messageService.svelte';
+	import { qr } from '@svelte-put/qr/svg';
+	import { settings } from '../../../sharedState.svelte';
+	import favicon from '$lib/assets/favicon.svg';
 
 	let invites = $state<Invite[]>([]);
 	let selectedVariant = $state<InviteVariant>('time+count');
 	let maxUses = $state(1);
 	let validDays = $state(0);
 	let validHours = $state(24);
+
+	let showQR = $state(false);
+	let qrInvite = $state('');
 
 	let created = $state<Invite | undefined>(undefined);
 
@@ -146,7 +154,7 @@
 			<th scope="col">Code</th>
 			<th scope="col">Variant</th>
 			<th scope="col">Validity</th>
-			<th scope="col">Delete</th>
+			<th scope="col">Actions</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -155,12 +163,39 @@
 				<td>{invite.invite}</td>
 				<td>{reprVariant(invite.variant!)}</td>
 				<td>{reprValidity(invite)}</td>
-				<td
-					><a href={'#'} onclick={deleteInvite(invite)} class="text-danger"
+				<td>
+					<a
+						href={'#'}
+						onclick={() => {
+							showQR = true;
+							qrInvite = invite.invite;
+						}}
+						class="text-info me-3"><Icon name="qr-code"></Icon></a
+					>
+					<a href={'#'} onclick={() => deleteInvite(invite)} class="text-danger"
 						><Icon name="trash3"></Icon></a
-					></td
-				>
+					>
+				</td>
 			</tr>
 		{/each}
 	</tbody>
 </Table>
+
+<Modal
+	centered
+	header="Registration QR Code"
+	isOpen={showQR}
+	toggle={() => {
+		showQR = false;
+	}}
+>
+	<ModalBody>
+		<svg
+			use:qr={{
+				data: `http://${settings.val?.WEB_HOST}/app/#register?invite=${qrInvite}`,
+				shape: 'circle',
+				logo: favicon
+			}}
+		/>
+	</ModalBody>
+</Modal>

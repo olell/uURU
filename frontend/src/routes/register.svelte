@@ -3,6 +3,7 @@
 		Button,
 		Form,
 		FormGroup,
+		FormText,
 		Input,
 		Modal,
 		ModalBody,
@@ -11,6 +12,7 @@
 	import { tick } from 'svelte';
 	import { push_api_error, push_message } from '../messageService.svelte';
 	import { registerApiV1UserRegisterPost } from '../client';
+	import { settings } from '../sharedState.svelte';
 
 	let { isOpen = $bindable() } = $props();
 
@@ -19,6 +21,8 @@
 	let username = $state('');
 	let password = $state('');
 	let password_rep = $state('');
+
+	let invite = $state('');
 
 	let passwords_match = $derived<boolean | undefined>(
 		password ? password == password_rep : undefined
@@ -33,7 +37,12 @@
 		}
 
 		const { data, error } = await registerApiV1UserRegisterPost({
-			body: { username, password, role: 'user' },
+			body: {
+				username,
+				password,
+				role: 'user',
+				invite: settings.val?.LIMIT_REGISTRATION ? invite : null
+			},
 			credentials: 'include'
 		});
 
@@ -68,6 +77,16 @@
 			<FormGroup floating label="Repeat Password">
 				<Input bind:value={password_rep} type="password" required minlength={10} />
 			</FormGroup>
+			{#if settings.val?.LIMIT_REGISTRATION}
+				<hr />
+				<FormGroup floating label="Invite Code">
+					<Input bind:value={invite} type="text" required minlength={10} />
+					<FormText>
+						This instance requires an invite code to create a new account, please ask an
+						administrator to obtain such a code!
+					</FormText>
+				</FormGroup>
+			{/if}
 		</ModalBody>
 		<ModalFooter>
 			<Button color="primary" type="submit">Create Account</Button>

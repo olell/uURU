@@ -45,7 +45,9 @@
 	let { children } = $props();
 	let theme = $state<'dark' | 'light'>('dark');
 
-	let showLogin = $state(false);
+	let showLogin = $state(
+		window.location.hash.includes('register') || window.location.hash.includes('login')
+	);
 
 	let navbarOpen = $state(false);
 
@@ -177,6 +179,9 @@
 						<DropdownMenu>
 							<DropdownItem href={resolve('/admin/user')}>Users</DropdownItem>
 							<DropdownItem href={resolve('/admin/extensions')}>Extensions</DropdownItem>
+							{#if settings.val.LIMIT_REGISTRATION}
+								<DropdownItem href={resolve('/admin/invites')}>Invites</DropdownItem>
+							{/if}
 						</DropdownMenu>
 					</Dropdown>
 				{/if}

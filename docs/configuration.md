@@ -72,11 +72,12 @@ The database must be a mariadb / mysql db
 
 ### Application Behavior
 
-| Key                   | Description                                             | Default |
-| --------------------- | ------------------------------------------------------- | ------- |
-| UURU_LOGLEVEL         | One of CRITICAL, FATAL, ERROR, WARNING, INFO, DEBUG     | INFO    |
-| UURU_LIFESPAN_DROP_DB | (For dev!) drop the database after application shutdown | False   |
-| UURU_LEGACY_FRONTEND  | Enable legacy UI                                        | False   |
+| Key                     | Description                                                 | Default |
+| ----------------------- | ----------------------------------------------------------- | ------- |
+| UURU_LOGLEVEL           | One of CRITICAL, FATAL, ERROR, WARNING, INFO, DEBUG         | INFO    |
+| UURU_LIFESPAN_DROP_DB   | (For dev!) drop the database after application shutdown     | False   |
+| UURU_LEGACY_FRONTEND    | Enable legacy UI                                            | False   |
+| UURU_LIMIT_REGISTRATION | Limit registrations by requiring an invite code to register | False   |
 
 ### Telephoning
 

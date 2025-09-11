@@ -48,3 +48,7 @@ def generate_extension_token():
     return settings.EXTENSION_TOKEN_PREFIX + "".join(
         random.choice(string.digits) for _ in range(settings.EXTENSION_TOKEN_LENGTH)
     )
+
+
+def generate_invite_code():
+    return "".join(random.choice(string.ascii_lowercase) for _ in range(10))

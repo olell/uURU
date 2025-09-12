@@ -52,6 +52,9 @@ class PublicSettings(BaseModel):
     WEBSIP_WS_HOST: str
     FEDERATION_IAX2_HOST: str
     FEDERATION_UURU_HOST: str
+    ASSETS_MAX_SIZE_USER: int
+    ASSETS_LIMIT_SIZE_ADMIN: bool
+    ASSETS_ALLOW_RAW: bool
 
 
 class Settings(BaseSettings):
@@ -175,6 +178,16 @@ class Settings(BaseSettings):
     @property
     def logging_loglevel(self) -> int:
         return getLevelNamesMapping().get(self.LOGLEVEL, INFO)
+
+    ## MEDIA
+
+    MEDIA_PATH: str = "./uploads/"
+    MEDIA_MAX_SIZE_USER: int = 2  # MiB
+    MEDIA_LIMIT_SIZE_ADMIN: bool = False
+    MEDIA_ALLOW_RAW: bool = False
+
+    MEDIA_IMAGE_STORAGE_FORMAT: str = "png"
+    MEDIA_AUDIO_STORAGE_FORMAT: str = "mp3"
 
     ## TELEPHONE
 

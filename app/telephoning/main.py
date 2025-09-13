@@ -56,7 +56,6 @@ class Telephoning(object):
         return Telephoning._instance
 
     def __init__(self):
-        self.scheduler = BackgroundScheduler()
         self.router = APIRouter(prefix=settings.TELEPHONING_PREFIX, tags=["phones"])
 
         self.flavor_classes = load_phone_flavors()
@@ -65,7 +64,7 @@ class Telephoning(object):
         self.flavor_by_type = {}
         self.all_types = []
 
-    def start(self, app: FastAPI):
+    def start(self, app: FastAPI, scheduler: BackgroundScheduler):
 
         for cls in self.flavor_classes:
             # 1st: create instance
@@ -88,9 +87,7 @@ class Telephoning(object):
             except NotImplementedError:
                 pass  # do not schedule job
             else:
-                self.scheduler.add_job(
-                    flavor.job, "interval", seconds=flavor.JOB_INTERVAL
-                )
+                scheduler.add_job(flavor.job, "interval", seconds=flavor.JOB_INTERVAL)
 
             logger.debug(f"Initiated router and job for {flavor_name}")
 
@@ -107,13 +104,10 @@ class Telephoning(object):
 
         logger.info(f"Supported phone types are {', '.join(self.all_types)}")
 
-        # start scheduler and include router
-        self.scheduler.start()
+        # include router
         app.include_router(self.router)
 
-    def stop(self):
-        # stop all jobs
-        self.scheduler.shutdown()
+    def stop(self): ...
 
     @staticmethod
     def get_flavor_by_type(phone_type: str) -> PhoneFlavor | None:

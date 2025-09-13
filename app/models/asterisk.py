@@ -35,6 +35,10 @@ class PSEndpoint(SQLModel, table=True):
     callerid: str
     send_pai: str = "1"
 
+    # Fields required for websip
+    dtls_auto_generate_cert: str = "0"
+    webrtc: str = "0"
+
 
 class PSAor(SQLModel, table=True):
 

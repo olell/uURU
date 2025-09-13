@@ -12,6 +12,7 @@ Telephone extension self registration utility for asterisk.
   - SNOM 300
   - Dummy extensions
   - IoT extensions
+- WebSIP to initiate calls directly from the browser
 - LDAP Phonebook
 - Callgroups
 - [Rendering of Markdown for (Help-)Pages](/docs/pages.md)

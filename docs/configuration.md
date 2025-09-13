@@ -107,3 +107,12 @@ The database must be a mariadb / mysql db
 | ----------------- | ------------------------------------- | ------- |
 | UURU_ENABLE_PAGES | True / False                          | True    |
 | UURU_PAGES_TITLE  | Title of the Pages dropdown in Navbar | Pages   |
+
+### WebSIP
+
+| Key                         | Description                                            | Default                |
+| --------------------------- | ------------------------------------------------------ | ---------------------- |
+| UURU_ENABLE_WEBSIP          | Enable websip                                          | True                   |
+| UURU_WEBSIP_PUBLIC          | If true yo don't need an account to use websip         | True                   |
+| UURU_WEBSIP_WS_HOST         | External url where the asterisk websocket is reachable | ws://127.0.0.1:8088/ws |
+| UURU_WEBSIP_EXTENSION_RANGE | Tuple of start and end of the range                    | [9900, 9999]           |

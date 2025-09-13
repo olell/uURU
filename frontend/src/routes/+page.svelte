@@ -15,8 +15,9 @@
 		type ExtensionBase
 	} from '../client';
 	import { push_api_error, push_message } from '../messageService.svelte';
-	import { isMobile, user_info } from '../sharedState.svelte';
-	import { onMount } from 'svelte';
+	import { isMobile, settings, user_info } from '../sharedState.svelte';
+	import { Web } from 'sip.js';
+	import Webphone from '../components/webphone.svelte';
 
 	let query = $state('');
 
@@ -51,6 +52,18 @@
 				});
 			});
 	});
+
+	let showWebphone = $state(false);
+	let webphoneTarget = $state<ExtensionBase | null>(null);
+
+	const handleWebSIP = (target: ExtensionBase) => {
+		if (settings.val?.ENABLE_WEBSIP) {
+			showWebphone = true;
+			webphoneTarget = target;
+		} else {
+			alert('Direct calling is disabled in this µURU instance!');
+		}
+	};
 </script>
 
 <Form class="row g-3">
@@ -77,7 +90,7 @@
 			{#each filtered_phonebook as extension (extension.extension)}
 				<tr>
 					<td>
-						<a href="tel:{extension.extension}">{extension.extension}</a>
+						<a href="#" onclick={() => handleWebSIP(extension)}>{extension.extension}</a>
 					</td>
 					<td>{extension.name}</td>
 					<td>{extension.location_name || ''}</td>
@@ -93,7 +106,7 @@
 {:else}
 	<ListGroup>
 		{#each filtered_phonebook as extension (extension.extension)}
-			<ListGroupItem action href="tel:{extension.extension}">
+			<ListGroupItem action on:click={() => handleWebSIP(extension)}>
 				<div class="d-flex w-100 justify-content-between">
 					<h5 class="mb-1">{extension.name}</h5>
 					<p class="mb-1 fw-bold font-monospace">
@@ -118,4 +131,8 @@
 			</ListGroupItem>
 		{/each}
 	</ListGroup>
+{/if}
+
+{#if settings.val?.ENABLE_WEBSIP}
+	<Webphone bind:isOpen={showWebphone} bind:target={webphoneTarget} />
 {/if}

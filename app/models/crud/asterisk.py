@@ -32,6 +32,7 @@ def create_asterisk_extension(
     password: str,
     codec: CODEC = "g722",
     context="pjsip_internal",
+    set_websip_fields: bool = False,
     autocommit=True,
 ) -> tuple[PSAor, PSAuth, PSEndpoint]:
 
@@ -53,6 +54,8 @@ def create_asterisk_extension(
             disallow="all",
             allow=codec,
             callerid=f"{extension_name} <{extension}>",
+            dtls_auto_generate_cert="1" if set_websip_fields else None,
+            webrtc="1" if set_websip_fields else None,
         )
         session_asterisk.add(ps_aor)
         session_asterisk.add(ps_auth)
@@ -108,11 +111,11 @@ def update_asterisk_extension(
 
 
 def delete_asterisk_extension(
-    session_asterisk: Session, extension: Extension, autocommit=True
+    session_asterisk: Session, extension: str, autocommit=True
 ) -> None:
     try:
         for cls in [PSEndpoint, PSAuth, PSAor]:
-            session_asterisk.exec(delete(cls).where(cls.id == extension.extension))
+            session_asterisk.exec(delete(cls).where(cls.id == extension))
 
     except Exception as e:
         logger.exception("Couldn't delete extension in asterisk DB")
@@ -123,7 +126,7 @@ def delete_asterisk_extension(
     if autocommit:
         session_asterisk.commit()
 
-    logger.info(f"Deleted extension <{extension.extension}> in asterisk DB")
+    logger.info(f"Deleted extension <{extension}> in asterisk DB")
 
 
 def create_or_update_asterisk_dialplan_entry(

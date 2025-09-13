@@ -350,6 +350,25 @@ export type PublicSettings = {
      * Limit Registration
      */
     LIMIT_REGISTRATION: boolean;
+    /**
+     * Enable Websip
+     */
+    ENABLE_WEBSIP: boolean;
+    /**
+     * Websip Public
+     */
+    WEBSIP_PUBLIC: boolean;
+    /**
+     * Websip Extension Range
+     */
+    WEBSIP_EXTENSION_RANGE: [
+        number,
+        number
+    ];
+    /**
+     * Websip Ws Host
+     */
+    WEBSIP_WS_HOST: string;
 };
 
 /**
@@ -432,6 +451,36 @@ export type ValidationError = {
      * Error Type
      */
     type: string;
+};
+
+/**
+ * WebSIPExtension
+ */
+export type WebSipExtension = {
+    /**
+     * Aor
+     */
+    aor: string;
+    /**
+     * Extension
+     */
+    extension: string;
+    /**
+     * Auth User
+     */
+    auth_user: string;
+    /**
+     * Auth Pass
+     */
+    auth_pass: string;
+    /**
+     * Display Name
+     */
+    display_name: string;
+    /**
+     * Last Seen
+     */
+    last_seen: string;
 };
 
 export type LoginApiV1UserLoginPostData = {
@@ -926,6 +975,84 @@ export type GetPhoneTypesApiV1TelephoningTypesGetResponses = {
 };
 
 export type GetPhoneTypesApiV1TelephoningTypesGetResponse = GetPhoneTypesApiV1TelephoningTypesGetResponses[keyof GetPhoneTypesApiV1TelephoningTypesGetResponses];
+
+export type DeleteWebsipApiV1TelephoningWebsipDeleteData = {
+    body?: never;
+    path?: never;
+    query: {
+        /**
+         * Extension
+         */
+        extension: string;
+        /**
+         * Password
+         */
+        password: string;
+    };
+    url: '/api/v1/telephoning/websip';
+};
+
+export type DeleteWebsipApiV1TelephoningWebsipDeleteErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DeleteWebsipApiV1TelephoningWebsipDeleteError = DeleteWebsipApiV1TelephoningWebsipDeleteErrors[keyof DeleteWebsipApiV1TelephoningWebsipDeleteErrors];
+
+export type DeleteWebsipApiV1TelephoningWebsipDeleteResponses = {
+    /**
+     * Successful Response
+     */
+    200: unknown;
+};
+
+export type CreateWebsipApiV1TelephoningWebsipGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/telephoning/websip';
+};
+
+export type CreateWebsipApiV1TelephoningWebsipGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: WebSipExtension;
+};
+
+export type CreateWebsipApiV1TelephoningWebsipGetResponse = CreateWebsipApiV1TelephoningWebsipGetResponses[keyof CreateWebsipApiV1TelephoningWebsipGetResponses];
+
+export type PutWebsipApiV1TelephoningWebsipPutData = {
+    body?: never;
+    path?: never;
+    query: {
+        /**
+         * Extension
+         */
+        extension: string;
+    };
+    url: '/api/v1/telephoning/websip';
+};
+
+export type PutWebsipApiV1TelephoningWebsipPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type PutWebsipApiV1TelephoningWebsipPutError = PutWebsipApiV1TelephoningWebsipPutErrors[keyof PutWebsipApiV1TelephoningWebsipPutErrors];
+
+export type PutWebsipApiV1TelephoningWebsipPutResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type PutWebsipApiV1TelephoningWebsipPutResponse = PutWebsipApiV1TelephoningWebsipPutResponses[keyof PutWebsipApiV1TelephoningWebsipPutResponses];
 
 export type GetPagesApiV1PagesGetData = {
     body?: never;

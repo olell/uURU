@@ -46,6 +46,10 @@ class PublicSettings(BaseModel):
     ENABLE_PAGES: bool
     PAGES_TITLE: str
     LIMIT_REGISTRATION: bool
+    ENABLE_WEBSIP: bool
+    WEBSIP_PUBLIC: bool
+    WEBSIP_EXTENSION_RANGE: tuple[int, int]
+    WEBSIP_WS_HOST: str
 
 
 class Settings(BaseSettings):
@@ -188,6 +192,14 @@ class Settings(BaseSettings):
     # list of enabled phone flavors, should contains the names of
     # files in "app/telephoning/phonetypes/" without the .py suffix
     ENABLED_PHONE_FLAVORS: list[str] = ["sip"]
+
+    ## WEBSIP
+
+    ENABLE_WEBSIP: bool = True
+    WEBSIP_PUBLIC: bool = True
+    WEBSIP_WS_HOST: str = "ws://127.0.0.1:8088/ws"
+    # those extensions should also be reserved in RESERVED_EXTENSIONS
+    WEBSIP_EXTENSION_RANGE: tuple[int, int] = [9900, 9999]
 
     ## SITE
 

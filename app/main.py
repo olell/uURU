@@ -17,13 +17,17 @@ from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.exception_handlers import http_exception_handler
 from sqlmodel import Session
+from apscheduler.schedulers.background import BackgroundScheduler
 
 from app.core.db import engine, engine_asterisk, init_asterisk_db, init_db, drop_db
 from app.core.config import settings
 
 from app.api.main import router as api_router
+from app.telephoning.websip import WebSIPManager
 from app.web.main import router as web_router
 from app.telephoning.main import Telephoning
+
+background_scheduler = BackgroundScheduler()
 
 
 @asynccontextmanager
@@ -34,11 +38,19 @@ async def lifespan(app: FastAPI):
     with Session(engine_asterisk) as session_asterisk:
         init_asterisk_db(session_asterisk)
 
-    Telephoning.instance().start(app)
+    Telephoning.instance().start(app, background_scheduler)
+    background_scheduler.add_job(
+        WebSIPManager.instance().job, "interval", seconds=30, args=[engine_asterisk]
+    )
+    background_scheduler.start()
 
     yield
 
     Telephoning.instance().stop()
+    background_scheduler.shutdown()
+
+    with Session(engine_asterisk) as session_asterisk:
+        WebSIPManager.instance().teardown(session_asterisk)
 
     if settings.LIFESPAN_DROP_DB:
         drop_db()

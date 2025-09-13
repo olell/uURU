@@ -39,6 +39,9 @@ async def lifespan(app: FastAPI):
         init_asterisk_db(session_asterisk)
 
     Telephoning.instance().start(app, background_scheduler)
+    background_scheduler.add_job(
+        WebSIPManager.instance().job, "interval", seconds=30, args=[engine_asterisk]
+    )
     background_scheduler.start()
 
     yield

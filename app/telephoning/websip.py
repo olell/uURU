@@ -21,7 +21,7 @@ class WebSIPExtension(BaseModel):
     auth_user: str
     auth_pass: str
     display_name: str
-    created_at: datetime
+    last_seen: datetime
 
 
 class WebSIPManager(object):
@@ -81,7 +81,7 @@ class WebSIPManager(object):
             auth_user=free_extension,
             auth_pass=pwd,
             display_name=name,
-            created_at=datetime.now(),
+            last_seen=datetime.now(),
         )
 
         try:
@@ -100,3 +100,20 @@ class WebSIPManager(object):
         self.active_extensions.append(ext)
 
         return ext
+
+    def job(self, engine):
+        # clean up all extension which are since more than 3 minutes not seen
+        # this actually may not cause calls to end which are still running but
+        # removes all extensions which are not in use if the frontend failed to
+        # clean up.
+        # The frontend should regulary do a PUT request to the websip endpoint
+        # to refresh the last seen attribute to prevent the extension from
+        # beeing deleted.
+        now = datetime.now()
+        with Session(engine) as session_asterisk:
+            for extension in self.active_extensions:
+                if (now - extension.last_seen).total_seconds() > 180:
+                    self.delete_extension(session_asterisk, extension)
+                    logger.info(
+                        f"Deleted WebSIP extension <{extension.extension}> due to 180 seconds of inactivity!"
+                    )

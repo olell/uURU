@@ -478,9 +478,9 @@ export type WebSipExtension = {
      */
     display_name: string;
     /**
-     * Created At
+     * Last Seen
      */
-    created_at: string;
+    last_seen: string;
 };
 
 export type LoginApiV1UserLoginPostData = {
@@ -1023,6 +1023,36 @@ export type CreateWebsipApiV1TelephoningWebsipGetResponses = {
 };
 
 export type CreateWebsipApiV1TelephoningWebsipGetResponse = CreateWebsipApiV1TelephoningWebsipGetResponses[keyof CreateWebsipApiV1TelephoningWebsipGetResponses];
+
+export type PutWebsipApiV1TelephoningWebsipPutData = {
+    body?: never;
+    path?: never;
+    query: {
+        /**
+         * Extension
+         */
+        extension: string;
+    };
+    url: '/api/v1/telephoning/websip';
+};
+
+export type PutWebsipApiV1TelephoningWebsipPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type PutWebsipApiV1TelephoningWebsipPutError = PutWebsipApiV1TelephoningWebsipPutErrors[keyof PutWebsipApiV1TelephoningWebsipPutErrors];
+
+export type PutWebsipApiV1TelephoningWebsipPutResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type PutWebsipApiV1TelephoningWebsipPutResponse = PutWebsipApiV1TelephoningWebsipPutResponses[keyof PutWebsipApiV1TelephoningWebsipPutResponses];
 
 export type GetPagesApiV1PagesGetData = {
     body?: never;

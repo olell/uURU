@@ -5,6 +5,7 @@ Copyright (c) Ole Lange, Gregor Michels and contributors. All rights reserved.
 Licensed under the MIT license. See LICENSE file in the project root for details.
 """
 
+from datetime import datetime
 from typing import Optional
 from fastapi import APIRouter, HTTPException
 from fastapi import status
@@ -78,5 +79,18 @@ def delete_websip(session_asterisk: SessionAsteriskDep, extension: str, password
         )
 
     WebSIPManager.instance().delete_extension(session_asterisk, ext)
+
+    return {}
+
+
+@router.put("/websip", status_code=status.HTTP_204_NO_CONTENT)
+def put_websip(extension: str):
+    if not settings.ENABLE_WEBSIP:
+        raise HTTPException(
+            status_code=status.HTTP_406_NOT_ACCEPTABLE, detail="WebSIP is disabled"
+        )
+
+    ext = WebSIPManager.instance().get_extension(extension)
+    ext.last_seen = datetime.now()
 
     return {}

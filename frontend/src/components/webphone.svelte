@@ -4,7 +4,8 @@
 		createWebsipApiV1TelephoningWebsipGet,
 		deleteWebsipApiV1TelephoningWebsipDelete,
 		type WebSipExtension,
-		type ExtensionBase
+		type ExtensionBase,
+		putWebsipApiV1TelephoningWebsipPut
 	} from '../client';
 	import { Web } from 'sip.js';
 	import { settings } from '../sharedState.svelte';
@@ -86,6 +87,8 @@
 	let user = $state<Web.SimpleUser | undefined>(undefined);
 	let extension = $state<WebSipExtension | undefined>(undefined);
 
+	let refreshInterval = $state<ReturnType<typeof setInterval> | undefined>(undefined);
+
 	const startCall = async () => {
 		statusText = 'Creating temporary extension...';
 		// create websip extension
@@ -97,6 +100,16 @@
 		}
 		extension = data;
 		statusText = `Created temporary extension ${extension.display_name} <${extension.extension}>`;
+
+		// create interval to regulary refresh the extension
+		refreshInterval = setInterval(() => {
+			putWebsipApiV1TelephoningWebsipPut({
+				credentials: 'include',
+				query: { extension: extension!.extension }
+			}).then(() => {
+				console.log('Refreshed extension');
+			});
+		}, 60000);
 
 		const options: Web.SimpleUserOptions = {
 			aor: extension.aor,
@@ -134,6 +147,7 @@
 	};
 
 	const teardown = async () => {
+		clearInterval(refreshInterval);
 		statusText = 'Cleaning up...';
 		statusColor = 'danger';
 		status = 'teardown';

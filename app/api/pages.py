@@ -4,16 +4,29 @@ from pathlib import Path
 from fastapi import APIRouter
 import mistune
 
-from app.web.pages import available, get_all
+from app.core.config import settings
 
 router = APIRouter(prefix="/pages", tags=["pages"])
 logger = getLogger(__name__)
 
 
+def get_page_files() -> list[str] | None:
+    if not settings.ENABLE_PAGES:
+        return None
+
+    if not os.path.exists("pages/"):
+        return None
+
+    files = os.listdir("pages/")
+    md_files = list(filter(lambda f: f.endswith(".md"), files))
+
+    return md_files
+
+
 @router.get("/")
 def get_pages() -> dict[str, str]:
-    files = available(True)
-    if not files:
+    files = get_page_files()
+    if files is None:
         return {}
 
     response = {}

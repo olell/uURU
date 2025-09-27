@@ -33,7 +33,7 @@ def create_user(
     autocommit=True,
 ) -> User:
 
-    if settings.LIMIT_REGISTRATION:
+    if not created_by_system and settings.LIMIT_REGISTRATION:
         if new_user.invite is None:
             raise CRUDNotAllowedException(
                 "An invite code is required to create a new account!"

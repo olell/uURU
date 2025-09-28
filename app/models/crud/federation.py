@@ -102,6 +102,7 @@ def create_outgoing_peering_request(
         name=name,
         partner_uuru_host=settings.FEDERATION_UURU_HOST,
         partner_iax_host=settings.FEDERATION_IAX2_HOST,
+        partner_extension_length=settings.EXTENSION_DIGITS,
         secret=secret,
     )
     try:

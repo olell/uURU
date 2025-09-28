@@ -8,6 +8,15 @@ Licensed under the MIT license. See LICENSE file in the project root for details
 from app.models.asterisk import PSAor, PSAuth, PSEndpoint, IAXFriend
 from app.models.user import Invite, User
 from app.models.extension import Extension, TemporaryExtensions
+from app.models.federation import Peer, IncomingPeeringRequest, OutgoingPeeringRequest
 
-tables = [User, Extension, TemporaryExtensions, Invite]
+tables = [
+    User,
+    Extension,
+    TemporaryExtensions,
+    Invite,
+    Peer,
+    IncomingPeeringRequest,
+    OutgoingPeeringRequest,
+]
 asterisk_tables = [PSAor, PSAuth, PSEndpoint, IAXFriend]

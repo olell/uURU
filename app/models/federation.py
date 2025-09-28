@@ -29,18 +29,24 @@ class Peer(PeerBase, table=True):
     partner_uuru_host: str
 
 
-class OutgoingPeeringRequest(SQLModel, table=True):
+class OutgoingPeeringRequestBase(SQLModel):
     id = Field(default_factory=uuid.uuid4, primary_key=True)
     name: str
-    secret: str
     partner_uuru_host: str
     prefix: str
 
 
-class IncomingPeeringRequest(SQLModel, table=True):
+class OutgoingPeeringRequest(OutgoingPeeringRequestBase, table=True):
+    secret: str
+
+
+class IncomingPeeringRequestBase(SQLModel):
     id = Field(primary_key=True)
     name: str
-    secret: str
     partner_uuru_host: str
     partner_iax_host: str
     partner_extension_length: str
+
+
+class IncomingPeeringRequest(SQLModel, table=True):
+    secret: str

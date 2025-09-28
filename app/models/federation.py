@@ -5,8 +5,26 @@ Copyright (c) Ole Lange, Gregor Michels and contributors. All rights reserved.
 Licensed under the MIT license. See LICENSE file in the project root for details.
 """
 
+from pydantic import BaseModel
 from sqlmodel import SQLModel, Field
 import uuid
+
+
+class IncomingRequestStatus(BaseModel):
+    accept: bool
+
+    # required only if accepted
+    prefix: str | None = None
+
+
+class OutgoingRequestStatus(BaseModel):
+    accept: bool
+    secret: str
+
+    # required only if accepted
+    extension_length: int | None = None
+    partner_iax_host: str | None = None
+    partner_uuru_host: str | None = None
 
 
 class PeerBase(SQLModel):

@@ -10,7 +10,7 @@ import uuid
 
 
 class PeerBase(SQLModel):
-    id = Field(default_factory=uuid.uuid4, primary_key=True)
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
 
     # iaxfriend
     name: str
@@ -30,7 +30,7 @@ class Peer(PeerBase, table=True):
 
 
 class OutgoingPeeringRequestBase(SQLModel):
-    id = Field(default_factory=uuid.uuid4, primary_key=True)
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     name: str
     partner_uuru_host: str
     prefix: str
@@ -41,12 +41,12 @@ class OutgoingPeeringRequest(OutgoingPeeringRequestBase, table=True):
 
 
 class IncomingPeeringRequestBase(SQLModel):
-    id = Field(primary_key=True)
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     name: str
     partner_uuru_host: str
     partner_iax_host: str
     partner_extension_length: str
 
 
-class IncomingPeeringRequest(SQLModel, table=True):
+class IncomingPeeringRequest(IncomingPeeringRequestBase, table=True):
     secret: str

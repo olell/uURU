@@ -36,7 +36,7 @@ def call_set_outgoing_peering_request_status(
     host: str, request_id: str, status: OutgoingRequestStatus
 ):
     response = requests.put(
-        host.rstrip("/") + f"/api/v1/federation/incoming/request/{request_id}",
+        host.rstrip("/") + f"/api/v1/federation/outgoing/request/{request_id}",
         json=status.model_dump(exclude_unset=True, exclude_none=True),
     )
     response.raise_for_status()

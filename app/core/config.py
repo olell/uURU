@@ -50,6 +50,8 @@ class PublicSettings(BaseModel):
     WEBSIP_PUBLIC: bool
     WEBSIP_EXTENSION_RANGE: tuple[int, int]
     WEBSIP_WS_HOST: str
+    FEDERATION_IAX2_HOST: str
+    FEDERATION_UURU_HOST: str
 
 
 class Settings(BaseSettings):
@@ -220,6 +222,11 @@ class Settings(BaseSettings):
 
     GRANDSTREAM_WIFI_SSID: str | None = None
     GRANDSTREAM_WIFI_PASSWD: str | None = None
+
+    ## FEDERATION
+
+    FEDERATION_IAX2_HOST: str = ASTERISK_HOST
+    FEDERATION_UURU_HOST: str = WEB_HOST
 
 
 settings = Settings()

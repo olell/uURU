@@ -52,3 +52,9 @@ def generate_extension_token():
 
 def generate_invite_code():
     return "".join(random.choice(string.ascii_lowercase) for _ in range(10))
+
+
+def generate_peer_secret():
+    return "".join(
+        random.choice(string.ascii_letters + string.digits) for _ in range(32)
+    )

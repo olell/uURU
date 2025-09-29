@@ -37,14 +37,14 @@ class PeerBase(SQLModel):
     prefix: str
     partner_extension_length: int
 
+    # network
+    partner_iax_host: str
+    partner_uuru_host: str
+
 
 class Peer(PeerBase, table=True):
     # iaxfriend
     secret: str
-
-    # network
-    partner_iax_host: str
-    partner_uuru_host: str
 
 
 class OutgoingPeeringRequestBase(SQLModel):

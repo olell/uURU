@@ -430,6 +430,17 @@ export type PeerBase = {
 };
 
 /**
+ * PeerPhonebook
+ */
+export type PeerPhonebook = {
+    peer: PeerBase;
+    /**
+     * Phonebook
+     */
+    phonebook: Array<ExtensionBase>;
+};
+
+/**
  * PeerTeardownData
  */
 export type PeerTeardownData = {
@@ -1529,6 +1540,23 @@ export type TeardownRequestApiV1FederationPeerTeardownPostResponses = {
      */
     200: unknown;
 };
+
+export type GetPeerPhonebooksApiV1FederationPhonebookGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/federation/phonebook';
+};
+
+export type GetPeerPhonebooksApiV1FederationPhonebookGetResponses = {
+    /**
+     * Response Get Peer Phonebooks Api V1 Federation Phonebook Get
+     * Successful Response
+     */
+    200: Array<PeerPhonebook>;
+};
+
+export type GetPeerPhonebooksApiV1FederationPhonebookGetResponse = GetPeerPhonebooksApiV1FederationPhonebookGetResponses[keyof GetPeerPhonebooksApiV1FederationPhonebookGetResponses];
 
 export type IndexGetData = {
     body?: never;

@@ -281,7 +281,10 @@ def delete_asterisk_iax_peer_and_dialplan(
         select(DialPlanEntry).where(
             DialPlanEntry.exten == f"_{peer.prefix}{'X'*peer.partner_extension_length}",
         )
-    )
+    ).first()
+
+    if dialplan is None:
+        raise CRUDNotAllowedException("Unknown dialplan entry!")
 
     try:
         session_asterisk.delete(friend)

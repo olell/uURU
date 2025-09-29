@@ -258,6 +258,8 @@ def get_peer_phonebooks(session: SessionDep) -> list[PeerPhonebook]:
     for peer in peers:
         try:
             phonebook = call_get_phonebook(peer.partner_uuru_host)
+            for i in range(0, len(phonebook)):
+                phonebook[i].extension = peer.prefix + phonebook[i].extension
         except Exception as e:
             logger.warning(
                 f"Failed to retrieve phonebook of peer {peer.name} @ {peer.partner_uuru_host}"

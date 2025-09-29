@@ -19,6 +19,8 @@ from app.models.federation import (
     OutgoingPeeringRequestBase,
     OutgoingPeeringRequestPublic,
     OutgoingRequestStatus,
+    Peer,
+    PeerBase,
 )
 from app.models.user import UserRole
 
@@ -180,5 +182,19 @@ def set_outgoing_peering_request_status(
                 session, request_id, request_status.secret
             )
         return {"status": "OK"}
+    except CRUDNotAllowedException as e:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+
+
+@router.get("/peers")
+def get_peers(session: SessionDep, user: CurrentUser) -> list[PeerBase]:
+    if user.role != UserRole.ADMIN:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You are not permitted to request peers",
+        )
+
+    try:
+        return federation.get_peers(session)
     except CRUDNotAllowedException as e:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))

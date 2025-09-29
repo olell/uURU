@@ -220,12 +220,14 @@ def accept_incoming_peering_request(
         session.delete(request)
         if autocommit:
             session.commit()
+            session_asterisk.commit()
 
         logger.info(f"Accepted peering {peer.name} with {peer.partner_uuru_host}")
 
     except:
         if autocommit:
             session.rollback()
+            session_asterisk.rollback()
         raise
 
 
@@ -284,11 +286,13 @@ def teardown_peer(
         session.delete(Peer)
         if autocommit:
             session.commit()
+            session_asterisk.commit()
 
         logger.info(f"Teared down peering {peer.name} with {peer.partner_uuru_host}")
     except:
         if autocommit:
             session.rollback()
+            session_asterisk.rollback()
         raise
 
 
@@ -393,9 +397,11 @@ def accept_outgoing_peering_request(
 
         if autocommit:
             session.commit()
+            session_asterisk.commit()
     except:
         if autocommit:
             session.rollback()
+            session_asterisk.rollback()
         raise
 
 
@@ -434,9 +440,11 @@ def request_peer_teardown(
         session.delete(peer)
         if autocommit:
             session.commit()
+            session_asterisk.commit()
     except:
         if autocommit:
             session.rollback()
+            session_asterisk.rollback()
         raise
 
 

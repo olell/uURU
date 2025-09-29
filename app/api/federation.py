@@ -21,6 +21,7 @@ from app.models.federation import (
     OutgoingRequestStatus,
     Peer,
     PeerBase,
+    PeerTeardownData,
 )
 from app.models.user import UserRole
 
@@ -196,5 +197,42 @@ def get_peers(session: SessionDep, user: CurrentUser) -> list[PeerBase]:
 
     try:
         return federation.get_peers(session)
+    except CRUDNotAllowedException as e:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+
+
+@router.delete("/peer/{peer_id}")
+def delete_peer(
+    session: SessionDep,
+    session_asterisk: SessionAsteriskDep,
+    user: CurrentUser,
+    peer_id: str,
+):
+    if user.role != UserRole.ADMIN:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin only!")
+
+    peer = federation.get_peer_by_id(session, peer_id)
+    if peer is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Unknown peer"
+        )
+
+    try:
+        federation.teardown_peer(session, session_asterisk, user, peer)
+        return {"status": "OK"}
+    except CRUDNotAllowedException as e:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+
+
+@router.post("/peer/teardown")
+def teardown_request(
+    session: SessionDep, session_asterisk: SessionAsteriskDep, data: PeerTeardownData
+):
+    # this endpoint is called by the other peer to teardown the peer
+    try:
+        federation.request_peer_teardown(
+            session, session_asterisk, data.name, data.secret
+        )
+        return {"status": "OK"}
     except CRUDNotAllowedException as e:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))

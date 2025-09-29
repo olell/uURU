@@ -27,6 +27,11 @@ class OutgoingRequestStatus(BaseModel):
     partner_uuru_host: str | None = None
 
 
+class PeerTeardownData(BaseModel):
+    name: str
+    secret: str
+
+
 class PeerBase(SQLModel):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
 

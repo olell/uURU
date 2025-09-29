@@ -8,7 +8,7 @@ Licensed under the MIT license. See LICENSE file in the project root for details
 import requests
 from logging import getLogger
 
-from app.models.federation import OutgoingRequestStatus
+from app.models.federation import OutgoingRequestStatus, PeerTeardownData
 from app.models.federation import IncomingPeeringRequest
 
 logger = getLogger(__name__)
@@ -43,3 +43,11 @@ def call_set_outgoing_peering_request_status(
     logger.info(
         f"Updated outgoing peering status to {'accepted' if status.accept else 'declined'} at {host}"
     )
+
+
+def call_teardown_request(host: str, data: PeerTeardownData):
+    response = requests.post(
+        host.rstrip("/") + f"/api/v1/federation/peer/teardown", json=data.model_dump()
+    )
+    response.raise_for_status()
+    logger.info(f"Requested teardown of session '{data.name}' at {host}")

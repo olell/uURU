@@ -14,6 +14,7 @@ from app.api.client.federation import (
     call_create_incoming_peering_request,
     call_revoke_incoming_peering_request,
     call_set_outgoing_peering_request_status,
+    call_teardown_request,
 )
 from app.models.crud import CRUDNotAllowedException
 from app.models.crud.asterisk import (
@@ -25,6 +26,7 @@ from app.models.federation import (
     Peer,
     OutgoingPeeringRequest,
     IncomingPeeringRequest,
+    PeerTeardownData,
 )
 from app.models.user import User, UserRole
 from app.core.security import generate_peer_secret
@@ -268,7 +270,13 @@ def teardown_peer(
     if user.role != UserRole.ADMIN:
         raise CRUDNotAllowedException("Admin only!")
 
-    # TODO: Sent teardown request to other instance
+    try:
+        data = PeerTeardownData(name=peer.name, secret=peer.secret)
+        call_teardown_request(peer.partner_uuru_host, data)
+    except HTTPError:
+        raise CRUDNotAllowedException(
+            f"Failed to request teardown at {peer.partner_uuru_host}"
+        )
 
     try:
         delete_asterisk_iax_peer_and_dialplan(session_asterisk, peer, autocommit)
@@ -430,3 +438,9 @@ def request_peer_teardown(
         if autocommit:
             session.rollback()
         raise
+
+
+def get_peer_by_id(session: Session, peer_id: str) -> Peer | None:
+    statement = select(Peer).where(Peer.id == uuid.UUID(peer_id))
+    peer = session.exec(statement).first()
+    return peer

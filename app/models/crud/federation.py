@@ -262,7 +262,7 @@ def decline_incoming_peering_request(
         raise
 
 
-def get_peers(session: Session) -> Peer:
+def get_peers(session: Session) -> list[Peer]:
     return list(session.exec(select(Peer)).all())
 
 

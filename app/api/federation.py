@@ -8,10 +8,13 @@ Licensed under the MIT license. See LICENSE file in the project root for details
 from logging import getLogger
 from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel
+from requests import HTTPError
 
-from app.api.deps import CurrentUser
+from app.api.client.extension import call_get_phonebook
+from app.api.deps import CurrentUser, OptionalCurrentUser
 from app.core.db import SessionAsteriskDep, SessionDep
 from app.models.crud import CRUDNotAllowedException, federation
+from app.models.extension import ExtensionBase
 from app.models.federation import (
     IncomingPeeringRequest,
     IncomingPeeringRequestBase,
@@ -236,3 +239,31 @@ def teardown_request(
         return {"status": "OK"}
     except CRUDNotAllowedException as e:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+
+
+class PeerPhonebook(BaseModel):
+    peer: PeerBase
+    phonebook: list[ExtensionBase]
+
+
+@router.get("/phonebook")
+def get_peer_phonebooks(session: SessionDep) -> list[PeerPhonebook]:
+    try:
+        peers = federation.get_peers(session)
+    except CRUDNotAllowedException as e:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+
+    phonebooks = []
+
+    for peer in peers:
+        try:
+            phonebook = call_get_phonebook(peer.partner_uuru_host)
+        except Exception as e:
+            logger.warning(
+                f"Failed to retrieve phonebook of peer {peer.name} @ {peer.partner_uuru_host}"
+            )
+            logger.exception(e)
+            continue
+        phonebooks.append(PeerPhonebook(peer=peer, phonebook=phonebook))
+
+    return phonebooks

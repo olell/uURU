@@ -283,7 +283,7 @@ def teardown_peer(
     try:
         delete_asterisk_iax_peer_and_dialplan(session_asterisk, peer, False)
 
-        session.delete(Peer)
+        session.delete(peer)
         if autocommit:
             session.commit()
             session_asterisk.commit()

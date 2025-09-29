@@ -182,6 +182,7 @@
 							{#if settings.val.LIMIT_REGISTRATION}
 								<DropdownItem href={resolve('/admin/invites')}>Invites</DropdownItem>
 							{/if}
+							<DropdownItem href={resolve('/admin/federation')}>Federation</DropdownItem>
 						</DropdownMenu>
 					</Dropdown>
 				{/if}

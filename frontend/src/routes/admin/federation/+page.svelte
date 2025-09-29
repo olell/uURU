@@ -196,7 +196,12 @@
 <h2>Federation</h2>
 <hr />
 
-<h3>Peers</h3>
+<h3>
+	Peers
+	<Button size="lg" color="link" onclick={updatePeers}>
+		<Icon name="arrow-clockwise"></Icon>
+	</Button>
+</h3>
 <Table striped>
 	<thead>
 		<tr>

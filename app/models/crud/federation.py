@@ -213,7 +213,7 @@ def accept_incoming_peering_request(
     )
 
     try:
-        create_asterisk_iax_peer_and_dialplan(session_asterisk, peer, autocommit)
+        create_asterisk_iax_peer_and_dialplan(session_asterisk, peer, False)
 
         session.delete(request)
         session.add(peer)
@@ -279,7 +279,7 @@ def teardown_peer(
         )
 
     try:
-        delete_asterisk_iax_peer_and_dialplan(session_asterisk, peer, autocommit)
+        delete_asterisk_iax_peer_and_dialplan(session_asterisk, peer, False)
 
         session.delete(Peer)
         if autocommit:
@@ -389,7 +389,7 @@ def accept_outgoing_peering_request(
     try:
         session.delete(request)
         session.add(peer)
-        create_asterisk_iax_peer_and_dialplan(session_asterisk, peer, autocommit)
+        create_asterisk_iax_peer_and_dialplan(session_asterisk, peer, False)
 
         if autocommit:
             session.commit()
@@ -430,7 +430,7 @@ def request_peer_teardown(
         raise CRUDNotAllowedException("Unknown peer!")
 
     try:
-        delete_asterisk_iax_peer_and_dialplan(session_asterisk, peer, autocommit)
+        delete_asterisk_iax_peer_and_dialplan(session_asterisk, peer, False)
         session.delete(peer)
         if autocommit:
             session.commit()

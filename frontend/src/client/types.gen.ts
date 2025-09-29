@@ -199,6 +199,76 @@ export type HttpValidationError = {
 };
 
 /**
+ * IncomingPeeringRequest
+ */
+export type IncomingPeeringRequest = {
+    /**
+     * Id
+     */
+    id?: string;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Partner Uuru Host
+     */
+    partner_uuru_host: string;
+    /**
+     * Partner Iax Host
+     */
+    partner_iax_host: string;
+    /**
+     * Partner Extension Length
+     */
+    partner_extension_length: number;
+    /**
+     * Secret
+     */
+    secret: string;
+};
+
+/**
+ * IncomingPeeringRequestBase
+ */
+export type IncomingPeeringRequestBase = {
+    /**
+     * Id
+     */
+    id?: string;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Partner Uuru Host
+     */
+    partner_uuru_host: string;
+    /**
+     * Partner Iax Host
+     */
+    partner_iax_host: string;
+    /**
+     * Partner Extension Length
+     */
+    partner_extension_length: number;
+};
+
+/**
+ * IncomingRequestStatus
+ */
+export type IncomingRequestStatus = {
+    /**
+     * Accept
+     */
+    accept: boolean;
+    /**
+     * Prefix
+     */
+    prefix?: string | null;
+};
+
+/**
  * Invite
  */
 export type Invite = {
@@ -250,6 +320,72 @@ export type InviteCreate = {
 export type InviteVariant = 'count' | 'time' | 'time+count';
 
 /**
+ * OutgoingPeeringRequestBase
+ */
+export type OutgoingPeeringRequestBase = {
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Partner Uuru Host
+     */
+    partner_uuru_host: string;
+    /**
+     * Prefix
+     */
+    prefix: string;
+};
+
+/**
+ * OutgoingPeeringRequestPublic
+ */
+export type OutgoingPeeringRequestPublic = {
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Partner Uuru Host
+     */
+    partner_uuru_host: string;
+    /**
+     * Prefix
+     */
+    prefix: string;
+    /**
+     * Id
+     */
+    id?: string;
+};
+
+/**
+ * OutgoingRequestStatus
+ */
+export type OutgoingRequestStatus = {
+    /**
+     * Accept
+     */
+    accept: boolean;
+    /**
+     * Secret
+     */
+    secret: string;
+    /**
+     * Extension Length
+     */
+    extension_length?: number | null;
+    /**
+     * Partner Iax Host
+     */
+    partner_iax_host?: string | null;
+    /**
+     * Partner Uuru Host
+     */
+    partner_uuru_host?: string | null;
+};
+
+/**
  * PasswordChange
  */
 export type PasswordChange = {
@@ -261,6 +397,50 @@ export type PasswordChange = {
      * New Password
      */
     new_password: string;
+};
+
+/**
+ * PeerBase
+ */
+export type PeerBase = {
+    /**
+     * Id
+     */
+    id?: string;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Prefix
+     */
+    prefix: string;
+    /**
+     * Partner Extension Length
+     */
+    partner_extension_length: number;
+    /**
+     * Partner Iax Host
+     */
+    partner_iax_host: string;
+    /**
+     * Partner Uuru Host
+     */
+    partner_uuru_host: string;
+};
+
+/**
+ * PeerTeardownData
+ */
+export type PeerTeardownData = {
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Secret
+     */
+    secret: string;
 };
 
 /**
@@ -369,6 +549,14 @@ export type PublicSettings = {
      * Websip Ws Host
      */
     WEBSIP_WS_HOST: string;
+    /**
+     * Federation Iax2 Host
+     */
+    FEDERATION_IAX2_HOST: string;
+    /**
+     * Federation Uuru Host
+     */
+    FEDERATION_UURU_HOST: string;
 };
 
 /**
@@ -1072,6 +1260,275 @@ export type GetPagesApiV1PagesGetResponses = {
 };
 
 export type GetPagesApiV1PagesGetResponse = GetPagesApiV1PagesGetResponses[keyof GetPagesApiV1PagesGetResponses];
+
+export type RevokeOutgoingPeeringRequestApiV1FederationOutgoingRequestDeleteData = {
+    body?: never;
+    path?: never;
+    query: {
+        /**
+         * Request Id
+         */
+        request_id: string;
+    };
+    url: '/api/v1/federation/outgoing/request';
+};
+
+export type RevokeOutgoingPeeringRequestApiV1FederationOutgoingRequestDeleteErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type RevokeOutgoingPeeringRequestApiV1FederationOutgoingRequestDeleteError = RevokeOutgoingPeeringRequestApiV1FederationOutgoingRequestDeleteErrors[keyof RevokeOutgoingPeeringRequestApiV1FederationOutgoingRequestDeleteErrors];
+
+export type RevokeOutgoingPeeringRequestApiV1FederationOutgoingRequestDeleteResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type RevokeOutgoingPeeringRequestApiV1FederationOutgoingRequestDeleteResponse = RevokeOutgoingPeeringRequestApiV1FederationOutgoingRequestDeleteResponses[keyof RevokeOutgoingPeeringRequestApiV1FederationOutgoingRequestDeleteResponses];
+
+export type CreateOutgoingPeeringRequestApiV1FederationOutgoingRequestPostData = {
+    body: OutgoingPeeringRequestBase;
+    path?: never;
+    query?: never;
+    url: '/api/v1/federation/outgoing/request';
+};
+
+export type CreateOutgoingPeeringRequestApiV1FederationOutgoingRequestPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateOutgoingPeeringRequestApiV1FederationOutgoingRequestPostError = CreateOutgoingPeeringRequestApiV1FederationOutgoingRequestPostErrors[keyof CreateOutgoingPeeringRequestApiV1FederationOutgoingRequestPostErrors];
+
+export type CreateOutgoingPeeringRequestApiV1FederationOutgoingRequestPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: OutgoingPeeringRequestBase;
+};
+
+export type CreateOutgoingPeeringRequestApiV1FederationOutgoingRequestPostResponse = CreateOutgoingPeeringRequestApiV1FederationOutgoingRequestPostResponses[keyof CreateOutgoingPeeringRequestApiV1FederationOutgoingRequestPostResponses];
+
+export type GetOutgoingPeeringRequestsApiV1FederationOutgoingRequestsGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/federation/outgoing/requests';
+};
+
+export type GetOutgoingPeeringRequestsApiV1FederationOutgoingRequestsGetResponses = {
+    /**
+     * Response Get Outgoing Peering Requests Api V1 Federation Outgoing Requests Get
+     * Successful Response
+     */
+    200: Array<OutgoingPeeringRequestPublic>;
+};
+
+export type GetOutgoingPeeringRequestsApiV1FederationOutgoingRequestsGetResponse = GetOutgoingPeeringRequestsApiV1FederationOutgoingRequestsGetResponses[keyof GetOutgoingPeeringRequestsApiV1FederationOutgoingRequestsGetResponses];
+
+export type GetIncomingPeeringRequestsApiV1FederationIncomingRequestsGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/federation/incoming/requests';
+};
+
+export type GetIncomingPeeringRequestsApiV1FederationIncomingRequestsGetResponses = {
+    /**
+     * Response Get Incoming Peering Requests Api V1 Federation Incoming Requests Get
+     * Successful Response
+     */
+    200: Array<IncomingPeeringRequestBase>;
+};
+
+export type GetIncomingPeeringRequestsApiV1FederationIncomingRequestsGetResponse = GetIncomingPeeringRequestsApiV1FederationIncomingRequestsGetResponses[keyof GetIncomingPeeringRequestsApiV1FederationIncomingRequestsGetResponses];
+
+export type RevokeIncomingPeeringRequestApiV1FederationIncomingRequestRequestIdDeleteData = {
+    body?: never;
+    path: {
+        /**
+         * Request Id
+         */
+        request_id: string;
+    };
+    query: {
+        /**
+         * Secret
+         */
+        secret: string;
+    };
+    url: '/api/v1/federation/incoming/request/{request_id}';
+};
+
+export type RevokeIncomingPeeringRequestApiV1FederationIncomingRequestRequestIdDeleteErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type RevokeIncomingPeeringRequestApiV1FederationIncomingRequestRequestIdDeleteError = RevokeIncomingPeeringRequestApiV1FederationIncomingRequestRequestIdDeleteErrors[keyof RevokeIncomingPeeringRequestApiV1FederationIncomingRequestRequestIdDeleteErrors];
+
+export type RevokeIncomingPeeringRequestApiV1FederationIncomingRequestRequestIdDeleteResponses = {
+    /**
+     * Successful Response
+     */
+    200: unknown;
+};
+
+export type SetIncomingPeeringRequestStatusApiV1FederationIncomingRequestRequestIdPutData = {
+    body: IncomingRequestStatus;
+    path: {
+        /**
+         * Request Id
+         */
+        request_id: string;
+    };
+    query?: never;
+    url: '/api/v1/federation/incoming/request/{request_id}';
+};
+
+export type SetIncomingPeeringRequestStatusApiV1FederationIncomingRequestRequestIdPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SetIncomingPeeringRequestStatusApiV1FederationIncomingRequestRequestIdPutError = SetIncomingPeeringRequestStatusApiV1FederationIncomingRequestRequestIdPutErrors[keyof SetIncomingPeeringRequestStatusApiV1FederationIncomingRequestRequestIdPutErrors];
+
+export type SetIncomingPeeringRequestStatusApiV1FederationIncomingRequestRequestIdPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: unknown;
+};
+
+export type CreateIncomingPeeringRequestApiV1FederationIncomingRequestPostData = {
+    body: IncomingPeeringRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/federation/incoming/request';
+};
+
+export type CreateIncomingPeeringRequestApiV1FederationIncomingRequestPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateIncomingPeeringRequestApiV1FederationIncomingRequestPostError = CreateIncomingPeeringRequestApiV1FederationIncomingRequestPostErrors[keyof CreateIncomingPeeringRequestApiV1FederationIncomingRequestPostErrors];
+
+export type CreateIncomingPeeringRequestApiV1FederationIncomingRequestPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: unknown;
+};
+
+export type SetOutgoingPeeringRequestStatusApiV1FederationOutgoingRequestRequestIdPutData = {
+    body: OutgoingRequestStatus;
+    path: {
+        /**
+         * Request Id
+         */
+        request_id: string;
+    };
+    query?: never;
+    url: '/api/v1/federation/outgoing/request/{request_id}';
+};
+
+export type SetOutgoingPeeringRequestStatusApiV1FederationOutgoingRequestRequestIdPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SetOutgoingPeeringRequestStatusApiV1FederationOutgoingRequestRequestIdPutError = SetOutgoingPeeringRequestStatusApiV1FederationOutgoingRequestRequestIdPutErrors[keyof SetOutgoingPeeringRequestStatusApiV1FederationOutgoingRequestRequestIdPutErrors];
+
+export type SetOutgoingPeeringRequestStatusApiV1FederationOutgoingRequestRequestIdPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: unknown;
+};
+
+export type GetPeersApiV1FederationPeersGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/federation/peers';
+};
+
+export type GetPeersApiV1FederationPeersGetResponses = {
+    /**
+     * Response Get Peers Api V1 Federation Peers Get
+     * Successful Response
+     */
+    200: Array<PeerBase>;
+};
+
+export type GetPeersApiV1FederationPeersGetResponse = GetPeersApiV1FederationPeersGetResponses[keyof GetPeersApiV1FederationPeersGetResponses];
+
+export type DeletePeerApiV1FederationPeerPeerIdDeleteData = {
+    body?: never;
+    path: {
+        /**
+         * Peer Id
+         */
+        peer_id: string;
+    };
+    query?: never;
+    url: '/api/v1/federation/peer/{peer_id}';
+};
+
+export type DeletePeerApiV1FederationPeerPeerIdDeleteErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DeletePeerApiV1FederationPeerPeerIdDeleteError = DeletePeerApiV1FederationPeerPeerIdDeleteErrors[keyof DeletePeerApiV1FederationPeerPeerIdDeleteErrors];
+
+export type DeletePeerApiV1FederationPeerPeerIdDeleteResponses = {
+    /**
+     * Successful Response
+     */
+    200: unknown;
+};
+
+export type TeardownRequestApiV1FederationPeerTeardownPostData = {
+    body: PeerTeardownData;
+    path?: never;
+    query?: never;
+    url: '/api/v1/federation/peer/teardown';
+};
+
+export type TeardownRequestApiV1FederationPeerTeardownPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type TeardownRequestApiV1FederationPeerTeardownPostError = TeardownRequestApiV1FederationPeerTeardownPostErrors[keyof TeardownRequestApiV1FederationPeerTeardownPostErrors];
+
+export type TeardownRequestApiV1FederationPeerTeardownPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: unknown;
+};
 
 export type IndexGetData = {
     body?: never;

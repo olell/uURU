@@ -80,7 +80,15 @@
 				push_api_error(error, 'Failed to retrieve outgoing peering requests!');
 			});
 	};
-	$effect(updateOutgoingRequests);
+	$effect(() => {
+		let interval = setInterval(() => {
+			updateOutgoingRequests();
+		}, 30000);
+		updateOutgoingRequests();
+		return () => {
+			clearInterval(interval);
+		};
+	});
 
 	const revokeRequest = async (request: OutgoingPeeringRequestPublic) => {
 		revokeOutgoingPeeringRequestApiV1FederationOutgoingRequestDelete({
@@ -257,7 +265,14 @@
 
 <h3>
 	Peers
-	<Button size="lg" color="link" onclick={updatePeers}>
+	<Button
+		size="lg"
+		color="link"
+		onclick={() => {
+			updatePeers();
+			updateOutgoingRequests();
+		}}
+	>
 		<Icon name="arrow-clockwise"></Icon>
 	</Button>
 </h3>

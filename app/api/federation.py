@@ -52,7 +52,10 @@ def create_outgoing_peering_request(
 
 @router.delete("/outgoing/request", status_code=status.HTTP_204_NO_CONTENT)
 def revoke_outgoing_peering_request(
-    session: SessionDep, user: CurrentUser, request_id: str
+    session: SessionDep,
+    user: CurrentUser,
+    request_id: str,
+    local_only: bool = False,
 ):
     if user.role != UserRole.ADMIN:
         raise HTTPException(
@@ -62,7 +65,7 @@ def revoke_outgoing_peering_request(
 
     try:
         request = federation.get_outgoing_peering_request_by_id(session, request_id)
-        federation.revoke_outgoing_peering_request(session, user, request)
+        federation.revoke_outgoing_peering_request(session, user, request, local_only)
         return {"status": "OK"}
     except CRUDNotAllowedException as e:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
@@ -128,7 +131,9 @@ def set_incoming_peering_request_status(
                 session, session_asterisk, user, request, prefix=request_status.prefix
             )
         else:
-            federation.decline_incoming_peering_request(session, user, request)
+            federation.decline_incoming_peering_request(
+                session, user, request, request_status.local_only
+            )
         return {"status": "OK"}
     except CRUDNotAllowedException as e:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
@@ -210,6 +215,7 @@ def delete_peer(
     session_asterisk: SessionAsteriskDep,
     user: CurrentUser,
     peer_id: str,
+    local_only: bool = False,
 ):
     if user.role != UserRole.ADMIN:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin only!")
@@ -221,7 +227,7 @@ def delete_peer(
         )
 
     try:
-        federation.teardown_peer(session, session_asterisk, user, peer)
+        federation.teardown_peer(session, session_asterisk, user, peer, local_only)
         return {"status": "OK"}
     except CRUDNotAllowedException as e:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))

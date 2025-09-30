@@ -11,6 +11,7 @@
 		Label,
 		Modal,
 		ModalBody,
+		ModalFooter,
 		Row,
 		Table
 	} from '@sveltestrap/sveltestrap';
@@ -37,6 +38,15 @@
 	let requestHost = $state('');
 	let requestPrefix = $state('');
 	let requestName = $state('');
+
+	let repeatLocalModalOpen = $state(false);
+	let repeatLocalModalText = $state('');
+	let repeatLocalModalCallback = $state(() => {});
+	const resetRepeatLocalModal = () => {
+		repeatLocalModalOpen = false;
+		repeatLocalModalText = '';
+		repeatLocalModalCallback = () => {};
+	};
 
 	const sendRequest = async (e: Event) => {
 		e.preventDefault();
@@ -76,14 +86,31 @@
 		revokeOutgoingPeeringRequestApiV1FederationOutgoingRequestDelete({
 			credentials: 'include',
 			query: {
-				request_id: request.id!
+				request_id: request.id!,
+				local_only: repeatLocalModalOpen
 			}
 		})
-			.then(() => {
-				updateOutgoingRequests();
+			.then(({ data, error }) => {
+				if (!error) {
+					updateOutgoingRequests();
+					resetRepeatLocalModal();
+				} else {
+					if (repeatLocalModalOpen) {
+						// failed second time, show error
+						push_api_error(error, 'Failed to revoke request!');
+						resetRepeatLocalModal();
+					} else {
+						// failed first time, open repeat modal
+						repeatLocalModalOpen = true;
+						repeatLocalModalText = error.detail;
+						repeatLocalModalCallback = () => {
+							revokeRequest(request);
+						};
+					}
+				}
 			})
 			.catch(({ error }) => {
-				push_api_error(error, 'Failed to revoke request!');
+				push_api_error(error, 'Failed revoking outgoing peering request!');
 			});
 	};
 
@@ -113,6 +140,7 @@
 		request: IncomingPeeringRequestBase,
 		status: IncomingRequestStatus
 	) => {
+		status.local_only = repeatLocalModalOpen && !status.accept;
 		setIncomingPeeringRequestStatusApiV1FederationIncomingRequestRequestIdPut({
 			credentials: 'include',
 			path: {
@@ -120,12 +148,26 @@
 			},
 			body: status
 		})
-			.then(({ data }) => {
-				updateIncomingRequests();
-				updatePeers();
+			.then(({ data, error }) => {
+				if (!error) {
+					updateIncomingRequests();
+					updatePeers();
+					resetRepeatLocalModal();
+				} else {
+					if (status.accept == true || repeatLocalModalOpen) {
+						push_api_error(error, 'Failed to set incoming request status!');
+						resetRepeatLocalModal();
+					} else {
+						repeatLocalModalOpen = true;
+						repeatLocalModalText = error.detail;
+						repeatLocalModalCallback = () => {
+							setIncomingRequestState(request, status);
+						};
+					}
+				}
 			})
 			.catch(({ error }) => {
-				push_api_error(error, 'Failed to set incoming request status!');
+				push_api_error(error, 'Failed to set incoming request state!');
 			});
 	};
 
@@ -182,13 +224,30 @@
 	const teardownPeering = async (peer: PeerBase) => {
 		deletePeerApiV1FederationPeerPeerIdDelete({
 			credentials: 'include',
-			path: { peer_id: peer.id! }
+			path: { peer_id: peer.id! },
+			query: {
+				local_only: repeatLocalModalOpen
+			}
 		})
-			.then(({ data }) => {
-				updatePeers();
+			.then(({ data, error }) => {
+				if (!error) {
+					updatePeers();
+					resetRepeatLocalModal();
+				} else {
+					if (repeatLocalModalOpen) {
+						push_api_error(error, 'Failed to teardown peer!');
+						resetRepeatLocalModal();
+					} else {
+						repeatLocalModalOpen = true;
+						repeatLocalModalText = error.detail;
+						repeatLocalModalCallback = () => {
+							teardownPeering(peer);
+						};
+					}
+				}
 			})
 			.catch(({ error }) => {
-				push_api_error(error, 'Failed to teardown peer!');
+				push_api_error(error, 'Failed to teardown peering!');
 			});
 	};
 </script>
@@ -363,4 +422,27 @@
 			<Input type="submit" color="success" value="Accept" />
 		</Form>
 	</ModalBody>
+</Modal>
+
+<Modal
+	centered
+	backdrop="static"
+	header="Error: {repeatLocalModalText}"
+	isOpen={repeatLocalModalOpen}
+>
+	<ModalBody>
+		There was an error while executing the requested operation. You can repeat the action without
+		notifying the other instance about it.
+	</ModalBody>
+	<ModalFooter>
+		<Button
+			color="secondary"
+			onclick={() => {
+				repeatLocalModalOpen = false;
+				repeatLocalModalText = '';
+				repeatLocalModalCallback = () => {};
+			}}>Cancel</Button
+		>
+		<Button color="danger" onclick={repeatLocalModalCallback}>Repeat local only</Button>
+	</ModalFooter>
 </Modal>

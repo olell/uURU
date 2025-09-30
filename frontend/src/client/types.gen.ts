@@ -266,6 +266,10 @@ export type IncomingRequestStatus = {
      * Prefix
      */
     prefix?: string | null;
+    /**
+     * Local Only
+     */
+    local_only?: boolean;
 };
 
 /**
@@ -1280,6 +1284,10 @@ export type RevokeOutgoingPeeringRequestApiV1FederationOutgoingRequestDeleteData
          * Request Id
          */
         request_id: string;
+        /**
+         * Local Only
+         */
+        local_only?: boolean;
     };
     url: '/api/v1/federation/outgoing/request';
 };
@@ -1498,7 +1506,12 @@ export type DeletePeerApiV1FederationPeerPeerIdDeleteData = {
          */
         peer_id: string;
     };
-    query?: never;
+    query?: {
+        /**
+         * Local Only
+         */
+        local_only?: boolean;
+    };
     url: '/api/v1/federation/peer/{peer_id}';
 };
 

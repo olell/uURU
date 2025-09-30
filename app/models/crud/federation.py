@@ -130,15 +130,20 @@ def create_outgoing_peering_request(
 
 
 def revoke_outgoing_peering_request(
-    session: Session, user: User, request: OutgoingPeeringRequest, autocommit=True
+    session: Session,
+    user: User,
+    request: OutgoingPeeringRequest,
+    local_only: bool = False,
+    autocommit=True,
 ):
     if user.role != UserRole.ADMIN:
         raise CRUDNotAllowedException("Admin only!")
 
     try:
-        call_revoke_incoming_peering_request(
-            request.partner_uuru_host, str(request.id), request.secret
-        )
+        if not local_only:
+            call_revoke_incoming_peering_request(
+                request.partner_uuru_host, str(request.id), request.secret
+            )
     except HTTPError:
         raise CRUDNotAllowedException(
             f"Failed to revoke peering request at {request.partner_uuru_host}"
@@ -232,7 +237,11 @@ def accept_incoming_peering_request(
 
 
 def decline_incoming_peering_request(
-    session: Session, user: User, request: IncomingPeeringRequest, autocommit=True
+    session: Session,
+    user: User,
+    request: IncomingPeeringRequest,
+    local_only: bool = False,
+    autocommit=True,
 ):
     if user.role != UserRole.ADMIN:
         raise CRUDNotAllowedException("Admin only!")
@@ -242,9 +251,10 @@ def decline_incoming_peering_request(
         secret=request.secret,
     )
     try:
-        call_set_outgoing_peering_request_status(
-            request.partner_uuru_host, str(request.id), status
-        )
+        if not local_only:
+            call_set_outgoing_peering_request_status(
+                request.partner_uuru_host, str(request.id), status
+            )
     except HTTPError:
         raise CRUDNotAllowedException(
             f"Failed to tell {request.partner_uuru_host} that the request was declined"
@@ -267,14 +277,20 @@ def get_peers(session: Session) -> list[Peer]:
 
 
 def teardown_peer(
-    session: Session, session_asterisk: Session, user: User, peer: Peer, autocommit=True
+    session: Session,
+    session_asterisk: Session,
+    user: User,
+    peer: Peer,
+    local_only: bool = False,
+    autocommit=True,
 ):
     if user.role != UserRole.ADMIN:
         raise CRUDNotAllowedException("Admin only!")
 
     try:
-        data = PeerTeardownData(name=peer.name, secret=peer.secret)
-        call_teardown_request(peer.partner_uuru_host, data)
+        if not local_only:
+            data = PeerTeardownData(name=peer.name, secret=peer.secret)
+            call_teardown_request(peer.partner_uuru_host, data)
     except HTTPError:
         raise CRUDNotAllowedException(
             f"Failed to request teardown at {peer.partner_uuru_host}"

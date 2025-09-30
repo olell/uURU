@@ -16,6 +16,9 @@ class IncomingRequestStatus(BaseModel):
     # required only if accepted
     prefix: str | None = None
 
+    # required only if not accepted
+    local_only: bool = False
+
 
 class OutgoingRequestStatus(BaseModel):
     accept: bool

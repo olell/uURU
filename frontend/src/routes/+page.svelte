@@ -56,6 +56,15 @@
 	});
 
 	let federationPhonebook = $state<PeerPhonebook[]>([]);
+	let fitlered_federationPhonebook = $derived(
+		federationPhonebook.map((peerPhonebook) => ({
+			...peerPhonebook,
+			phonebook: peerPhonebook.phonebook.filter(
+				(ext) =>
+					ext.name.toLowerCase().includes(query.toLowerCase()) || ext.extension.includes(query)
+			)
+		}))
+	);
 
 	$effect(() => {
 		getPeerPhonebooksApiV1FederationPhonebookGet({ credentials: 'include' })
@@ -115,7 +124,7 @@
 					{/if}
 				</tr>
 			{/each}
-			{#each federationPhonebook as peerPhonebook (peerPhonebook.peer.id)}
+			{#each fitlered_federationPhonebook as peerPhonebook (peerPhonebook.peer.id)}
 				<tr>
 					<td colspan={user_info.val?.role == 'admin' ? 6 : 4}>
 						<hr />
@@ -180,7 +189,7 @@
 			</ListGroupItem>
 		{/each}
 	</ListGroup>
-	{#each federationPhonebook as peerPhonebook (peerPhonebook.peer.id)}
+	{#each fitlered_federationPhonebook as peerPhonebook (peerPhonebook.peer.id)}
 		<hr />
 		<h6>
 			Phonebook of

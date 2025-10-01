@@ -9,8 +9,8 @@ from datetime import datetime
 from enum import Enum
 from typing import Literal, Optional
 import uuid
-from pydantic import BaseModel, computed_field
-from sqlmodel import JSON, Column, Field, Relationship, SQLModel
+from pydantic import BaseModel
+from sqlmodel import Field, Relationship, SQLModel
 
 from app.models.user import User
 
@@ -48,14 +48,4 @@ class Media(SQLModel, table=True):
 
     uploaded_at: datetime = Field(default_factory=datetime.now)
 
-    default_format_json: dict = Field(default_factory=dict, sa_column=Column(JSON))
-
-    @computed_field
-    @property
-    def default_format(self) -> AudioFormat | ImageFormat:
-        if self.type == MediaType.IMAGE:
-            return ImageFormat.model_validate(self.default_format_json)
-        elif self.type == MediaType.AUDIO:
-            return AudioFormat.model_validate(self.default_format_json)
-        else:
-            raise ValueError("Raw media does not have a default format!")
+    stored_as: str

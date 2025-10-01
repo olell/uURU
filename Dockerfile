@@ -11,6 +11,10 @@ FROM python:3.13
 
 ENV PYTHONUNBUFFERED=1
 
+# Install system dependencies
+RUN apt update
+RUN apt install sox
+
 WORKDIR /app/
 
 # Install uv

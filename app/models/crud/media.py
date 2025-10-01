@@ -107,5 +107,4 @@ def create_media_from_upload(
         session.refresh(db_obj)
 
     logger.info(f"Created media {db_obj} {type(db_obj)}")
-    print(db_obj.model_dump_json())
     return db_obj

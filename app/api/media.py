@@ -6,7 +6,10 @@ Licensed under the MIT license. See LICENSE file in the project root for details
 """
 
 from logging import getLogger
+import os
+from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, status
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
 from app.api.deps import CurrentUser
@@ -123,3 +126,15 @@ def update_media(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to delete your media!",
         )
+
+
+# TODO: Decide if this endpoint should be login only
+@router.get("/byid/{media_id}", response_class=FileResponse)
+@router.get("/byid/{media_id}.{ext}", response_class=FileResponse)
+def get_media_content(session: SessionDep, media_id: str, ext: Optional[str] = None):
+    media = media_crud.get_media_by_id(session, media_id)
+    if media is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not found!")
+
+    path = os.path.join(settings.MEDIA_PATH, media.stored_as)
+    return path

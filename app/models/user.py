@@ -17,6 +17,9 @@ import uuid
 from app.models.extension import Extension
 from pydantic import model_validator
 
+if TYPE_CHECKING:
+    from app.models.media import Media
+
 
 class UserRole(str, Enum):
     ADMIN = "admin"
@@ -33,6 +36,7 @@ class User(UserBase, table=True):
     password_hash: str
 
     extensions: list[Extension] = Relationship(back_populates="user")
+    media: list["Media"] = Relationship(back_populates="created_by")
 
 
 class UserCreate(UserBase):

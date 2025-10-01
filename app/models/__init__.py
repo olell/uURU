@@ -9,6 +9,7 @@ from app.models.asterisk import PSAor, PSAuth, PSEndpoint, IAXFriend
 from app.models.user import Invite, User
 from app.models.extension import Extension, TemporaryExtensions
 from app.models.federation import Peer, IncomingPeeringRequest, OutgoingPeeringRequest
+from app.models.media import Media
 
 tables = [
     User,
@@ -18,5 +19,6 @@ tables = [
     Peer,
     IncomingPeeringRequest,
     OutgoingPeeringRequest,
+    Media,
 ]
 asterisk_tables = [PSAor, PSAuth, PSEndpoint, IAXFriend]

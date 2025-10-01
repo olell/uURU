@@ -234,3 +234,5 @@ __marimo__/
 
 markdown/
 .DS_Store
+test_media/
+uploads/

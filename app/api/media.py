@@ -14,6 +14,7 @@ from app.core.db import SessionDep
 from app.core.config import settings
 from app.models.media import AudioFormat, ImageFormat, Media, MediaType
 from app.models.crud import CRUDNotAllowedException, media as media_crud
+from app.models.user import UserRole
 
 router = APIRouter(prefix="/media", tags=["media"])
 logger = getLogger(__name__)
@@ -56,3 +57,21 @@ def create_media(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to process your media!",
         )
+
+
+@router.get("/")
+def get_media(
+    session: SessionDep, user: CurrentUser, all_media: bool = False
+) -> list[Media]:
+    if all_media and user.role != UserRole.ADMIN:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only admins are permitted to request all media!",
+        )
+    try:
+        if all_media:
+            return media_crud.get_all_media(session)
+        else:
+            return media_crud.get_media_by_user(session, user)
+    except CRUDNotAllowedException as e:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))

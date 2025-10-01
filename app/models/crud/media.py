@@ -8,9 +8,10 @@ Licensed under the MIT license. See LICENSE file in the project root for details
 from logging import getLogger
 import os
 import tempfile
+import uuid
 
 from fastapi import UploadFile
-from sqlmodel import Session
+from sqlmodel import Session, select
 
 from app.core.config import settings
 from app.models.crud import CRUDNotAllowedException
@@ -108,3 +109,12 @@ def create_media_from_upload(
 
     logger.info(f"Created media {db_obj} {type(db_obj)}")
     return db_obj
+
+
+def get_media_by_user(session: Session, user: User) -> list[Media]:
+    statement = select(Media).where(Media.created_by_id == user.id)
+    return list(session.exec(statement).all())
+
+
+def get_all_media(session: Session) -> list[Media]:
+    return list(session.exec(select(Media)).all())

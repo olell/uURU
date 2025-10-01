@@ -52,9 +52,9 @@ class PublicSettings(BaseModel):
     WEBSIP_WS_HOST: str
     FEDERATION_IAX2_HOST: str
     FEDERATION_UURU_HOST: str
-    ASSETS_MAX_SIZE_USER: int
-    ASSETS_LIMIT_SIZE_ADMIN: bool
-    ASSETS_ALLOW_RAW: bool
+    MEDIA_MAX_SIZE_USER: int
+    MEDIA_LIMIT_SIZE_ADMIN: bool
+    MEDIA_ALLOW_RAW: bool
 
 
 class Settings(BaseSettings):
@@ -182,7 +182,10 @@ class Settings(BaseSettings):
     ## MEDIA
 
     MEDIA_PATH: str = "./uploads/"
-    MEDIA_MAX_SIZE_USER: int = 2  # MiB
+    # This limits how large a file uploaded by a user or admin may be
+    # since media is processed in memory it must be small enough to fit
+    # at least twice in the applications memory
+    MEDIA_MAX_SIZE_USER: int = 2097152  # 2 MiB
     MEDIA_LIMIT_SIZE_ADMIN: bool = False
     MEDIA_ALLOW_RAW: bool = False
 

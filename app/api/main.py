@@ -13,6 +13,7 @@ from app.api import settings
 from app.api import telephoning
 from app.api import pages
 from app.api import federation
+from app.api import media
 
 router = APIRouter()
 router.include_router(user.router)
@@ -21,3 +22,4 @@ router.include_router(settings.router)
 router.include_router(telephoning.router)
 router.include_router(pages.router)
 router.include_router(federation.router)
+router.include_router(media.router)

@@ -38,6 +38,13 @@ The credentials for the first created account are configured by
 | UURU_WEB_HOST      | Hostname / ip + port of the web host | 127.0.0.1:8000 |
 | UURU_ASTERISK_HOST | Hostname / ip + port of the asterisk | 127.0.0.1      |
 
+### Federation
+
+| Key                       | Description                                              | Default               |
+| ------------------------- | -------------------------------------------------------- | --------------------- |
+| UURU_FEDERATION_IAX2_HOST | The hostname or ip-address of your asterisk server       | 127.0.0.1             |
+| UURU_FEDERATION_UURU_HOST | The web-address of your µURU instance including protocol | http://127.0.0.1:8000 |
+
 ### Application Database
 
 | Key                    | Description                                                  | Default  |

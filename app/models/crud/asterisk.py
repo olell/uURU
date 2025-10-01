@@ -9,9 +9,10 @@ from logging import getLogger
 from pydantic import BaseModel
 from sqlmodel import Session, delete, select
 
-from app.models.asterisk import DialPlanEntry, PSAor, PSAuth, PSEndpoint
+from app.models.asterisk import DialPlanEntry, IAXFriend, PSAor, PSAuth, PSEndpoint
 from app.models.crud import CRUDNotAllowedException
 from app.models.extension import Extension
+from app.models.federation import Peer
 from app.models.user import User, UserRole
 from app.telephoning.flavor import CODEC
 from app.telephoning.main import Telephoning
@@ -220,6 +221,79 @@ def delete_asterisk_dialplan_entry(
 
     try:
         session_asterisk.delete(entry)
+        if autocommit:
+            session_asterisk.commit()
+    except:
+        if autocommit:
+            session_asterisk.rollback()
+        raise
+
+
+def create_asterisk_iax_peer_and_dialplan(
+    session_asterisk: Session, peer: Peer, autocommit=True
+):
+    # create iax peer
+    friend = IAXFriend(
+        name=peer.name,
+        username=peer.name,
+        secret=peer.secret,
+        host=peer.partner_iax_host,
+    )
+
+    # create dialplan entry
+    dialplan = DialPlanEntry(
+        exten=f"_{peer.prefix}{'X'*peer.partner_extension_length}",
+        priority=1,
+        app="Dial",
+        appdata=f"IAX2/{peer.name}/${{EXTEN:-{peer.partner_extension_length}}}",
+    )
+
+    try:
+        session_asterisk.add(friend)
+        create_or_update_asterisk_dialplan_entry(session_asterisk, dialplan, autocommit)
+        if autocommit:
+            session_asterisk.commit()
+
+        logger.info(
+            f"Created IAX2Friend for peer {peer.name} and dialplan {dialplan.exten} in asterisk DB"
+        )
+    except:
+        if autocommit:
+            session_asterisk.rollback()
+
+        raise
+
+
+def delete_asterisk_iax_peer_and_dialplan(
+    session_asterisk: Session,
+    peer: Peer,
+    autocommit=True,
+):
+    friend = session_asterisk.exec(
+        select(IAXFriend)
+        .where(IAXFriend.name == peer.name)
+        .where(IAXFriend.secret == peer.secret)
+    ).first()
+    if friend is None:
+        raise CRUDNotAllowedException("Unkown IAX2Friend")
+
+    dialplan = session_asterisk.exec(
+        select(DialPlanEntry).where(
+            DialPlanEntry.exten == f"_{peer.prefix}{'X'*peer.partner_extension_length}",
+        )
+    ).first()
+
+    if dialplan is None:
+        raise CRUDNotAllowedException("Unknown dialplan entry!")
+
+    try:
+        session_asterisk.delete(friend)
+        session_asterisk.delete(dialplan)
+
+        logger.info(
+            f"Deleted IAX2Friend for {peer.name} and dialplan {dialplan.exten} from asterisk DB"
+        )
+
         if autocommit:
             session_asterisk.commit()
     except:

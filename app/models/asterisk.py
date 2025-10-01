@@ -56,3 +56,21 @@ class PSAuth(SQLModel, table=True):
     auth_type: str = "userpass"
     password: str
     username: str
+
+
+class IAXFriend(SQLModel, table=True):
+
+    __tablename__ = "iaxfriends"
+
+    id: int = Field(
+        primary_key=True, nullable=False, sa_column_kwargs={"autoincrement": True}
+    )
+    type: str = "friend"
+    context: str = "pjsip_internal"
+    trunk: str = "yes"
+    encryption: str = "yes"
+
+    name: str
+    username: str
+    secret: str
+    host: str

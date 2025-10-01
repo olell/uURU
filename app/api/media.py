@@ -75,3 +75,24 @@ def get_media(
             return media_crud.get_media_by_user(session, user)
     except CRUDNotAllowedException as e:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+
+
+@router.delete("/{media_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_media(session: SessionDep, user: CurrentUser, media_id: str):
+    media = media_crud.get_media_by_id(session, media_id)
+    if media is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Unknown media!"
+        )
+
+    try:
+        media_crud.delete_media(session, user, media)
+    except CRUDNotAllowedException as e:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+    except Exception as e:
+        logger.error("Encountered exception while deleting media")
+        logger.exception(e)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to delete your media!",
+        )

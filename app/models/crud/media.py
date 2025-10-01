@@ -118,3 +118,24 @@ def get_media_by_user(session: Session, user: User) -> list[Media]:
 
 def get_all_media(session: Session) -> list[Media]:
     return list(session.exec(select(Media)).all())
+
+
+def get_media_by_id(session: Session, media_id: str) -> Media | None:
+    statement = select(Media).where(Media.id == uuid.UUID(media_id))
+    return session.exec(statement).first()
+
+
+def delete_media(session: Session, user: User, media: Media):
+    if media.created_by_id != user.id and user.role != UserRole.ADMIN:
+        raise CRUDNotAllowedException("You are not permitted to delete this media!")
+
+    path = os.path.join(settings.MEDIA_PATH, media.stored_as)
+    if not os.path.isfile(path):
+        raise CRUDNotAllowedException("The media file was not found!")
+
+    ## TODO: At this point should be checked if the media is in use somewhere
+
+    os.remove(path)
+    logger.info(f"rm {path}")
+    session.delete(media)
+    session.commit()

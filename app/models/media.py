@@ -32,9 +32,9 @@ class ImageFormat(BaseModel):
 class AudioFormat(BaseModel):
     # please note: the out_type literal format must match util.media.SUPPORTED_AUDIO_FORMATS
     out_type: Literal["gsm", "wav", "ogg", "mp3", "flac"] = "mp3"
-    samplerate: Optional[int] = 44100
-    channels: Optional[int] = 2
-    bitdepth: Optional[int] = 16
+    samplerate: int = 44100
+    channels: int = 2
+    bitdepth: int = 16
 
 
 class Media(SQLModel, table=True):

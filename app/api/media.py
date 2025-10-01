@@ -25,6 +25,10 @@ class MediaCreateMeta(BaseModel):
     supposed_type: MediaType
 
 
+class MediaUpdateMeta(BaseModel):
+    name: str
+
+
 @router.post("/")
 def create_media(
     session: SessionDep,
@@ -91,6 +95,29 @@ def delete_media(session: SessionDep, user: CurrentUser, media_id: str):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
     except Exception as e:
         logger.error("Encountered exception while deleting media")
+        logger.exception(e)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to delete your media!",
+        )
+
+
+@router.put("/{media_id}")
+def update_media(
+    session: SessionDep, user: CurrentUser, media_id: str, data: MediaUpdateMeta
+) -> Media:
+    media = media_crud.get_media_by_id(session, media_id)
+    if media is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Unknown media!"
+        )
+
+    try:
+        return media_crud.update_media(session, user, media, new_name=data.name)
+    except CRUDNotAllowedException as e:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+    except Exception as e:
+        logger.error("Encountered exception while updating media")
         logger.exception(e)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

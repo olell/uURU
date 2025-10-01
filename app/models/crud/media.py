@@ -139,3 +139,14 @@ def delete_media(session: Session, user: User, media: Media):
     logger.info(f"rm {path}")
     session.delete(media)
     session.commit()
+
+
+def update_media(session: Session, user: User, media: Media, new_name: str) -> Media:
+    if media.created_by_id != user.id and user.role != UserRole.ADMIN:
+        raise CRUDNotAllowedException("You are not permitted to change this media!")
+
+    media.name = new_name
+    session.add(media)
+    session.commit()
+    session.refresh(media)
+    return media

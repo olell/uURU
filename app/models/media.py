@@ -7,12 +7,14 @@ Licensed under the MIT license. See LICENSE file in the project root for details
 
 from datetime import datetime
 from enum import Enum
-from typing import Literal, Optional
+from typing import Literal, Optional, TYPE_CHECKING
 import uuid
 from pydantic import BaseModel
 from sqlmodel import Field, Relationship, SQLModel
 
-from app.models.user import User
+if TYPE_CHECKING:
+    from app.models.extension import Extension
+    from app.models.user import User
 
 
 class MediaType(str, Enum):
@@ -44,8 +46,25 @@ class Media(SQLModel, table=True):
     type: MediaType
 
     created_by_id: Optional[uuid.UUID] = Field(default=None, foreign_key="user.id")
-    created_by: Optional[User] = Relationship(back_populates="media")
+    created_by: Optional["User"] = Relationship(back_populates="media")
 
     uploaded_at: datetime = Field(default_factory=datetime.now)
 
     stored_as: str
+
+    assigned_extensions: list["ExtensionMedia"] = Relationship(back_populates="media")
+
+
+class ExtensionMedia(SQLModel, table=True):
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+
+    # this refers to the key of the MEDIA dict in the phoneflavor of the extension
+    name: str
+
+    media_id: Optional[uuid.UUID] = Field(default=None, foreign_key="media.id")
+    media: Optional[Media] = Relationship(back_populates="assigned_extensions")
+
+    extension_id: Optional[uuid.UUID] = Field(
+        default=None, foreign_key="extension.extension"
+    )
+    extension: Optional["Extension"] = Relationship(back_populates="assigned_media")

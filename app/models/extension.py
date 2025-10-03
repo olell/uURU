@@ -27,6 +27,7 @@ from app.telephoning.main import Telephoning
 
 
 if TYPE_CHECKING:
+    from app.models.media import ExtensionMedia
     from app.models.user import User
 
 from app.core.config import settings
@@ -85,6 +86,7 @@ class Extension(ExtensionBase, table=True):
     user: Optional["User"] = Relationship(back_populates="extensions")
 
     extra_fields: dict = Field(default_factory=dict, sa_column=Column(JSON))
+    assigned_media: list["ExtensionMedia"] = Relationship(back_populates="extension")
 
     def get_flavor_model(self) -> BaseModel:
         flavor = Telephoning.get_flavor_by_type(self.type)

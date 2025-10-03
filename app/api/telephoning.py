@@ -14,6 +14,7 @@ from pydantic import BaseModel
 from app.api.deps import CurrentUser, OptionalCurrentUser
 from app.core.db import SessionAsteriskDep
 from app.models.user import UserRole
+from app.telephoning.flavor import MediaDescriptor
 from app.telephoning.main import Telephoning
 from app.core.config import settings
 from app.telephoning.websip import WebSIPExtension, WebSIPManager
@@ -27,6 +28,7 @@ class PhoneType(BaseModel):
     display_index: int
     name: str
     max_extension_name_chars: int
+    media: dict[str, MediaDescriptor]
 
 
 @router.get("/types")
@@ -40,6 +42,7 @@ def get_phone_types(user: CurrentUser) -> list[PhoneType]:
                     display_index=flavor.DISPLAY_INDEX,
                     name=phone_type,
                     max_extension_name_chars=flavor.MAX_EXTENSION_NAME_CHARS,
+                    media=flavor.MEDIA,
                 )
                 schemas.append(pt)
     return schemas

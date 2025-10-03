@@ -104,6 +104,10 @@ export type Extension = {
      * Created By
      */
     readonly created_by: string;
+    /**
+     * Media
+     */
+    readonly media: Array<ExtensionMedia>;
 };
 
 /**
@@ -182,6 +186,28 @@ export type ExtensionCreate = {
      * Lon
      */
     lon?: number | null;
+};
+
+/**
+ * ExtensionMedia
+ */
+export type ExtensionMedia = {
+    /**
+     * Id
+     */
+    id?: string;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Media Id
+     */
+    media_id?: string | null;
+    /**
+     * Extension Id
+     */
+    extension_id?: string | null;
 };
 
 /**

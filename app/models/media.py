@@ -9,7 +9,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Literal, Optional, TYPE_CHECKING
 import uuid
-from pydantic import BaseModel
+from pydantic import BaseModel, computed_field
 from sqlmodel import Field, Relationship, SQLModel
 
 if TYPE_CHECKING:
@@ -64,7 +64,5 @@ class ExtensionMedia(SQLModel, table=True):
     media_id: Optional[uuid.UUID] = Field(default=None, foreign_key="media.id")
     media: Optional[Media] = Relationship(back_populates="assigned_extensions")
 
-    extension_id: Optional[uuid.UUID] = Field(
-        default=None, foreign_key="extension.extension"
-    )
+    extension_id: Optional[str] = Field(default=None, foreign_key="extension.extension")
     extension: Optional["Extension"] = Relationship(back_populates="assigned_media")

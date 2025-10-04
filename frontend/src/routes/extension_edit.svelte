@@ -107,7 +107,6 @@
 	// extra data form and media assignments
 	let extra_data = $state<any>(extension?.extra_fields || {});
 	let assignedMedia = $state<Record<string, string>>({});
-	$inspect(assignedMedia);
 	$effect(() => {
 		if (!selectedType || !selectedType.schema) {
 			extra_data = {};

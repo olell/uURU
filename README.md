@@ -17,6 +17,7 @@ Telephone extension self registration utility for asterisk.
 - LDAP Phonebook
 - Callgroups
 - [Rendering of Markdown for (Help-)Pages](/docs/pages.md)
+- [Managing of images, audio files and other media](/docs/media.md)
 - Prometheus HTTP Service-Discovery (**currently only for Innovaphones**)
 - Super-Simplified deployment of the whole PBX by using docker compose
 - Build with shiny stuff like FastAPI and SQLModel.

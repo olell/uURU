@@ -22,6 +22,8 @@ from app.models.crud.asterisk import (
     delete_asterisk_extension,
     update_asterisk_extension,
 )
+from app.models.crud.media import get_media_by_id
+from app.models.media import ExtensionMedia
 from app.models.user import User, UserRole
 from app.models.extension import (
     ExtensionCreate,
@@ -118,6 +120,20 @@ def create_extension(
                 "Normal users may not create this kind of extension!"
             )
 
+    # validate media fields
+    assigned_media = {}
+    for name in flavor.MEDIA.keys():
+        description = flavor.MEDIA[name]
+        media_id = extension.media.get(name, None)
+        if media_id is None and description.required:
+            raise CRUDNotAllowedException(f"Missing value for media '{name}'")
+        elif media_id is None:
+            continue
+        media = get_media_by_id(session, media_id)
+        if media is None:
+            raise CRUDNotAllowedException("Unknown media!")
+        assigned_media.update({name: media})
+
     try:
         if len(extension.name) > flavor.MAX_EXTENSION_NAME_CHARS:
             raise CRUDNotAllowedException("Extension name too long!")
@@ -131,6 +147,14 @@ def create_extension(
             },
         )
         session.add(db_obj)
+
+        for name in assigned_media.keys():
+            ext_media = ExtensionMedia(
+                name=name,
+                media_id=assigned_media[name].id,
+                extension_id=db_obj.extension,
+            )
+            session.add(ext_media)
 
         if not flavor.PREVENT_SIP_CREATION:
             create_asterisk_extension(
@@ -199,7 +223,48 @@ def update_extension(
     try:
         prev_data = extension.model_dump()
 
+        # update media assignments
+        assigned_media: dict[str, ExtensionMedia] = {
+            e.name: e for e in extension.assigned_media
+        }
+        print(update_data.media)
+        for name in update_data.media.keys():
+            current = assigned_media.get(name)
+            descr = flavor.MEDIA.get(name)
+            if descr is None:
+                raise CRUDNotAllowedException(f"Unknown media '{name}' in update data")
+
+            new_media_id = update_data.media.get(name)
+            if (descr.required and new_media_id is None) or (
+                current is not None and current.media_id == new_media_id
+            ):
+                # no update requested or update to the same value
+                continue
+
+            if current:
+                session.delete(current)  # delete old assignment
+                session.refresh(extension)
+            if new_media_id is None or new_media_id == "":
+                if descr.required:
+                    raise CRUDNotAllowedException(
+                        f"Cannot delete assignment for required media {name}"
+                    )
+                # don't create a new assignment
+                continue
+
+            media = get_media_by_id(session, new_media_id)
+            if media is None:
+                raise CRUDNotAllowedException(f"Media {new_media_id} is unknown!")
+
+            ext_media = ExtensionMedia(
+                name=name,
+                media_id=media.id,
+                extension_id=extension.extension,
+            )
+            session.add(ext_media)
+
         data = update_data.model_dump(exclude_unset=True)
+        del data["media"]
         extension.sqlmodel_update(data)
 
         if len(extension.name) > flavor.MAX_EXTENSION_NAME_CHARS:
@@ -259,6 +324,10 @@ def delete_extension(
             delete_asterisk_extension(
                 session_asterisk, extension.extension, autocommit=False
             )
+
+        for e in extension.assigned_media:
+            session.delete(e)
+            session.refresh(extension)
 
         session.delete(extension)
 

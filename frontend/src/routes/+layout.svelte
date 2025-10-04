@@ -162,6 +162,9 @@
 							<DropdownItem href={resolve('/extensions/new')}>Create a new Extension</DropdownItem>
 						</DropdownMenu>
 					</Dropdown>
+					<NavItem>
+						<NavLink href={resolve('/media')}>Media</NavLink>
+					</NavItem>
 				{/if}
 				{#if Object.keys(pages.val).length !== 0}
 					<Dropdown>

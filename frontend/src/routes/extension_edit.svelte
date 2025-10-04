@@ -12,7 +12,9 @@
 	} from '@sveltestrap/sveltestrap';
 	import {
 		createApiV1ExtensionPost,
+		getMediaApiV1MediaGet,
 		getPhoneTypesApiV1TelephoningTypesGet,
+		type Media,
 		updateApiV1ExtensionExtensionPatch,
 		type Extension,
 		type PhoneType
@@ -102,17 +104,23 @@
 		}
 	};
 
-	// extra data form
+	// extra data form and media assignments
 	let extra_data = $state<any>(extension?.extra_fields || {});
+	let assignedMedia = $state<Record<string, string>>({});
 	$effect(() => {
 		if (!selectedType || !selectedType.schema) {
 			extra_data = {};
+			assignedMedia = {};
 			return;
 		}
 		// create empty extra_data object to bind form elements to
 		let schema: any = selectedType.schema['properties'] as object;
 		Object.keys(schema).forEach((element) => {
 			extra_data[element] = extension?.extra_fields[element] || schema[element].default;
+		});
+
+		Object.keys(selectedType.media).forEach((name) => {
+			assignedMedia[name] = extension?.media.find((m) => m.name == name)?.media_id || '';
 		});
 	});
 
@@ -191,6 +199,26 @@
 				}
 			}
 		}
+
+		// validate media
+		let media_data: Record<string, string> = {};
+		Object.keys(selectedType.media).forEach((name) => {
+			const descr = selectedType!.media[name];
+			let media_id = assignedMedia[name];
+			if (descr.required && !media_id) {
+				push_message({
+					color: 'danger',
+					title: 'Missing media!',
+					message: `Missing ${name}`
+				});
+				return;
+			}
+			if (media_id || extension) {
+				// || extension to include empty fields in update
+				media_data[name] = media_id;
+			}
+		});
+
 		const data = {
 			type: selectedType.name,
 			extension: extensionInput,
@@ -200,7 +228,8 @@
 			lat: markerLat,
 			lon: markerLon,
 			extra_fields: $state.snapshot(extra_data),
-			public: publicInput
+			public: publicInput,
+			media: media_data
 		};
 
 		if (extension) {
@@ -236,6 +265,23 @@
 		console.log(data);
 		goto(resolve('/extensions'));
 	};
+
+	let media = $state<Media[]>([]);
+
+	$effect(() => {
+		getMediaApiV1MediaGet({
+			credentials: 'include',
+			query: {
+				all_media: user_info.val?.role === 'admin'
+			}
+		}).then(({ data, error }) => {
+			if (error) {
+				push_api_error(error, 'Failed to retrieve media!');
+				return;
+			}
+			media = data!;
+		});
+	});
 </script>
 
 <Form onsubmit={handleSubmit}>
@@ -297,6 +343,31 @@
 	<FormGroup>
 		<Input bind:checked={publicInput} type="switch" label="Show in public phonebook" />
 	</FormGroup>
+
+	{#if selectedType && Object.keys(selectedType.media).length > 0}
+		<hr />
+		<h1 class="fs-5">Media</h1>
+		{#each Object.keys(selectedType.media) as key (key)}
+			<FormGroup>
+				<Label>{selectedType.media[key].label}{selectedType.media[key].required ? ' *' : ''}</Label>
+				<select
+					class="form-select"
+					bind:value={assignedMedia[key]}
+					required={selectedType.media[key].required}
+				>
+					{#if !selectedType.media[key].required}
+						<option value="" selected={!assignedMedia[key]}>---</option>
+					{/if}
+					{#each media.filter((m) => m.type == selectedType!.media[key].media_type) as candidate (candidate.id)}
+						<option value={candidate.id} selected={assignedMedia[key] == candidate.id}>
+							{candidate.name}
+							{candidate.created_by_id != user_info.val?.id ? ' (*)' : ''}
+						</option>
+					{/each}
+				</select>
+			</FormGroup>
+		{/each}
+	{/if}
 
 	<Button type="submit" color="primary" class="float-end ">{!!extension ? 'Save' : 'Create'}</Button
 	>

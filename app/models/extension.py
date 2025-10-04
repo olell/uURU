@@ -143,6 +143,8 @@ class ExtensionCreate(BaseModel):
     lat: Optional[float] = None
     lon: Optional[float] = None
 
+    media: dict[str, str] = {}
+
     # required if the model is parsed from form data where a checked
     # checkbox will only set the key, but not a value ("")
     @field_validator("public", mode="before")
@@ -174,6 +176,8 @@ class ExtensionUpdate(BaseModel):
     lon: Optional[float] = None
 
     extra_fields: dict = {}
+
+    media: dict[str, str] = {}
 
     @field_validator("lat", "lon", mode="before")
     @classmethod

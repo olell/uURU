@@ -5,12 +5,16 @@ Copyright (c) Ole Lange, Gregor Michels and contributors. All rights reserved.
 Licensed under the MIT license. See LICENSE file in the project root for details.
 """
 
+import os
+from typing import Generator
 import filetype
 
 from PIL import Image
 import sox
+import tempfile
 
-from app.models.media import AudioFormat, ImageFormat, MediaType
+from app.core.config import settings
+from app.models.media import AudioFormat, ImageFormat, Media, MediaType
 
 
 SUPPORTED_IMAGE_FORMATS = ["avif", "bmp", "gif", "jpeg", "png", "tiff", "webp"]
@@ -85,3 +89,32 @@ def convert_audio(
         target_format.samplerate, target_format.channels, target_format.bitdepth
     )
     return tfm.build(source_path, target_path)
+
+
+def get_converted_stream(
+    media: Media, format: AudioFormat | ImageFormat | None
+) -> Generator[any, any, any]:
+    # check if format is matching for media type
+    if (
+        (media.type == MediaType.AUDIO and not isinstance(format, AudioFormat))
+        or (media.type == MediaType.IMAGE and not isinstance(format, ImageFormat))
+        or (media.type == MediaType.RAW and format is not None)
+    ):
+        raise RuntimeError("Given media and flavor do not match!")
+
+    suffix = ""
+    if format is not None:
+        suffix = "." + format.out_type
+
+    source_path = os.path.join(settings.MEDIA_PATH, media.stored_as)
+    if media.type == MediaType.RAW:
+        with open(source_path, "rb") as tmp:
+            yield from tmp
+
+    with tempfile.NamedTemporaryFile(suffix=suffix) as tmp:
+        if media.type == MediaType.IMAGE:
+            convert_image(source_path, tmp.name, format)
+        elif media.type == MediaType.AUDIO:
+            convert_audio(source_path, tmp.name, format)
+
+        yield from tmp

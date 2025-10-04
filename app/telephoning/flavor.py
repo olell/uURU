@@ -36,7 +36,7 @@ class MediaDescriptor(BaseModel):
     # for this media should be, by default it will be
     # /api/v1/media/byextension/{extension}/{name}[.ext]
     # this field may add this endpoint
-    # /api/v1/media/byextension/{extension}/{endpoint_filename}
+    # /api/v1/media/byendpoint/{extension}/{endpoint_filename}
     endpoint_filename: str | None = None
 
 

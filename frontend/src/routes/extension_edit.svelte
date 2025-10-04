@@ -272,7 +272,7 @@
 		getMediaApiV1MediaGet({
 			credentials: 'include',
 			query: {
-				all_media: false
+				all_media: user_info.val?.role === 'admin'
 			}
 		}).then(({ data, error }) => {
 			if (error) {

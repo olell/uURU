@@ -133,7 +133,10 @@ def delete_media(session: Session, user: User, media: Media):
     if not os.path.isfile(path):
         raise CRUDNotAllowedException("The media file was not found!")
 
-    ## TODO: At this point should be checked if the media is in use somewhere
+    if len(media.assigned_extensions) > 0:
+        raise CRUDNotAllowedException(
+            f"This media is in use for {len(media.assigned_extensions)} extension(s)!"
+        )
 
     os.remove(path)
     logger.info(f"rm {path}")

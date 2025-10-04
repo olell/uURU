@@ -361,6 +361,7 @@
 					{#each media.filter((m) => m.type == selectedType!.media[key].media_type) as candidate (candidate.id)}
 						<option value={candidate.id} selected={assignedMedia[key] == candidate.id}>
 							{candidate.name}
+							{candidate.created_by_id != user_info.val?.id ? ' (*)' : ''}
 						</option>
 					{/each}
 				</select>

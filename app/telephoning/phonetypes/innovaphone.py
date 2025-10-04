@@ -11,12 +11,13 @@ from pydantic import BaseModel, Field, IPvAnyAddress
 from pydantic_extra_types.mac_address import MacAddress
 
 from app.models.crud.extension import get_extension_by_extra_field
+from app.models.media import ImageFormat, MediaType
 from app.telephoning.templates import templates
 from app.core.config import settings
 from app.core.db import SessionDep
 
 # from app.models.crud.extension import get_extension_by_mac
-from app.telephoning.flavor import PhoneFlavor
+from app.telephoning.flavor import MediaDescriptor, PhoneFlavor
 
 
 class InnovaphoneFields(BaseModel):
@@ -33,6 +34,17 @@ class Innovaphone(PhoneFlavor):
     }
     EXTRA_FIELDS = InnovaphoneFields
     IS_SPECIAL = True
+
+    MEDIA = {
+        "background_image": MediaDescriptor(
+            media_type=MediaType.IMAGE,
+            required=True,
+            label="Background Image",
+            out_format=ImageFormat(
+                out_type="png", colormode="RGB", width=320, height=240
+            ),
+        )
+    }
 
     def __init__(self):
         super().__init__()

@@ -52,6 +52,9 @@ class PublicSettings(BaseModel):
     WEBSIP_WS_HOST: str
     FEDERATION_IAX2_HOST: str
     FEDERATION_UURU_HOST: str
+    MEDIA_MAX_SIZE_USER: int
+    MEDIA_LIMIT_SIZE_ADMIN: bool
+    MEDIA_ALLOW_RAW: bool
 
 
 class Settings(BaseSettings):
@@ -175,6 +178,19 @@ class Settings(BaseSettings):
     @property
     def logging_loglevel(self) -> int:
         return getLevelNamesMapping().get(self.LOGLEVEL, INFO)
+
+    ## MEDIA
+
+    MEDIA_PATH: str = "./uploads/"
+    # This limits how large a file uploaded by a user or admin may be
+    # since media is processed in memory it must be small enough to fit
+    # at least twice in the applications memory
+    MEDIA_MAX_SIZE_USER: int = 2097152  # 2 MiB
+    MEDIA_LIMIT_SIZE_ADMIN: bool = False
+    MEDIA_ALLOW_RAW: bool = False
+
+    MEDIA_IMAGE_STORAGE_FORMAT: str = "png"
+    MEDIA_AUDIO_STORAGE_FORMAT: str = "mp3"
 
     ## TELEPHONE
 

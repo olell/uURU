@@ -7,6 +7,8 @@ Licensed under the MIT license. See LICENSE file in the project root for details
 
 from typing import TYPE_CHECKING, Literal
 
+from app.models.media import AudioFormat, ImageFormat, MediaType
+
 if TYPE_CHECKING:
     from app.models.user import User
     from app.models.extension import Extension
@@ -18,6 +20,24 @@ from sqlmodel import Session
 from app.core.config import settings
 
 CODEC = Literal["g722", "alaw", "ulaw", "g726", "gsm", "lpc10"]
+
+
+class MediaDescriptor(BaseModel):
+    media_type: MediaType
+    required: bool
+
+    # a label showed the user in the create / edit interface
+    label: str
+
+    # depending on media_type
+    out_format: ImageFormat | AudioFormat | None
+
+    # this field may define what the "filename" of the endpoint
+    # for this media should be, by default it will be
+    # /api/v1/media/byextension/{extension}/{name}[.ext]
+    # this field may add this endpoint
+    # /api/v1/media/byendpoint/{extension}/{endpoint_filename}
+    endpoint_filename: str | None = None
 
 
 class PhoneFlavor:
@@ -79,6 +99,9 @@ class PhoneFlavor:
 
     # This limits the maximum amount of characters for the extension name
     MAX_EXTENSION_NAME_CHARS = 20
+
+    # This dict defines which media is required (or optional) for this phonetype
+    MEDIA: dict[str, MediaDescriptor] = {}
 
     def on_extension_create(
         self,

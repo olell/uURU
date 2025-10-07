@@ -26,6 +26,8 @@ from urllib.parse import unquote
 from app.telephoning.main import Telephoning
 
 
+from app.models.media import ExtensionMedia
+
 if TYPE_CHECKING:
     from app.models.user import User
 
@@ -85,6 +87,7 @@ class Extension(ExtensionBase, table=True):
     user: Optional["User"] = Relationship(back_populates="extensions")
 
     extra_fields: dict = Field(default_factory=dict, sa_column=Column(JSON))
+    assigned_media: list[ExtensionMedia] = Relationship(back_populates="extension")
 
     def get_flavor_model(self) -> BaseModel:
         flavor = Telephoning.get_flavor_by_type(self.type)
@@ -113,6 +116,16 @@ class Extension(ExtensionBase, table=True):
     def created_by(self) -> str:
         return self.user.username
 
+    @computed_field
+    @property
+    def media(self) -> list[ExtensionMedia]:
+        # this computed field is necessary because fastapi does not automatically
+        # recognize relationships a fields, since I don't want to create an extra
+        # base model which includes the relationship as a "normal" field, this
+        # wrapper method is used to get the value of assigned media into a field
+        # that will get returned
+        return self.assigned_media
+
 
 class ExtensionCreate(BaseModel):
     extension: str = PydanticField(
@@ -129,6 +142,8 @@ class ExtensionCreate(BaseModel):
     location_name: Optional[str] = None
     lat: Optional[float] = None
     lon: Optional[float] = None
+
+    media: dict[str, str] = {}
 
     # required if the model is parsed from form data where a checked
     # checkbox will only set the key, but not a value ("")
@@ -161,6 +176,8 @@ class ExtensionUpdate(BaseModel):
     lon: Optional[float] = None
 
     extra_fields: dict = {}
+
+    media: dict[str, str] = {}
 
     @field_validator("lat", "lon", mode="before")
     @classmethod

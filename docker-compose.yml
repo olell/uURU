@@ -13,9 +13,15 @@ services:
       ldap:
         condition: service_healthy
     env_file: ".env"
+    volumes:
+      - uuru_uploads:/media
     environment:
       UURU_DATABASE_PORT: 3306
       UURU_DATABASE_SERVER: mariadb-app
       UURU_ASTERISK_DATABASE_SERVER: mariadb-asterisk
+      UURU_MEDIA_PATH: /media
     ports:
       - 8000:8000
+
+volumes:
+  uuru_uploads:

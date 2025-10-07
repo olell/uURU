@@ -77,3 +77,15 @@ class IAXFriend(SQLModel, table=True):
 
     disallow: str = ""
     allow: str = ""
+
+
+class MusicOnHold(SQLModel, table=True):
+
+    __tablename__ = "musiconhold"
+
+    name: str = Field(primary_key=True, nullable=False)
+
+    mode: str
+    directory: str = ""
+    application: str
+    loop_last: str = "yes"

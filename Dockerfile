@@ -12,7 +12,7 @@ FROM python:3.13
 ENV PYTHONUNBUFFERED=1
 
 # Install system dependencies
-RUN apt update && apt install -y sox && rm -rf /var/lib/apt/lists/*
+RUN apt update && apt install -y sox libsox-fmt-mp3 && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app/
 

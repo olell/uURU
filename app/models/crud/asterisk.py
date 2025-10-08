@@ -238,6 +238,8 @@ def create_asterisk_iax_peer_and_dialplan(
         username=peer.name,
         secret=peer.secret,
         host=peer.partner_iax_host,
+        disallow="all",
+        allow=peer.codec,
     )
 
     # create dialplan entry

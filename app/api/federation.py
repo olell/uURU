@@ -44,7 +44,7 @@ def create_outgoing_peering_request(
 
     try:
         return federation.create_outgoing_peering_request(
-            session, user, data.name, data.partner_uuru_host, data.prefix
+            session, user, data.name, data.partner_uuru_host, data.prefix, data.codec
         )
     except CRUDNotAllowedException as e:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))

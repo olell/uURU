@@ -186,6 +186,12 @@ export type ExtensionCreate = {
      * Lon
      */
     lon?: number | null;
+    /**
+     * Media
+     */
+    media?: {
+        [key: string]: string;
+    };
 };
 
 /**
@@ -244,6 +250,12 @@ export type ExtensionUpdate = {
     extra_fields?: {
         [key: string]: unknown;
     };
+    /**
+     * Media
+     */
+    media?: {
+        [key: string]: string;
+    };
 };
 
 /**
@@ -291,6 +303,10 @@ export type IncomingPeeringRequest = {
      */
     name: string;
     /**
+     * Codec
+     */
+    codec?: 'g722' | 'alaw' | 'ulaw' | 'g726' | 'gsm' | 'lpc10';
+    /**
      * Partner Uuru Host
      */
     partner_uuru_host: string;
@@ -320,6 +336,10 @@ export type IncomingPeeringRequestBase = {
      * Name
      */
     name: string;
+    /**
+     * Codec
+     */
+    codec?: 'g722' | 'alaw' | 'ulaw' | 'g726' | 'gsm' | 'lpc10';
     /**
      * Partner Uuru Host
      */
@@ -484,6 +504,10 @@ export type OutgoingPeeringRequestBase = {
      * Prefix
      */
     prefix: string;
+    /**
+     * Codec
+     */
+    codec?: 'g722' | 'alaw' | 'ulaw' | 'g726' | 'gsm' | 'lpc10';
 };
 
 /**
@@ -502,6 +526,10 @@ export type OutgoingPeeringRequestPublic = {
      * Prefix
      */
     prefix: string;
+    /**
+     * Codec
+     */
+    codec?: 'g722' | 'alaw' | 'ulaw' | 'g726' | 'gsm' | 'lpc10';
     /**
      * Id
      */
@@ -560,6 +588,10 @@ export type PeerBase = {
      * Name
      */
     name: string;
+    /**
+     * Codec
+     */
+    codec?: 'g722' | 'alaw' | 'ulaw' | 'g726' | 'gsm' | 'lpc10';
     /**
      * Prefix
      */
@@ -1915,6 +1947,38 @@ export type GetMediaContentApiV1MediaByidMediaIdGetErrors = {
 export type GetMediaContentApiV1MediaByidMediaIdGetError = GetMediaContentApiV1MediaByidMediaIdGetErrors[keyof GetMediaContentApiV1MediaByidMediaIdGetErrors];
 
 export type GetMediaContentApiV1MediaByidMediaIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: unknown;
+};
+
+export type GetMediaByNameApiV1MediaByextensionExtensionIdQueryGetData = {
+    body?: never;
+    path: {
+        /**
+         * Extension Id
+         */
+        extension_id: string;
+        /**
+         * Query
+         */
+        query: string;
+    };
+    query?: never;
+    url: '/api/v1/media/byextension/{extension_id}/{query}';
+};
+
+export type GetMediaByNameApiV1MediaByextensionExtensionIdQueryGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetMediaByNameApiV1MediaByextensionExtensionIdQueryGetError = GetMediaByNameApiV1MediaByextensionExtensionIdQueryGetErrors[keyof GetMediaByNameApiV1MediaByextensionExtensionIdQueryGetErrors];
+
+export type GetMediaByNameApiV1MediaByextensionExtensionIdQueryGetResponses = {
     /**
      * Successful Response
      */

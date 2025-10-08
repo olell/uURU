@@ -6,6 +6,7 @@ Licensed under the MIT license. See LICENSE file in the project root for details
 """
 
 from logging import getLogger
+from typing import Literal
 import uuid
 from requests import HTTPError
 from sqlmodel import Session, or_, select
@@ -65,6 +66,7 @@ def create_outgoing_peering_request(
     name: str,
     partner_uuru_host: str,
     prefix: str,
+    codec: Literal["g722", "alaw", "ulaw", "g726", "gsm", "lpc10"] = "g722",
     autocommit=True,
 ) -> OutgoingPeeringRequest:
     if user.role != UserRole.ADMIN:
@@ -96,7 +98,11 @@ def create_outgoing_peering_request(
     secret = generate_peer_secret()
 
     db_obj = OutgoingPeeringRequest(
-        name=name, secret=secret, partner_uuru_host=partner_uuru_host, prefix=prefix
+        name=name,
+        secret=secret,
+        partner_uuru_host=partner_uuru_host,
+        prefix=prefix,
+        codec=codec,
     )
 
     request = IncomingPeeringRequest(
@@ -106,6 +112,7 @@ def create_outgoing_peering_request(
         partner_iax_host=settings.FEDERATION_IAX2_HOST,
         partner_extension_length=settings.EXTENSION_DIGITS,
         secret=secret,
+        codec=codec,
     )
     try:
         call_create_incoming_peering_request(partner_uuru_host, request)
@@ -215,6 +222,7 @@ def accept_incoming_peering_request(
         secret=request.secret,
         partner_iax_host=request.partner_iax_host,
         partner_uuru_host=request.partner_uuru_host,
+        codec=request.codec,
     )
 
     try:
@@ -404,6 +412,7 @@ def accept_outgoing_peering_request(
         secret=secret,
         partner_iax_host=partner_iax_host,
         partner_uuru_host=partner_uuru_host,
+        codec=request.codec,
     )
 
     try:

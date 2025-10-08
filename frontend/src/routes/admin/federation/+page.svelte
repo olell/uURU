@@ -38,6 +38,16 @@
 	let requestHost = $state('');
 	let requestPrefix = $state('');
 	let requestName = $state('');
+	let requestCodec = $state<'g722' | 'alaw' | 'ulaw' | 'g726' | 'gsm' | 'lpc10'>('g722');
+
+	const codecLabel: Record<string, string> = {
+		g722: 'G.722',
+		alaw: 'G.711 A-law',
+		ulaw: 'G.711 µ-law',
+		g726: 'G.726',
+		gsm: 'GSM',
+		lpc10: 'FIPS 137 / LPC-10'
+	};
 
 	let repeatLocalModalOpen = $state(false);
 	let repeatLocalModalText = $state('');
@@ -55,7 +65,8 @@
 			body: {
 				name: requestName,
 				prefix: requestPrefix,
-				partner_uuru_host: requestHost
+				partner_uuru_host: requestHost,
+				codec: requestCodec
 			}
 		});
 		if (!!error) {
@@ -64,6 +75,7 @@
 		requestHost = '';
 		requestPrefix = '';
 		requestName = '';
+		requestCodec = 'g722';
 		newRequestOpen = false;
 		updateOutgoingRequests();
 	};
@@ -283,6 +295,7 @@
 			<th scope="col">Prefix</th>
 			<th scope="col">Partner</th>
 			<th scope="col">Partner Ext.-Length</th>
+			<th scope="col">Codec</th>
 			<th scope="col">Actions</th>
 		</tr>
 	</thead>
@@ -297,6 +310,7 @@
 					</a>
 				</td>
 				<td>{peer.partner_extension_length}</td>
+				<td>{codecLabel[peer.codec!]}</td>
 				<td>
 					<a href={'#'} onclick={() => teardownPeering(peer)} class="text-danger">
 						<Icon name="trash3"></Icon>
@@ -322,6 +336,7 @@
 					<tr>
 						<th scope="col">Name</th>
 						<th scope="col">Prefix</th>
+						<th scope="col">Codec</th>
 						<th scope="col">Host</th>
 						<th scope="col">Actions</th>
 					</tr>
@@ -331,6 +346,7 @@
 						<tr>
 							<td>{request.name}</td>
 							<td>{request.prefix}</td>
+							<td>{codecLabel[request.codec!]}</td>
 							<td>
 								<a target="_blank" rel="noopener noreferrer" href={request.partner_uuru_host}>
 									{request.partner_uuru_host}
@@ -359,6 +375,7 @@
 						<th scope="col">Name</th>
 						<th scope="col">Origin</th>
 						<th scope="col">Origin Ext.-Length</th>
+						<th scope="col">Codec</th>
 						<th scope="col">Actions</th>
 					</tr>
 				</thead>
@@ -372,6 +389,7 @@
 								</a>
 							</td>
 							<td>{request.partner_extension_length}</td>
+							<td>{codecLabel[request.codec!]}</td>
 							<td>
 								<a
 									href={'#'}
@@ -415,6 +433,14 @@
 			<FormGroup>
 				<Label>Prefix</Label>
 				<Input pattern="\d+" bind:value={requestPrefix} required />
+			</FormGroup>
+			<FormGroup>
+				<Label>Codec</Label>
+				<select class="form-select" bind:value={requestCodec} required>
+					{#each Object.keys(codecLabel) as codec (codec)}
+						<option value={codec}>{codecLabel[codec]}</option>
+					{/each}
+				</select>
 			</FormGroup>
 			<Input type="submit" value="Send" />
 		</Form>

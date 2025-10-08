@@ -74,3 +74,6 @@ class IAXFriend(SQLModel, table=True):
     username: str
     secret: str
     host: str
+
+    disallow: str = ""
+    allow: str = ""

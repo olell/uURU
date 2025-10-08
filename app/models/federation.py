@@ -5,8 +5,9 @@ Copyright (c) Ole Lange, Gregor Michels and contributors. All rights reserved.
 Licensed under the MIT license. See LICENSE file in the project root for details.
 """
 
+from typing import Literal
 from pydantic import BaseModel
-from sqlmodel import SQLModel, Field
+from sqlmodel import SQLModel, Field, String
 import uuid
 
 
@@ -40,6 +41,9 @@ class PeerBase(SQLModel):
 
     # iaxfriend
     name: str
+    codec: Literal["g722", "alaw", "ulaw", "g726", "gsm", "lpc10"] = Field(
+        "g722", sa_type=String
+    )
 
     # dialplan
     prefix: str
@@ -59,6 +63,9 @@ class OutgoingPeeringRequestBase(SQLModel):
     name: str
     partner_uuru_host: str
     prefix: str
+    codec: Literal["g722", "alaw", "ulaw", "g726", "gsm", "lpc10"] = Field(
+        "g722", sa_type=String
+    )
 
 
 class OutgoingPeeringRequestPublic(OutgoingPeeringRequestBase):
@@ -72,6 +79,9 @@ class OutgoingPeeringRequest(OutgoingPeeringRequestPublic, table=True):
 class IncomingPeeringRequestBase(SQLModel):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     name: str
+    codec: Literal["g722", "alaw", "ulaw", "g726", "gsm", "lpc10"] = Field(
+        "g722", sa_type=String
+    )
     partner_uuru_host: str
     partner_iax_host: str
     partner_extension_length: int

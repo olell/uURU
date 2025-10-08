@@ -6,6 +6,7 @@ license = "MIT"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "alembic>=1.16.5",
     "apscheduler>=3.11.0",
     "argon2-cffi>=25.1.0",
     "coverage>=7.9.2",

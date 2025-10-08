@@ -48,6 +48,11 @@ COPY ./app /app/app
 COPY ./static /app/static
 COPY ./templates /app/templates
 
+COPY ./migrations /app/migrations
+COPY alembic.ini /app
+
+COPY entrypoint.sh /
+
 COPY --from=svelte /frontend/build/ /app/frontend/build
 
 # Sync the project
@@ -55,4 +60,4 @@ COPY --from=svelte /frontend/build/ /app/frontend/build
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync
 
-CMD ["uvicorn", "app.main:app", "--workers", "1", "--host", "0.0.0.0"]
+ENTRYPOINT /entrypoint.sh

@@ -11,7 +11,6 @@ from app.core.db import get_session
 from app.core.config import settings
 from app.models import *
 
-print(dir())
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -64,7 +63,6 @@ def run_migrations_online() -> None:
     """
     conf = config.get_section(config.config_ini_section, {})
     conf.update({"sqlalchemy.url": settings.SQLALCHEMY_DATABASE_URI})
-    print(conf)
     connectable = engine_from_config(
         conf,
         prefix="sqlalchemy.",

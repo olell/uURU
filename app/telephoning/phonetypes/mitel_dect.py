@@ -15,7 +15,7 @@ from threading import Lock
 
 from app.core.security import generate_extension_password
 from app.models.crud.asterisk import (
-    create_asterisk_extension,
+    create_sip_account,
 )
 from app.models.crud.extension import (
     delete_tmp_extension,
@@ -124,7 +124,7 @@ class MitelDECT(PhoneFlavor):
                 session.commit()
 
                 with Session(engine_asterisk) as session_asterisk:
-                    create_asterisk_extension(
+                    create_sip_account(
                         session_asterisk,
                         extension=tmp_ext_id,
                         extension_name="DECT TMP",

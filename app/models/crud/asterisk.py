@@ -21,13 +21,7 @@ from app.telephoning.main import Telephoning
 logger = getLogger(__name__)
 
 
-class AsteriskExtension(BaseModel):
-    extension: str
-    password: str
-    type: str
-
-
-def create_asterisk_extension(
+def create_sip_account(
     session_asterisk: Session,
     extension: str,
     extension_name: str,
@@ -79,7 +73,7 @@ def create_asterisk_extension(
     return [ps_aor, ps_auth, ps_endpoint]
 
 
-def update_asterisk_extension(
+def update_sip_account(
     session_asterisk: Session, extension: Extension, autocommit=True
 ):
     ps_endpoint = session_asterisk.exec(
@@ -112,7 +106,7 @@ def update_asterisk_extension(
     )
 
 
-def delete_asterisk_extension(
+def delete_sip_account(
     session_asterisk: Session, extension: str, autocommit=True
 ) -> None:
     try:
@@ -131,7 +125,7 @@ def delete_asterisk_extension(
     logger.info(f"Deleted extension <{extension}> in asterisk DB")
 
 
-def create_or_update_asterisk_dialplan_callgroup(
+def create_or_update_callgroup(
     session: Session,
     session_asterisk: Session,
     creating_user: User,
@@ -176,9 +170,7 @@ def create_or_update_asterisk_dialplan_callgroup(
     )
 
 
-def create_asterisk_iax_peer_and_dialplan(
-    session_asterisk: Session, peer: Peer, autocommit=True
-):
+def create_iax_peer(session_asterisk: Session, peer: Peer, autocommit=True):
     # create iax peer
     friend = IAXFriend(
         name=peer.name,
@@ -220,7 +212,7 @@ def create_asterisk_iax_peer_and_dialplan(
         raise
 
 
-def delete_asterisk_iax_peer_and_dialplan(
+def delete_iax_peer(
     session_asterisk: Session,
     peer: Peer,
     autocommit=True,

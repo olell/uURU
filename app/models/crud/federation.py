@@ -19,8 +19,8 @@ from app.api.client.federation import (
 )
 from app.models.crud import CRUDNotAllowedException
 from app.models.crud.asterisk import (
-    create_asterisk_iax_peer_and_dialplan,
-    delete_asterisk_iax_peer_and_dialplan,
+    create_iax_peer,
+    delete_iax_peer,
 )
 from app.models.federation import (
     OutgoingRequestStatus,
@@ -226,7 +226,7 @@ def accept_incoming_peering_request(
     )
 
     try:
-        create_asterisk_iax_peer_and_dialplan(session_asterisk, peer, False)
+        create_iax_peer(session_asterisk, peer, False)
 
         session.delete(request)
         session.add(peer)
@@ -305,7 +305,7 @@ def teardown_peer(
         )
 
     try:
-        delete_asterisk_iax_peer_and_dialplan(session_asterisk, peer, False)
+        delete_iax_peer(session_asterisk, peer, False)
 
         session.delete(peer)
         if autocommit:
@@ -418,7 +418,7 @@ def accept_outgoing_peering_request(
     try:
         session.delete(request)
         session.add(peer)
-        create_asterisk_iax_peer_and_dialplan(session_asterisk, peer, False)
+        create_iax_peer(session_asterisk, peer, False)
 
         if autocommit:
             session.commit()
@@ -461,7 +461,7 @@ def request_peer_teardown(
         raise CRUDNotAllowedException("Unknown peer!")
 
     try:
-        delete_asterisk_iax_peer_and_dialplan(session_asterisk, peer, False)
+        delete_iax_peer(session_asterisk, peer, False)
         session.delete(peer)
         if autocommit:
             session.commit()

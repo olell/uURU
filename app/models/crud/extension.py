@@ -18,9 +18,9 @@ from app.core.security import generate_extension_password, generate_extension_to
 
 from app.models.crud import CRUDNotAllowedException
 from app.models.crud.asterisk import (
-    create_asterisk_extension,
-    delete_asterisk_extension,
-    update_asterisk_extension,
+    create_sip_account,
+    delete_sip_account,
+    update_sip_account,
 )
 from app.models.crud.media import get_media_by_id
 from app.models.media import ExtensionMedia
@@ -157,7 +157,7 @@ def create_extension(
             session.add(ext_media)
 
         if not flavor.PREVENT_SIP_CREATION:
-            create_asterisk_extension(
+            create_sip_account(
                 session_asterisk,
                 extension=db_obj.extension,
                 extension_name=db_obj.name,
@@ -273,7 +273,7 @@ def update_extension(
         session.add(extension)
 
         if not flavor.PREVENT_SIP_CREATION:
-            update_asterisk_extension(session_asterisk, extension, autocommit=False)
+            update_sip_account(session_asterisk, extension, autocommit=False)
 
         flavor.on_extension_update(session, session_asterisk, user, extension)
 
@@ -321,9 +321,7 @@ def delete_extension(
     try:
         flavor.on_extension_delete(session, session_asterisk, user, extension)
         if not flavor.PREVENT_SIP_CREATION:
-            delete_asterisk_extension(
-                session_asterisk, extension.extension, autocommit=False
-            )
+            delete_sip_account(session_asterisk, extension.extension, autocommit=False)
 
         for e in extension.assigned_media:
             session.delete(e)
@@ -357,9 +355,7 @@ def delete_tmp_extension(
     autocommit=True,
 ) -> None:
     try:
-        delete_asterisk_extension(
-            session_asterisk, tmp_extension.extension, autocommit=False
-        )
+        delete_sip_account(session_asterisk, tmp_extension.extension, autocommit=False)
         session.delete(tmp_extension)
     except Exception as e:
         logger.exception("Failed to delete temporary extension")

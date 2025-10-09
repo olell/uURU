@@ -6,8 +6,8 @@ from sqlmodel import Session
 
 from app.core.security import generate_extension_password
 from app.models.crud.asterisk import (
-    create_asterisk_extension,
-    delete_asterisk_extension,
+    create_sip_account,
+    delete_sip_account,
 )
 from app.models.user import User
 from app.core.config import settings
@@ -50,7 +50,7 @@ class WebSIPManager(object):
 
     def delete_extension(self, session_asterisk: Session, extension: WebSIPExtension):
         try:
-            delete_asterisk_extension(session_asterisk, extension.extension)
+            delete_sip_account(session_asterisk, extension.extension)
             self.active_extensions.pop(self.active_extensions.index(extension))
         except Exception as e:
             logger.error(
@@ -85,7 +85,7 @@ class WebSIPManager(object):
         )
 
         try:
-            create_asterisk_extension(
+            create_sip_account(
                 session_asterisk,
                 free_extension,
                 name,

@@ -152,6 +152,11 @@ def create_extension(
             )
             session.add(ext_media)
 
+        if autocommit:
+            session.commit()
+            session.refresh(db_obj)
+            session_asterisk.commit()
+
         flavor.on_extension_create(session, session_asterisk, user, db_obj)
 
         if extension.public:
@@ -259,6 +264,10 @@ def update_extension(
 
         session.add(extension)
 
+        if autocommit:
+            session.commit()
+            session.refresh(extension)
+            session_asterisk.commit()
         flavor.on_extension_update(session, session_asterisk, user, extension)
 
         if prev_data["public"] and not extension.public:  # user change to not public

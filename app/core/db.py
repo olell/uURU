@@ -14,6 +14,7 @@ from app.core.config import settings
 
 from app.models import *
 from app.models.asterisk import DialPlanEntry
+from app.models.crud.dialplan import Dial, Dialplan
 from app.models.user import User
 from app.models.crud.user import create_user
 from app.models.user import UserCreate, UserRole
@@ -30,20 +31,11 @@ def init_asterisk_db(session_asterisk: Session) -> None:
     )
     logger.info(f"Created asterisk tables")
 
-    # check if we have a basic dialplan for pjsip_internal defined
-    num_dialplan_entries = session_asterisk.exec(
-        select(func.count("*")).select_from(DialPlanEntry)
-    ).first()
-    if num_dialplan_entries == 0:
-        # TODO: make exten based on extension lengths
-        dialplan_entry = DialPlanEntry(
-            exten="_" + ("X" * settings.EXTENSION_DIGITS),
-            priority=1,
-            app="Dial",
-            appdata="${PJSIP_DIAL_CONTACTS(${EXTEN})}",
-        )
-        session_asterisk.add(dialplan_entry)
-        session_asterisk.commit()
+    # TODO: Figure out if we want to keep this when every SIP extension creates
+    # its own dialplan (as fallback maybe?)
+    dialplan = Dialplan(session_asterisk, exten="_" + ("X" * settings.EXTENSION_DIGITS))
+    dialplan.add(Dial(devices=["${PJSIP_DIAL_CONTACTS(${EXTEN})}"]), prio=1)
+    dialplan.store()
 
 
 def init_db(session: Session) -> None:

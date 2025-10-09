@@ -8,10 +8,8 @@ Licensed under the MIT license. See LICENSE file in the project root for details
 from typing import Annotated, Literal
 from pydantic import BaseModel, Field, computed_field
 from app.core.config import settings
-from app.models.crud.asterisk import (
-    create_or_update_asterisk_dialplan_callgroup,
-    delete_asterisk_dialplan_entry,
-)
+from app.models.crud.asterisk import create_or_update_callgroup
+from app.models.crud.dialplan import Dialplan
 from app.telephoning.flavor import PhoneFlavor
 
 
@@ -32,19 +30,14 @@ class CallGroupFields(BaseModel):
 class CallGroup(PhoneFlavor):
     PHONE_TYPES = ["Callgroup"]
     DISPLAY_INDEX = -1
-    PREVENT_SIP_CREATION = True
 
     EXTRA_FIELDS = CallGroupFields
 
     def on_extension_create(self, session, asterisk_session, user, extension):
-        create_or_update_asterisk_dialplan_callgroup(
-            session, asterisk_session, user, extension
-        )
+        create_or_update_callgroup(session, asterisk_session, user, extension)
 
     def on_extension_update(self, session, asterisk_session, user, extension):
-        create_or_update_asterisk_dialplan_callgroup(
-            session, asterisk_session, user, extension
-        )
+        create_or_update_callgroup(session, asterisk_session, user, extension)
 
     def on_extension_delete(self, session, asterisk_session, user, extension):
-        delete_asterisk_dialplan_entry(asterisk_session, extension, user)
+        Dialplan(asterisk_session, extension.extension).delete()

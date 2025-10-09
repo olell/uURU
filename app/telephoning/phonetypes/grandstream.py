@@ -10,9 +10,12 @@ from fastapi import HTTPException, Request
 from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel, Field
 from app.core.db import SessionDep
-from app.models.crud.extension import get_extension_by_extra_field, filter_extensions_by_name
+from app.models.crud.extension import (
+    get_extension_by_extra_field,
+    filter_extensions_by_name,
+)
+from app.telephoning.phonetypes.sip import SIP
 from app.telephoning.templates import templates
-from app.telephoning.flavor import PhoneFlavor
 
 logger = getLogger(__name__)
 
@@ -21,11 +24,12 @@ class GrandstreamExtraFields(BaseModel):
     mac: str = Field(pattern="^([0-9a-f]{2}-){5}[0-9a-f]{2}$")
 
 
-class Grandstream(PhoneFlavor):
+class Grandstream(SIP):
 
     PHONE_TYPES = ["Grandstream WP810", "Grandstream GXP2160"]
     IS_SPECIAL = True
     EXTRA_FIELDS = GrandstreamExtraFields
+    DISPLAY_INDEX = 0
     SUPPORTED_CODEC = "g722"
 
     def generate_routes(self, router):
@@ -48,5 +52,7 @@ class Grandstream(PhoneFlavor):
         @router.get("/phonebook.xml")
         def get_phonebook(request: Request, session: SessionDep):
             return templates.TemplateResponse(
-                request, "grandstream_phonebook.j2.xml", {"extensions": filter_extensions_by_name(session, public=True)}
+                request,
+                "grandstream_phonebook.j2.xml",
+                {"extensions": filter_extensions_by_name(session, public=True)},
             )

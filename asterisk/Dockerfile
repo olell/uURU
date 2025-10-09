@@ -16,6 +16,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-pip \
     python3-mysqldb \
     python3-requests \
+    mpg123 \
     && rm -rf /var/lib/apt/lists/*
 
 # download asterisk source - extract alembic contrib - move into /etc/alembic

@@ -9,7 +9,14 @@ from logging import getLogger
 from pydantic import BaseModel
 from sqlmodel import Session, delete, select
 
-from app.models.asterisk import DialPlanEntry, IAXFriend, PSAor, PSAuth, PSEndpoint
+from app.core.config import settings
+from app.models.asterisk import (
+    IAXFriend,
+    MusicOnHold,
+    PSAor,
+    PSAuth,
+    PSEndpoint,
+)
 from app.models.crud import CRUDNotAllowedException
 from app.models.crud.dialplan import Dial, Dialplan
 from app.models.extension import Extension
@@ -238,6 +245,80 @@ def delete_iax_peer(
             f"Deleted IAX2Friend for {peer.name} and dialplan {plan.exten} from asterisk DB"
         )
 
+        if autocommit:
+            session_asterisk.commit()
+    except:
+        if autocommit:
+            session_asterisk.rollback()
+        raise
+
+
+def get_music_on_hold_by_name(session_asterisk: Session, name: str) -> MusicOnHold:
+    return session_asterisk.exec(
+        select(MusicOnHold).where(MusicOnHold.name == name)
+    ).first()
+
+
+def create_music_on_hold(
+    session_asterisk: Session, extension: Extension, media_name="moh", autocommit=True
+):
+    """
+    creates a music on hold database entry for the extension if media is assigned
+    at the given media name
+    """
+    if extension.get_assigned_media(media_name):  # check if the media is assigned
+        moh = MusicOnHold(
+            name=f"moh_{extension.extension}",
+            mode="custom",
+            application=f"/usr/bin/mpg123 -q -r 8000 -f 8192 --mono -s http://{settings.WEB_HOST}/api/v1/media/byextension/{extension.extension}/{media_name}",
+        )
+        try:
+            session_asterisk.add(moh)
+            if autocommit:
+                session_asterisk.commit()
+                session_asterisk.refresh(moh)
+        except:
+            if autocommit:
+                session_asterisk.rollback()
+            raise
+
+
+def update_music_on_hold(
+    session_asterisk: Session, extension: Extension, media_name="moh", autocommit=True
+):
+    assigned = extension.get_assigned_media(media_name)
+    ex = get_music_on_hold_by_name(session_asterisk, f"moh_{extension.extension}")
+
+    try:
+        if assigned and not ex:  # newly assigned
+            moh = MusicOnHold(
+                name=f"moh_{extension.extension}",
+                mode="custom",
+                application=f"/usr/bin/mpg123 -q -r 8000 -f 8192 --mono -s http://{settings.WEB_HOST}/api/v1/media/byextension/{extension.extension}/{media_name}",
+            )
+            session_asterisk.add(moh)
+            if autocommit:
+                session_asterisk.commit()
+                session_asterisk.refresh(moh)
+        if assigned is None and ex:  # removed
+            session_asterisk.delete(moh)
+            if autocommit:
+                session_asterisk.commit()
+
+    except:
+        if autocommit:
+            session_asterisk.rollback()
+        raise
+
+
+def delete_music_on_hold(
+    session_asterisk: Session, extension: Extension, autocommit=True
+):
+    moh = get_music_on_hold_by_name(session_asterisk, f"moh_{extension.extension}")
+    if moh is None:
+        return
+    try:
+        session_asterisk.delete(moh)
         if autocommit:
             session_asterisk.commit()
     except:

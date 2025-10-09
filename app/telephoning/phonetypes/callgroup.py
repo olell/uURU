@@ -30,7 +30,6 @@ class CallGroupFields(BaseModel):
 class CallGroup(PhoneFlavor):
     PHONE_TYPES = ["Callgroup"]
     DISPLAY_INDEX = -1
-    PREVENT_SIP_CREATION = True
 
     EXTRA_FIELDS = CallGroupFields
 

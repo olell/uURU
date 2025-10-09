@@ -31,16 +31,18 @@ from app.core.db import (
     engine,
     engine_asterisk,
 )
+from app.telephoning.phonetypes.sip import SIP
 
 logger = getLogger(__name__)
 
 
-class MitelDECT(PhoneFlavor):
+class MitelDECT(SIP):
     PHONE_TYPES = ["DECT"]
     DISPLAY_INDEX = 1001
     IS_SPECIAL = False
 
     SUPPORTED_CODEC = "alaw"
+    EXTRA_FIELDS = None
 
     JOB_INTERVAL = 10
 
@@ -171,12 +173,14 @@ class MitelDECT(PhoneFlavor):
             self.ommclient.delete_pp_user(id=user_id)
 
     def on_extension_delete(self, session, asterisk_session, _, extension):
+        super().on_extension_delete(session, asterisk_session, user, extension)
         user = self.get_user_by_extension(extension.extension)
         with self.lock:
             self.ommclient.detach_user_device_by_user(user.uid)
             self.ommclient.delete_pp_user(user.uid)
 
     def on_extension_update(self, session, asterisk_session, _, extension):
+        super().on_extension_update(session, asterisk_session, user, extension)
         user = self.get_user_by_extension(extension.extension)
         with self.lock:
             self.ommclient.set_user_name(user.uid, extension.name)

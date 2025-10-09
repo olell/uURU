@@ -93,10 +93,6 @@ class PhoneFlavor:
     # Supported codecs: "g722", "alaw", "ulaw", "g726", "gsm", "lpc10"
     SUPPORTED_CODEC: CODEC | dict[str, CODEC] = "g722"
 
-    # If this flag is set to true, on creation of such a phone type no SIP
-    # account is created in the asterisk database
-    PREVENT_SIP_CREATION = False
-
     # This limits the maximum amount of characters for the extension name
     MAX_EXTENSION_NAME_CHARS = 20
 

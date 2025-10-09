@@ -12,19 +12,20 @@ from pydantic_extra_types.mac_address import MacAddress
 
 from app.models.crud.extension import get_extension_by_extra_field
 from app.models.media import ImageFormat, MediaType
+from app.telephoning.phonetypes.sip import SIP
 from app.telephoning.templates import templates
 from app.core.config import settings
 from app.core.db import SessionDep
 
 # from app.models.crud.extension import get_extension_by_mac
-from app.telephoning.flavor import MediaDescriptor, PhoneFlavor
+from app.telephoning.flavor import MediaDescriptor
 
 
 class InnovaphoneFields(BaseModel):
     mac: str = Field(pattern="^([0-9a-f]{2}-){5}[0-9a-f]{2}$")
 
 
-class Innovaphone(PhoneFlavor):
+class Innovaphone(SIP):
 
     PHONE_TYPES = ["Innovaphone 112", "Innovaphone 241", "Innovaphone 200a"]
     SUPPORTED_CODEC = {
@@ -33,6 +34,7 @@ class Innovaphone(PhoneFlavor):
         "Innovaphone 200a": "alaw",
     }
     EXTRA_FIELDS = InnovaphoneFields
+    DISPLAY_INDEX = 0
     IS_SPECIAL = True
 
     MEDIA = {
@@ -50,11 +52,6 @@ class Innovaphone(PhoneFlavor):
         super().__init__()
 
         self.prometheus_sd_target: dict[str, tuple[dict, IPvAnyAddress]] = {}
-
-    def on_extension_create(self, session, asterisk_session, user, extension):
-        print(
-            f"A new {extension.type} was created. My extra_fields are {extension.extra_fields}"
-        )
 
     def update_sd_targets_by_mac(
         self, session: SessionDep, mac: MacAddress, last_ip: IPvAnyAddress

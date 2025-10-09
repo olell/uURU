@@ -26,7 +26,7 @@ from urllib.parse import unquote
 from app.telephoning.main import Telephoning
 
 
-from app.models.media import ExtensionMedia
+from app.models.media import ExtensionMedia, Media
 
 if TYPE_CHECKING:
     from app.models.user import User
@@ -125,6 +125,16 @@ class Extension(ExtensionBase, table=True):
         # wrapper method is used to get the value of assigned media into a field
         # that will get returned
         return self.assigned_media
+
+    def get_assigned_media(self, name: str) -> Media | None:
+        """
+        Returns the assigned media for the given name, None if there
+        is no media assigned.
+        """
+        for el in self.assigned_media:
+            if el.name == name:
+                return el.media
+        return None
 
 
 class ExtensionCreate(BaseModel):

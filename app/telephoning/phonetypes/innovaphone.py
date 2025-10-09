@@ -38,7 +38,7 @@ class Innovaphone(PhoneFlavor):
     MEDIA = {
         "background_image": MediaDescriptor(
             media_type=MediaType.IMAGE,
-            required=True,
+            required=False,
             label="Background Image",
             out_format=ImageFormat(
                 out_type="png", colormode="RGB", width=320, height=240

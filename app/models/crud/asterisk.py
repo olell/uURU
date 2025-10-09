@@ -180,29 +180,15 @@ def create_or_update_asterisk_dialplan_callgroup(
             "You may only create callgroups with extension you've created!"
         )
 
-    dialplan = session_asterisk.exec(
-        select(DialPlanEntry).where(DialPlanEntry.exten == extension.extension)
-    ).first()
-    if not dialplan:
-        dialplan = DialPlanEntry(
-            exten=extension.extension,
-            priority=1,
-            app="Dial",
-            appdata="&".join(
-                [f"${{PJSIP_DIAL_CONTACTS({e.extension})}}" for e in extensions]
-            ),
-        )
-    else:
-        dialplan.appdata = "&".join(
-            [f"${{PJSIP_DIAL_CONTACTS({e.extension})}}" for e in extensions]
-        )
+    plan = Dialplan(session_asterisk, extension.extension)
+    plan.add(
+        Dial(devices=[f"${{PJSIP_DIAL_CONTACTS({e.extension})}}" for e in extensions]),
+        1,
+    )
+    plan.store()
 
     logger.info(
         f"Created callgroup at {extension.extension} with participants: {participants}"
-    )
-
-    return create_or_update_asterisk_dialplan_entry(
-        session_asterisk, dialplan, autocommit
     )
 
 

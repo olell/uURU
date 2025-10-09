@@ -131,22 +131,6 @@ def delete_asterisk_extension(
     logger.info(f"Deleted extension <{extension}> in asterisk DB")
 
 
-def create_or_update_asterisk_dialplan_entry(
-    session_asterisk: Session, entry: DialPlanEntry, autocommit=True
-) -> DialPlanEntry:
-    try:
-        session_asterisk.add(entry)
-        if autocommit:
-            session_asterisk.commit()
-            session_asterisk.refresh(entry)
-    except:
-        if autocommit:
-            session_asterisk.rollback()
-        raise
-
-    return entry
-
-
 def create_or_update_asterisk_dialplan_callgroup(
     session: Session,
     session_asterisk: Session,
@@ -190,30 +174,6 @@ def create_or_update_asterisk_dialplan_callgroup(
     logger.info(
         f"Created callgroup at {extension.extension} with participants: {participants}"
     )
-
-
-def delete_asterisk_dialplan_entry(
-    session_asterisk: Session, extension: Extension, user: User, autocommit=True
-):
-    if not (user.role == UserRole.ADMIN or extension.user.id == user.id):
-        raise CRUDNotAllowedException(
-            "You're not permitted to delete this dialplan entry"
-        )
-
-    entry = session_asterisk.exec(
-        select(DialPlanEntry).where(DialPlanEntry.exten == extension.extension)
-    ).first()
-    if entry is None:
-        raise CRUDNotAllowedException("Extension not found in dialplan database")
-
-    try:
-        session_asterisk.delete(entry)
-        if autocommit:
-            session_asterisk.commit()
-    except:
-        if autocommit:
-            session_asterisk.rollback()
-        raise
 
 
 def create_asterisk_iax_peer_and_dialplan(

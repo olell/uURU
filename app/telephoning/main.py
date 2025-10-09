@@ -39,6 +39,7 @@ def load_phone_flavors() -> list[PhoneFlavor]:
                 isinstance(attr, type)
                 and issubclass(attr, PhoneFlavor)
                 and attr is not PhoneFlavor
+                and attr not in phone_flavors
             ):
                 phone_flavors.append(attr)
 
@@ -69,6 +70,7 @@ class Telephoning(object):
         for cls in self.flavor_classes:
             # 1st: create instance
             flavor_name = cls.__name__.lower()
+            print(cls, flavor_name)
             if flavor_name in self.flavors:
                 raise RuntimeError("Flavor classes must have unique names!")
 

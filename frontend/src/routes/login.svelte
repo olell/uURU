@@ -3,7 +3,7 @@
 	import Register from './register.svelte';
 	import { infoApiV1UserGet, loginApiV1UserLoginPost } from '../client';
 	import { push_api_error, push_message } from '../messageService.svelte';
-	import { user_info } from '../sharedState.svelte';
+	import { adminMode, user_info } from '../sharedState.svelte';
 
 	let { isOpen = $bindable() } = $props();
 
@@ -41,6 +41,7 @@
 		}
 
 		user_info.val = data;
+		adminMode.val = data.role == 'admin';
 		push_message({ color: 'success', title: 'Welcome!', message: `Hello ${data?.username} 👋` });
 		isOpen = false;
 	}

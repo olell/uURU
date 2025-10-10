@@ -20,7 +20,7 @@
 		createMediaApiV1MediaPost,
 		deleteMediaApiV1MediaMediaIdDelete
 	} from '../../client';
-	import { settings, user_info } from '../../sharedState.svelte';
+	import { adminMode, settings, user_info } from '../../sharedState.svelte';
 	import { push_api_error } from '../../messageService.svelte';
 	import { client } from '../../client/client.gen';
 
@@ -54,8 +54,6 @@
 		}
 	});
 
-	let adminMode = $state(false);
-
 	let media = $state<Media[]>([]);
 	$inspect(media);
 	let audios = $derived(media.filter((e) => e.type === 'audio'));
@@ -65,7 +63,7 @@
 		console.log('updated media');
 		getMediaApiV1MediaGet({
 			credentials: 'include',
-			query: { all_media: adminMode }
+			query: { all_media: adminMode.val }
 		}).then(({ data, error }) => {
 			if (error) {
 				push_api_error(error, 'Failed to load media!');
@@ -120,20 +118,6 @@
 
 <h1 class="fs-3">Media</h1>
 
-{#if user_info.val?.role == 'admin'}
-	<div class="form-check form-switch">
-		<input
-			class="form-check-input"
-			type="checkbox"
-			role="switch"
-			bind:checked={adminMode}
-			id="example-switch-1"
-		/>
-		<label class="form-check-label" for="example-switch-1">
-			Admin Mode (show media from all users)
-		</label>
-	</div>
-{/if}
 <Button
 	color="primary"
 	class="mt-3"

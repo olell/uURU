@@ -87,6 +87,13 @@
 		});
 	});
 
+	// enable admin mode initially if the user is an admin
+	$effect(() => {
+		if (user_info.val?.role == 'admin') {
+			adminMode.val = true;
+		}
+	});
+
 	// set theme based on system preference
 	$effect(() => {
 		const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)');

@@ -17,7 +17,7 @@
 		type PeerPhonebook
 	} from '../client';
 	import { push_api_error, push_message } from '../messageService.svelte';
-	import { isMobile, settings, user_info } from '../sharedState.svelte';
+	import { adminMode, isMobile, settings, user_info } from '../sharedState.svelte';
 	import { Web } from 'sip.js';
 	import Webphone from '../components/webphone.svelte';
 
@@ -35,7 +35,7 @@
 		let handler:
 			| typeof phonebookApiV1ExtensionPhonebookGet
 			| typeof adminPhonebookApiV1ExtensionAllGet = phonebookApiV1ExtensionPhonebookGet;
-		if (user_info.val?.role == 'admin') {
+		if (user_info.val?.role == 'admin' && adminMode.val) {
 			handler = adminPhonebookApiV1ExtensionAllGet;
 		}
 

@@ -29,7 +29,7 @@
 		logoutApiV1UserLogoutGet,
 		getPagesApiV1PagesGet
 	} from '../client';
-	import { isMobile, pages, settings, user_info } from '../sharedState.svelte';
+	import { adminMode, isMobile, pages, settings, user_info } from '../sharedState.svelte';
 	import Login from './login.svelte';
 	import { messages, push_message } from '../messageService.svelte';
 	import { fade } from 'svelte/transition';
@@ -158,7 +158,9 @@
 					<Dropdown>
 						<DropdownToggle nav caret>Extensions</DropdownToggle>
 						<DropdownMenu>
-							<DropdownItem href={resolve('/extensions')}>Your Extensions</DropdownItem>
+							<DropdownItem href={resolve('/extensions')}
+								>{adminMode.val ? 'Manage' : 'Your'} Extensions</DropdownItem
+							>
 							<DropdownItem href={resolve('/extensions/new')}>Create a new Extension</DropdownItem>
 						</DropdownMenu>
 					</Dropdown>
@@ -176,12 +178,11 @@
 						</DropdownMenu>
 					</Dropdown>
 				{/if}
-				{#if user_info.val && user_info.val.role == 'admin'}
+				{#if user_info.val && user_info.val.role == 'admin' && adminMode.val}
 					<Dropdown>
 						<DropdownToggle nav caret>Admin</DropdownToggle>
 						<DropdownMenu>
 							<DropdownItem href={resolve('/admin/user')}>Users</DropdownItem>
-							<DropdownItem href={resolve('/admin/extensions')}>Extensions</DropdownItem>
 							{#if settings.val.LIMIT_REGISTRATION}
 								<DropdownItem href={resolve('/admin/invites')}>Invites</DropdownItem>
 							{/if}
@@ -200,6 +201,20 @@
 						>
 					</NavItem>
 				{:else}
+					{#if user_info.val?.role === 'admin'}
+						<form class="d-flex align-items-center me-3">
+							<div class="form-check form-switch">
+								<input
+									class="form-check-input"
+									type="checkbox"
+									role="switch"
+									id="admin-mode-switch"
+									bind:checked={adminMode.val}
+								/>
+								<label class="form-check-label" for="admin-mode-switch">Admin Mode</label>
+							</div>
+						</form>
+					{/if}
 					<Dropdown>
 						<DropdownToggle nav caret>
 							<Icon name="person-circle" class="me-1"></Icon>

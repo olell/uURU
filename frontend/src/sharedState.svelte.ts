@@ -6,3 +6,5 @@ export const settings = $state<{ val: PublicSettings | undefined }>({ val: undef
 export const isMobile = $state({ val: false });
 
 export const pages = $state<{ val: object }>({ val: {} });
+
+export const adminMode = $state({ val: false });

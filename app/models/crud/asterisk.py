@@ -137,6 +137,7 @@ def create_or_update_callgroup(
     session_asterisk: Session,
     creating_user: User,
     extension: Extension,
+    dialplan_options: dict[str, str] = {},
     autocommit=True,
 ):
     """
@@ -167,7 +168,10 @@ def create_or_update_callgroup(
 
     plan = Dialplan(session_asterisk, extension.extension)
     plan.add(
-        Dial(devices=[f"${{PJSIP_DIAL_CONTACTS({e.extension})}}" for e in extensions]),
+        Dial(
+            devices=[f"${{PJSIP_DIAL_CONTACTS({e.extension})}}" for e in extensions],
+            options=dialplan_options,
+        ),
         1,
     )
     plan.store()

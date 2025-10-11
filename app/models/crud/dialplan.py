@@ -194,7 +194,7 @@ class ConfBridge(BaseDialplanApp):
     # TODO: There are more options: https://docs.asterisk.org/Latest_API/API_Documentation/Dialplan_Applications/ConfBridge/#description
 
     @staticmethod
-    def parse(appdata):
+    def parse(_, appdata):
         return ConfBridge(conference=appdata)
 
     def assemble(self):

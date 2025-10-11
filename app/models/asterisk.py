@@ -58,6 +58,19 @@ class PSAuth(SQLModel, table=True):
     username: str
 
 
+class PSContact(SQLModel, table=True):
+
+    __tablename__ = "ps_contacts"
+
+    id: str = Field(primary_key=True)
+    uri: str
+    expiration_time: int
+    user_agent: str
+    via_addr: str
+    via_port: int
+    endpoint: str
+
+
 class IAXFriend(SQLModel, table=True):
 
     __tablename__ = "iaxfriends"

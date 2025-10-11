@@ -12,6 +12,7 @@
 		adminPhonebookApiV1ExtensionAllGet,
 		deleteApiV1ExtensionExtensionDelete,
 		type Extension,
+		getExtensionsOnlineApiV1ExtensionOnlineGet,
 		getOwnApiV1ExtensionOwnGet
 	} from '../../client';
 	import { push_api_error, push_message } from '../../messageService.svelte';
@@ -19,9 +20,17 @@
 	import { resolve } from '$app/paths';
 
 	let extensions = $state<Extension[]>([]);
+	let onlineExtensions = $state<Extension[]>([]);
 
 	$effect(() => {
 		refreshExtensions();
+	});
+	$effect(() => {
+		refreshOnlineExtensions();
+		let interval = setInterval(refreshOnlineExtensions, 5000);
+		return () => {
+			clearInterval(interval);
+		};
 	});
 
 	async function refreshExtensions() {
@@ -32,6 +41,17 @@
 			return;
 		}
 		extensions = data!;
+	}
+
+	async function refreshOnlineExtensions() {
+		let { data, error } = await getExtensionsOnlineApiV1ExtensionOnlineGet({
+			credentials: 'include'
+		});
+		if (error) {
+			push_api_error(error, 'Failed to load online extensions');
+			return;
+		}
+		onlineExtensions = data!;
 	}
 
 	async function deleteExtension(extension: Extension) {
@@ -73,7 +93,12 @@
 		<tbody>
 			{#each extensions as extension (extension.extension)}
 				<tr>
-					<td>{extension.extension}</td>
+					<td>
+						{extension.extension}
+						{#if onlineExtensions.findIndex((e) => e.extension == extension.extension) != -1 && adminMode.val}
+							<Icon class="ms-2 text-success" name="broadcast-pin" />
+						{/if}
+					</td>
 					<td>{extension.name}</td>
 					<td>{extension.type}</td>
 					<td>{extension.public ? '' : 'Not Public'}</td>

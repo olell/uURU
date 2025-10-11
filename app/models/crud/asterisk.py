@@ -7,7 +7,7 @@ Licensed under the MIT license. See LICENSE file in the project root for details
 
 from logging import getLogger
 from pydantic import BaseModel
-from sqlmodel import Session, delete, select
+from sqlmodel import Session, delete, func, select
 
 from app.core.config import settings
 from app.models.asterisk import (
@@ -15,6 +15,7 @@ from app.models.asterisk import (
     MusicOnHold,
     PSAor,
     PSAuth,
+    PSContact,
     PSEndpoint,
 )
 from app.models.crud import CRUDNotAllowedException
@@ -329,3 +330,47 @@ def delete_music_on_hold(
         if autocommit:
             session_asterisk.rollback()
         raise
+
+
+def get_contact(
+    session_asterisk: Session, extension: Extension, user: User
+) -> PSContact | None:
+    if user.role != UserRole.ADMIN and not extension.user_id == user.id:
+        raise CRUDNotAllowedException(
+            "You may not request the contact of an extension you don't own!"
+        )
+
+    contact = session_asterisk.exec(
+        select(PSContact).where(PSContact.endpoint == extension.extension)
+    ).first()
+
+    return contact
+
+
+def has_contact(session_asterisk: Session, extension: Extension, user: User) -> bool:
+    if user.role != UserRole.ADMIN and not extension.public:
+        raise CRUDNotAllowedException(
+            "You may not request the contact state of a private extension!"
+        )
+
+    contact_count = session_asterisk.scalar(
+        select(func.count(PSContact.id)).where(
+            PSContact.endpoint == extension.extension
+        )
+    )
+
+    return contact_count > 0
+
+
+def get_extensions_with_contacts(
+    session: Session, session_asterisk: Session, user: User | None
+) -> list[Extension]:
+    endpoints = list(session_asterisk.exec(select(PSContact.endpoint)).all())
+
+    statement = select(Extension).where(Extension.extension.in_(endpoints))
+    if user.role != UserRole.ADMIN:
+        statement = statement.where(Extension.public)
+
+    extensions = list(session.exec(statement).all())
+
+    return extensions

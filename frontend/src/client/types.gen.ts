@@ -563,6 +563,40 @@ export type OutgoingRequestStatus = {
 };
 
 /**
+ * PSContact
+ */
+export type PsContact = {
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Uri
+     */
+    uri: string;
+    /**
+     * Expiration Time
+     */
+    expiration_time: number;
+    /**
+     * User Agent
+     */
+    user_agent: string;
+    /**
+     * Via Addr
+     */
+    via_addr: string;
+    /**
+     * Via Port
+     */
+    via_port: number;
+    /**
+     * Endpoint
+     */
+    endpoint: string;
+};
+
+/**
  * PasswordChange
  */
 export type PasswordChange = {
@@ -1340,6 +1374,87 @@ export type AdminPhonebookApiV1ExtensionAllGetResponses = {
      */
     200: unknown;
 };
+
+export type GetExtensionsOnlineApiV1ExtensionOnlineGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/extension/online';
+};
+
+export type GetExtensionsOnlineApiV1ExtensionOnlineGetResponses = {
+    /**
+     * Response Get Extensions Online Api V1 Extension Online Get
+     * Successful Response
+     */
+    200: Array<ExtensionBase>;
+};
+
+export type GetExtensionsOnlineApiV1ExtensionOnlineGetResponse = GetExtensionsOnlineApiV1ExtensionOnlineGetResponses[keyof GetExtensionsOnlineApiV1ExtensionOnlineGetResponses];
+
+export type IsExtensionOnlineApiV1ExtensionIsOnlineExtensionGetData = {
+    body?: never;
+    path: {
+        /**
+         * Extension
+         */
+        extension: string;
+    };
+    query?: never;
+    url: '/api/v1/extension/is_online/{extension}';
+};
+
+export type IsExtensionOnlineApiV1ExtensionIsOnlineExtensionGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type IsExtensionOnlineApiV1ExtensionIsOnlineExtensionGetError = IsExtensionOnlineApiV1ExtensionIsOnlineExtensionGetErrors[keyof IsExtensionOnlineApiV1ExtensionIsOnlineExtensionGetErrors];
+
+export type IsExtensionOnlineApiV1ExtensionIsOnlineExtensionGetResponses = {
+    /**
+     * Response Is Extension Online Api V1 Extension Is Online  Extension  Get
+     * Successful Response
+     */
+    200: {
+        [key: string]: boolean;
+    };
+};
+
+export type IsExtensionOnlineApiV1ExtensionIsOnlineExtensionGetResponse = IsExtensionOnlineApiV1ExtensionIsOnlineExtensionGetResponses[keyof IsExtensionOnlineApiV1ExtensionIsOnlineExtensionGetResponses];
+
+export type GetExtensionContactApiV1ExtensionContactExtensionGetData = {
+    body?: never;
+    path: {
+        /**
+         * Extension
+         */
+        extension: string;
+    };
+    query?: never;
+    url: '/api/v1/extension/contact/{extension}';
+};
+
+export type GetExtensionContactApiV1ExtensionContactExtensionGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetExtensionContactApiV1ExtensionContactExtensionGetError = GetExtensionContactApiV1ExtensionContactExtensionGetErrors[keyof GetExtensionContactApiV1ExtensionContactExtensionGetErrors];
+
+export type GetExtensionContactApiV1ExtensionContactExtensionGetResponses = {
+    /**
+     * Response Get Extension Contact Api V1 Extension Contact  Extension  Get
+     * Successful Response
+     */
+    200: PsContact | null;
+};
+
+export type GetExtensionContactApiV1ExtensionContactExtensionGetResponse = GetExtensionContactApiV1ExtensionContactExtensionGetResponses[keyof GetExtensionContactApiV1ExtensionContactExtensionGetResponses];
 
 export type GetSettingsApiV1SettingsGetData = {
     body?: never;

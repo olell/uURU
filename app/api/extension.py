@@ -5,7 +5,7 @@ Copyright (c) Ole Lange, Gregor Michels and contributors. All rights reserved.
 Licensed under the MIT license. See LICENSE file in the project root for details.
 """
 
-from typing import Optional
+from typing import Literal, Optional
 
 from fastapi import APIRouter, status, HTTPException
 import sqlalchemy
@@ -13,7 +13,13 @@ import sqlalchemy
 from app.api.deps import OptionalCurrentUser, SessionDep, CurrentUser
 from app.core.db import SessionAsteriskDep
 from app.core.ldap import LDAPDep
+from app.models.asterisk import PSContact
 from app.models.crud import CRUDNotAllowedException
+from app.models.crud.asterisk import (
+    get_contact,
+    get_extensions_with_contacts,
+    has_contact,
+)
 from app.models.extension import (
     Extension,
     ExtensionCreate,
@@ -144,3 +150,54 @@ def admin_phonebook(
             detail="You may not request the all extensions!",
         )
     return phonebook(session=session, user=user, query=query, public=public)
+
+
+@router.get("/online")
+def get_extensions_online(
+    *, session: SessionDep, session_asterisk: SessionAsteriskDep, user: CurrentUser
+) -> list[ExtensionBase]:
+    try:
+        extensions = get_extensions_with_contacts(session, session_asterisk, user)
+    except CRUDNotAllowedException as e:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+
+    return extensions
+
+
+@router.get("/is_online/{extension}")
+def is_extension_online(
+    *,
+    session: SessionDep,
+    session_asterisk: SessionAsteriskDep,
+    user: CurrentUser,
+    extension: str,
+) -> dict[Literal["online"], bool]:
+    extension = get_extension_by_id(session, extension, False)
+    if extension is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Extension not found!"
+        )
+    try:
+        state = has_contact(session_asterisk, extension, user)
+        return {"online": state}
+    except CRUDNotAllowedException as e:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+
+
+@router.get("/contact/{extension}")
+def get_extension_contact(
+    *,
+    session: SessionDep,
+    session_asterisk: SessionAsteriskDep,
+    user: CurrentUser,
+    extension: str,
+) -> PSContact | None:
+    extension = get_extension_by_id(session, extension, False)
+    if extension is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Extension not found!"
+        )
+    try:
+        return get_contact(session_asterisk, extension, user)
+    except CRUDNotAllowedException as e:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))

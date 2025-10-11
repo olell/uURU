@@ -287,40 +287,41 @@
 	});
 
 	let contact = $state<PsContact | null>(null);
+	if (adminMode.val && extension) {
+		const refreshContact = async () => {
+			const { data, error } = await getExtensionContactApiV1ExtensionContactExtensionGet({
+				credentials: 'include',
+				path: {
+					extension: extension?.extension!
+				}
+			});
 
-	const refreshContact = async () => {
-		const { data, error } = await getExtensionContactApiV1ExtensionContactExtensionGet({
-			credentials: 'include',
-			path: {
-				extension: extension?.extension!
+			if (error) {
+				push_api_error(error, 'Failed to retrieve contact data!');
+				return;
 			}
-		});
 
-		if (error) {
-			push_api_error(error, 'Failed to retrieve contact data!');
-			return;
-		}
-
-		contact = data;
-	};
-
-	$effect(() => {
-		refreshContact();
-		const interval = setInterval(refreshContact, 10000);
-		return () => {
-			clearInterval(interval);
+			contact = data;
 		};
-	});
+
+		$effect(() => {
+			refreshContact();
+			const interval = setInterval(refreshContact, 10000);
+			return () => {
+				clearInterval(interval);
+			};
+		});
+	}
 </script>
 
-{#if !isMobile.val}
+{#if !isMobile.val && extension}
 	<div class="row">
 		<div class="col col-md-8">
 			<h1 class="fs-3">Edit Extension - {extension?.extension}</h1>
 		</div>
 		{#if adminMode.val}
 			<div class="col col-md-4">
-				{#if contact}
+				{#if adminMode.val && extension && contact}
 					<h5>Registration Status:</h5>
 					<pre>Registered
 User-Agent: {contact.user_agent}

@@ -8,7 +8,12 @@ Licensed under the MIT license. See LICENSE file in the project root for details
 from typing import Annotated, Literal
 from pydantic import BaseModel, Field, computed_field
 from app.core.config import settings
-from app.models.crud.asterisk import create_or_update_callgroup
+from app.models.crud.asterisk import (
+    create_music_on_hold,
+    create_or_update_callgroup,
+    delete_music_on_hold,
+    update_music_on_hold,
+)
 from app.models.crud.dialplan import Dialplan
 from app.models.media import AudioFormat, MediaType
 from app.telephoning.flavor import MediaDescriptor, PhoneFlavor
@@ -46,7 +51,7 @@ class CallGroup(PhoneFlavor):
     }
 
     def on_extension_create(self, session, asterisk_session, user, extension):
-
+        create_music_on_hold(asterisk_session, extension, autocommit=False)
         dialplan_options = {}
         if extension.get_assigned_media("moh"):
             dialplan_options.update({"m": f"moh_{extension.extension}"})
@@ -56,7 +61,7 @@ class CallGroup(PhoneFlavor):
         )
 
     def on_extension_update(self, session, asterisk_session, user, extension):
-
+        update_music_on_hold(asterisk_session, extension, autocommit=False)
         dialplan_options = {}
         if extension.get_assigned_media("moh"):
             dialplan_options.update({"m": f"moh_{extension.extension}"})
@@ -66,4 +71,5 @@ class CallGroup(PhoneFlavor):
         )
 
     def on_extension_delete(self, session, asterisk_session, user, extension):
+        delete_music_on_hold(asterisk_session, extension, autocommit=False)
         Dialplan(asterisk_session, extension.extension).delete()

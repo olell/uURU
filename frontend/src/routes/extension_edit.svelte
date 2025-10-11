@@ -17,15 +17,18 @@
 		type Media,
 		updateApiV1ExtensionExtensionPatch,
 		type Extension,
-		type PhoneType
+		type PhoneType,
+		getExtensionContactApiV1ExtensionContactExtensionGet,
+		type PsContact
 	} from '../client';
 	import { push_api_error, push_message } from '../messageService.svelte';
-	import { settings, user_info } from '../sharedState.svelte';
+	import { isMobile, settings, user_info } from '../sharedState.svelte';
 	import { Map, Marker, TileLayer } from 'sveaflet';
 	import SchemaForm from '../components/schemaForm.svelte';
 	import Ajv from 'ajv';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
+	import { json } from '@sveltejs/kit';
 
 	const { extension }: { extension?: Extension } = $props();
 
@@ -282,7 +285,51 @@
 			media = data!;
 		});
 	});
+
+	let contact = $state<PsContact | null>(null);
+
+	const refreshContact = async () => {
+		const { data, error } = await getExtensionContactApiV1ExtensionContactExtensionGet({
+			credentials: 'include',
+			path: {
+				extension: extension?.extension!
+			}
+		});
+
+		if (error) {
+			push_api_error(error, 'Failed to retrieve contact data!');
+			return;
+		}
+
+		contact = data;
+	};
+
+	$effect(() => {
+		refreshContact();
+		const interval = setInterval(refreshContact, 10000);
+		return () => {
+			clearInterval(interval);
+		};
+	});
 </script>
+
+{#if !isMobile.val}
+	<div class="row">
+		<div class="col col-md-8">
+			<h1 class="fs-3">Edit Extension - {extension?.extension}</h1>
+		</div>
+		<div class="col col-md-4">
+			{#if contact}
+				<h5>Registration Status:</h5>
+				<pre>Registered
+User-Agent: {contact.user_agent}
+IP: {contact.via_addr}:{contact.via_port}</pre>
+			{:else}
+				<h5>Not registered</h5>
+			{/if}
+		</div>
+	</div>
+{/if}
 
 <Form onsubmit={handleSubmit}>
 	<FormGroup>

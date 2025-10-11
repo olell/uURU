@@ -95,7 +95,7 @@
 				<tr>
 					<td>
 						{extension.extension}
-						{#if onlineExtensions.findIndex((e) => e.extension == extension.extension) != -1}
+						{#if onlineExtensions.findIndex((e) => e.extension == extension.extension) != -1 && adminMode.val}
 							<Icon class="ms-2 text-success" name="broadcast-pin" />
 						{/if}
 					</td>

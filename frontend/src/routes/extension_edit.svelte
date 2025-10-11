@@ -22,7 +22,7 @@
 		type PsContact
 	} from '../client';
 	import { push_api_error, push_message } from '../messageService.svelte';
-	import { isMobile, settings, user_info } from '../sharedState.svelte';
+	import { adminMode, isMobile, settings, user_info } from '../sharedState.svelte';
 	import { Map, Marker, TileLayer } from 'sveaflet';
 	import SchemaForm from '../components/schemaForm.svelte';
 	import Ajv from 'ajv';
@@ -318,16 +318,18 @@
 		<div class="col col-md-8">
 			<h1 class="fs-3">Edit Extension - {extension?.extension}</h1>
 		</div>
-		<div class="col col-md-4">
-			{#if contact}
-				<h5>Registration Status:</h5>
-				<pre>Registered
+		{#if adminMode.val}
+			<div class="col col-md-4">
+				{#if contact}
+					<h5>Registration Status:</h5>
+					<pre>Registered
 User-Agent: {contact.user_agent}
 IP: {contact.via_addr}:{contact.via_port}</pre>
-			{:else}
-				<h5>Not registered</h5>
-			{/if}
-		</div>
+				{:else}
+					<h5>Not registered</h5>
+				{/if}
+			</div>
+		{/if}
 	</div>
 {/if}
 

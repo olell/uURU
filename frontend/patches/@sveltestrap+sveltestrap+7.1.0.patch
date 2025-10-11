@@ -1,0 +1,146 @@
+diff --git a/node_modules/@sveltestrap/sveltestrap/dist/transitions.js b/node_modules/@sveltestrap/sveltestrap/dist/transitions.js
+index 8d7017e..a536d63 100644
+--- a/node_modules/@sveltestrap/sveltestrap/dist/transitions.js
++++ b/node_modules/@sveltestrap/sveltestrap/dist/transitions.js
+@@ -5,6 +5,10 @@ export function backdropIn(node) {
+ 
+   const duration = getTransitionDuration(node);
+ 
++  if (duration === 0) {
++    node.classList.add('show');
++  }
++
+   return {
+     duration,
+     tick: (t) => {
+@@ -19,6 +23,10 @@ export function backdropOut(node) {
+   node.classList.remove('show');
+   const duration = getTransitionDuration(node);
+ 
++  if (duration === 0) {
++    node.style.display = 'none';
++  }
++
+   return {
+     duration,
+     tick: (t) => {
+@@ -36,6 +44,11 @@ export function collapseOut(node, params) {
+   node.classList.remove('collapse', 'show');
+   const duration = getTransitionDuration(node);
+ 
++  if (duration === 0) {
++    node.classList.remove('collapsing');
++    node.classList.add('collapse');
++  }
++
+   return {
+     duration,
+     tick: (t) => {
+@@ -57,6 +70,12 @@ export function collapseIn(node, params) {
+   node.style[dimension] = 0;
+   const duration = getTransitionDuration(node);
+ 
++  if (duration === 0) {
++    node.classList.remove('collapsing');
++    node.classList.add('collapse', 'show');
++    node.style[dimension] = '';
++  }
++
+   return {
+     duration,
+     tick: (t) => {
+@@ -79,6 +98,10 @@ export function modalIn(node) {
+   node.style.display = 'block';
+   const duration = getTransitionDuration(node);
+ 
++  if (duration === 0) {
++    node.classList.add('show');
++  }
++
+   return {
+     duration,
+     tick: (t) => {
+@@ -93,6 +116,10 @@ export function modalOut(node) {
+   node.classList.remove('show');
+   const duration = getTransitionDuration(node);
+ 
++  if (duration === 0) {
++    node.style.display = 'none';
++  }
++
+   return {
+     duration,
+     tick: (t) => {
+diff --git a/node_modules/@sveltestrap/sveltestrap/src/transitions.js b/node_modules/@sveltestrap/sveltestrap/src/transitions.js
+index 8d7017e..a536d63 100644
+--- a/node_modules/@sveltestrap/sveltestrap/src/transitions.js
++++ b/node_modules/@sveltestrap/sveltestrap/src/transitions.js
+@@ -5,6 +5,10 @@ export function backdropIn(node) {
+ 
+   const duration = getTransitionDuration(node);
+ 
++  if (duration === 0) {
++    node.classList.add('show');
++  }
++
+   return {
+     duration,
+     tick: (t) => {
+@@ -19,6 +23,10 @@ export function backdropOut(node) {
+   node.classList.remove('show');
+   const duration = getTransitionDuration(node);
+ 
++  if (duration === 0) {
++    node.style.display = 'none';
++  }
++
+   return {
+     duration,
+     tick: (t) => {
+@@ -36,6 +44,11 @@ export function collapseOut(node, params) {
+   node.classList.remove('collapse', 'show');
+   const duration = getTransitionDuration(node);
+ 
++  if (duration === 0) {
++    node.classList.remove('collapsing');
++    node.classList.add('collapse');
++  }
++
+   return {
+     duration,
+     tick: (t) => {
+@@ -57,6 +70,12 @@ export function collapseIn(node, params) {
+   node.style[dimension] = 0;
+   const duration = getTransitionDuration(node);
+ 
++  if (duration === 0) {
++    node.classList.remove('collapsing');
++    node.classList.add('collapse', 'show');
++    node.style[dimension] = '';
++  }
++
+   return {
+     duration,
+     tick: (t) => {
+@@ -79,6 +98,10 @@ export function modalIn(node) {
+   node.style.display = 'block';
+   const duration = getTransitionDuration(node);
+ 
++  if (duration === 0) {
++    node.classList.add('show');
++  }
++
+   return {
+     duration,
+     tick: (t) => {
+@@ -93,6 +116,10 @@ export function modalOut(node) {
+   node.classList.remove('show');
+   const duration = getTransitionDuration(node);
+ 
++  if (duration === 0) {
++    node.style.display = 'none';
++  }
++
+   return {
+     duration,
+     tick: (t) => {

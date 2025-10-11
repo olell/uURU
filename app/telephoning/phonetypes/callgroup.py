@@ -10,7 +10,8 @@ from pydantic import BaseModel, Field, computed_field
 from app.core.config import settings
 from app.models.crud.asterisk import create_or_update_callgroup
 from app.models.crud.dialplan import Dialplan
-from app.telephoning.flavor import PhoneFlavor
+from app.models.media import AudioFormat, MediaType
+from app.telephoning.flavor import MediaDescriptor, PhoneFlavor
 
 
 class CallGroupFields(BaseModel):
@@ -33,11 +34,36 @@ class CallGroup(PhoneFlavor):
 
     EXTRA_FIELDS = CallGroupFields
 
+    MEDIA = {
+        "moh": MediaDescriptor(
+            media_type=MediaType.AUDIO,
+            required=False,
+            label="Ringback Tone / Music on Hold",
+            out_format=AudioFormat(
+                out_type="mp3", samplerate=44100, channels=1, bitdepth=16
+            ),
+        )
+    }
+
     def on_extension_create(self, session, asterisk_session, user, extension):
-        create_or_update_callgroup(session, asterisk_session, user, extension)
+
+        dialplan_options = {}
+        if extension.get_assigned_media("moh"):
+            dialplan_options.update({"m": f"moh_{extension.extension}"})
+
+        create_or_update_callgroup(
+            session, asterisk_session, user, extension, dialplan_options
+        )
 
     def on_extension_update(self, session, asterisk_session, user, extension):
-        create_or_update_callgroup(session, asterisk_session, user, extension)
+
+        dialplan_options = {}
+        if extension.get_assigned_media("moh"):
+            dialplan_options.update({"m": f"moh_{extension.extension}"})
+
+        create_or_update_callgroup(
+            session, asterisk_session, user, extension, dialplan_options
+        )
 
     def on_extension_delete(self, session, asterisk_session, user, extension):
         Dialplan(asterisk_session, extension.extension).delete()

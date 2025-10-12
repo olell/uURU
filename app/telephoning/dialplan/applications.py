@@ -41,6 +41,12 @@ class BaseDialplanApp(BaseModel):
 
 
 class Answer(BaseDialplanApp):
+    """
+    Answer a channel if ringing.
+
+    Answer([delay,[options]])
+    """
+
     DOC_URL = "https://docs.asterisk.org/Latest_API/API_Documentation/Dialplan_Applications/Answer/"
     COMPATIBLE_APP: ClassVar = "Answer"
 
@@ -67,6 +73,13 @@ class Answer(BaseDialplanApp):
 
 
 class Hangup(BaseDialplanApp):
+    """
+    Hang up the calling channel.
+
+    Hangup([causecode])
+    """
+
+    DOC_URL = "https://docs.asterisk.org/Latest_API/API_Documentation/Dialplan_Applications/Hangup/"
     COMPATIBLE_APP: ClassVar = "Hangup"
     causecode: Optional[str] = None
 
@@ -82,6 +95,13 @@ class Hangup(BaseDialplanApp):
 
 
 class Goto(BaseDialplanApp):
+    """
+    Jump to a particular priority, extension, or context.
+
+    Goto([[context,]extension,]priority)
+    """
+
+    DOC_URL = "https://docs.asterisk.org/Latest_API/API_Documentation/Dialplan_Applications/Goto/"
     COMPATIBLE_APP: ClassVar = "Goto"
 
     context: Optional[str] = None
@@ -109,6 +129,13 @@ class Goto(BaseDialplanApp):
 
 
 class Set(BaseDialplanApp):
+    """
+    Set channel variable or function value.
+
+    Set(name=value)
+    """
+
+    DOC_URL = "https://docs.asterisk.org/Latest_API/API_Documentation/Dialplan_Applications/Set/"
     COMPATIBLE_APP: ClassVar = "Set"
 
     name: str
@@ -137,6 +164,13 @@ class Set(BaseDialplanApp):
 
 
 class ConfBridge(BaseDialplanApp):
+    """
+    Conference bridge application.
+
+    ConfBridge(conference,[bridge_profile,[user_profile,[menu]]])
+    """
+
+    DOC_URL = "https://docs.asterisk.org/Latest_API/API_Documentation/Dialplan_Applications/ConfBridge/"
     COMPATIBLE_APP: ClassVar = "ConfBridge"
 
     conference: str
@@ -152,12 +186,12 @@ class ConfBridge(BaseDialplanApp):
 
 class Dial(BaseDialplanApp):
     """
-    This abstracts the asterisk dial application it parses itself from appdata
-    strings in the format
+    Attempt to connect to another device or endpoint and bridge the call.
 
-    device[&device[&...]][,timeout[,options]]
+    Dial(Technology/Resource&[Technology2/Resource2[&...]],[timeout,[options,[URL]]]])
     """
 
+    DOC_URL = "https://docs.asterisk.org/Latest_API/API_Documentation/Dialplan_Applications/Dial/"
     COMPATIBLE_APP: ClassVar = "Dial"
 
     devices: list[str]

@@ -49,7 +49,7 @@ class Dialplan(BaseModel):
         for subcls in Dialplan.get_known_apps():
             if subcls.COMPATIBLE_APP == app:
                 return subcls.parse(app, appdata)
-        return BaseDialplanApp.parse(app, appdata)
+        return Dummy.parse(app, appdata)
 
     def _load(self, session_asterisk: Session):
         """

@@ -18,26 +18,37 @@ class BaseDialplanApp(BaseModel):
     DOC_URL: ClassVar = ""
     COMPATIBLE_APP: ClassVar = ""
 
-    _app: Optional[str] = PrivateAttr(None)
-    _appdata: Optional[str] = PrivateAttr(None)
-
     @staticmethod
     def parse(app: str, appdata: str) -> Self:
-        plan = BaseDialplanApp()
-        plan._app = app
-        plan._appdata = appdata
-        return plan
+        raise NotImplementedError()
 
     def assemble(self) -> tuple[str, str]:
-        """
-        returns values for app and appdata fields
-        """
-        return self._app, self._appdata
+        raise NotImplementedError()
 
     @computed_field
     @property
     def app(self) -> str:
         return self.COMPATIBLE_APP
+
+
+class Dummy(BaseDialplanApp):
+    """
+    This is a dummy application to support dialplan applications that are not
+    available directly. You directly set the app name and appdata content.
+    """
+
+    application: str
+    appdata: str
+
+    @staticmethod
+    def parse(application: str, appdata: str) -> Self:
+        return Dummy(application=application, appdata=appdata)
+
+    def assemble(self) -> tuple[str, str]:
+        """
+        returns values for app and appdata fields
+        """
+        return self.application, self.appdata
 
 
 class Answer(BaseDialplanApp):

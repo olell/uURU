@@ -14,12 +14,12 @@ class Conference(PhoneFlavor):
     IS_SPECIAL = True
 
     def on_extension_create(self, session, asterisk_session, user, extension):
-        plan = Dialplan(asterisk_session, extension.extension)
+        plan = Dialplan.from_db(asterisk_session, extension.extension)
         plan.add(Answer(), 1)
         plan.add(ConfBridge(conference=extension.extension), 2)
         plan.add(Hangup(), 3)
-        plan.store(False)
+        plan.store(asterisk_session, False)
 
     def on_extension_delete(self, session, asterisk_session, user, extension):
-        plan = Dialplan(asterisk_session, extension.extension)
-        plan.delete(False)
+        plan = Dialplan.from_db(asterisk_session, extension.extension)
+        plan.delete(asterisk_session, False)

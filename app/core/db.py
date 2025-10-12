@@ -13,8 +13,9 @@ from sqlmodel import Session, create_engine, SQLModel, func, select
 from app.core.config import settings
 
 from app.models import *
-from app.models.asterisk import DialPlanEntry
-from app.models.crud.dialplan import Dial, Dialplan
+
+from app.telephoning.dialplan import Dialplan, Dial
+
 from app.models.user import User
 from app.models.crud.user import create_user
 from app.models.user import UserCreate, UserRole

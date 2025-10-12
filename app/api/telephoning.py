@@ -14,6 +14,7 @@ from pydantic import BaseModel
 from app.api.deps import CurrentUser, OptionalCurrentUser
 from app.core.db import SessionAsteriskDep
 from app.models.user import UserRole
+from app.telephoning.dialplan import Dialplan
 from app.telephoning.flavor import MediaDescriptor
 from app.telephoning.main import Telephoning
 from app.core.config import settings
@@ -97,3 +98,30 @@ def put_websip(extension: str):
     ext.last_seen = datetime.now()
 
     return {}
+
+
+@router.get("/dialplan/schemas")
+def get_dialplan_application_schemas(user: CurrentUser) -> dict[str, dict]:
+    if user.role != UserRole.ADMIN:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only admins are permitted to request this!",
+        )
+    schemas = {}
+    for app in Dialplan.get_known_apps():
+        schemas.update({app.COMPATIBLE_APP: app.model_json_schema()})
+        schemas[app.COMPATIBLE_APP].update({"doc_url": app.DOC_URL})
+    return schemas
+
+
+@router.get("/dialplan/{exten}")
+def get_dialplan(
+    session_asterisk: SessionAsteriskDep, user: CurrentUser, exten: str
+) -> Dialplan | None:
+    if user.role != UserRole.ADMIN:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only admins are permitted to request dialplans!",
+        )
+    plan = Dialplan.from_db(session_asterisk, exten)
+    return plan

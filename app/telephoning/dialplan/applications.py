@@ -7,7 +7,7 @@ Licensed under the MIT license. See LICENSE file in the project root for details
 
 from typing import ClassVar, Literal, Optional, Self
 
-from pydantic import BaseModel, PrivateAttr
+from pydantic import BaseModel, PrivateAttr, computed_field
 
 
 class BaseDialplanApp(BaseModel):
@@ -33,6 +33,11 @@ class BaseDialplanApp(BaseModel):
         returns values for app and appdata fields
         """
         return self._app, self._appdata
+
+    @computed_field
+    @property
+    def app(self) -> str:
+        return self.COMPATIBLE_APP
 
 
 class Answer(BaseDialplanApp):

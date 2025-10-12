@@ -194,6 +194,7 @@
 								<DropdownItem href={resolve('/admin/invites')}>Invites</DropdownItem>
 							{/if}
 							<DropdownItem href={resolve('/admin/federation')}>Federation</DropdownItem>
+							<DropdownItem href={resolve('/admin/dialplan')}>Dialplans</DropdownItem>
 						</DropdownMenu>
 					</Dropdown>
 				{/if}

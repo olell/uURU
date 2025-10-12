@@ -59,7 +59,7 @@ class SIP(PhoneFlavor):
         if extension.get_assigned_media("moh"):
             dialplan_options.update({"m": f"moh_{extension.extension}"})
 
-        dialplan = Dialplan(asterisk_session, extension.extension)
+        dialplan = Dialplan.from_db(asterisk_session, extension.extension)
         dialplan.add(
             Dial(
                 devices=[f"${{PJSIP_DIAL_CONTACTS({extension.extension})}}"],
@@ -67,7 +67,7 @@ class SIP(PhoneFlavor):
             ),
             1,
         )
-        dialplan.store(autocommit=False)
+        dialplan.store(asterisk_session, autocommit=False)
 
     def on_extension_update(self, session, asterisk_session, user, extension):
         super().on_extension_update(session, asterisk_session, user, extension)
@@ -82,7 +82,7 @@ class SIP(PhoneFlavor):
         if extension.get_assigned_media("moh"):
             dialplan_options.update({"m": f"moh_{extension.extension}"})
 
-        dialplan = Dialplan(asterisk_session, extension.extension)
+        dialplan = Dialplan.from_db(asterisk_session, extension.extension)
         dialplan.add(
             Dial(
                 devices=[f"${{PJSIP_DIAL_CONTACTS({extension.extension})}}"],
@@ -90,7 +90,7 @@ class SIP(PhoneFlavor):
             ),
             1,
         )
-        dialplan.store(autocommit=False)
+        dialplan.store(asterisk_session, autocommit=False)
 
     def on_extension_delete(self, session, asterisk_session, user, extension):
         super().on_extension_delete(session, asterisk_session, user, extension)
@@ -101,8 +101,8 @@ class SIP(PhoneFlavor):
         )
         delete_music_on_hold(asterisk_session, extension, autocommit=False)
 
-        dialplan = Dialplan(asterisk_session, extension.extension)
-        dialplan.delete(autocommit=False)
+        dialplan = Dialplan.from_db(asterisk_session, extension.extension)
+        dialplan.delete(asterisk_session, autocommit=False)
 
     def get_codec(self, extension) -> CODEC:
         """

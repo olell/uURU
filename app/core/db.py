@@ -34,9 +34,11 @@ def init_asterisk_db(session_asterisk: Session) -> None:
 
     # TODO: Figure out if we want to keep this when every SIP extension creates
     # its own dialplan (as fallback maybe?)
-    dialplan = Dialplan(session_asterisk, exten="_" + ("X" * settings.EXTENSION_DIGITS))
+    dialplan = Dialplan.from_db(
+        session_asterisk, exten="_" + ("X" * settings.EXTENSION_DIGITS)
+    )
     dialplan.add(Dial(devices=["${PJSIP_DIAL_CONTACTS(${EXTEN})}"]), prio=1)
-    dialplan.store()
+    dialplan.store(session_asterisk)
 
 
 def init_db(session: Session) -> None:

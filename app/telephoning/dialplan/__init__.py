@@ -22,15 +22,17 @@ from app.models.asterisk import DialPlanEntry
 from app.telephoning.dialplan.applications import *
 
 
-class Dialplan:
+class Dialplan(BaseModel):
 
-    def __init__(self, session_asterisk: Session, exten: str, context="pjsip_internal"):
-        self.session = session_asterisk
-        self.exten = exten
-        self.context = context
-        self.entries: dict[int, BaseDialplanApp] = {}
+    exten: str
+    context: str
+    entries: dict[int, BaseDialplanApp] = {}
 
-        self._load()
+    @staticmethod
+    def from_db(session_asterisk: Session, exten: str, context="pjsip_internal"):
+        plan = Dialplan(exten=exten, context=context)
+        plan._load(session_asterisk)
+        return plan
 
     def _parse(self, app: str, appdata: str) -> BaseDialplanApp:
         """
@@ -42,12 +44,12 @@ class Dialplan:
                 return subcls.parse(app, appdata)
         return BaseDialplanApp.parse(app, appdata)
 
-    def _load(self):
+    def _load(self, session_asterisk: Session):
         """
         Loads existing dialplan entries from the database
         """
 
-        entries = self.session.exec(
+        entries = session_asterisk.exec(
             select(DialPlanEntry)
             .where(DialPlanEntry.exten == self.exten)
             .where(DialPlanEntry.context == self.context)
@@ -57,28 +59,28 @@ class Dialplan:
         for entry in entries:
             self.entries.update({entry.priority: self._parse(entry.app, entry.appdata)})
 
-    def delete(self, autocommit=True):
+    def delete(self, session_asterisk: Session, autocommit=True):
         """
         Deletes the complete dialplan from the database
         """
         try:
-            self.session.exec(
+            session_asterisk.exec(
                 delete(DialPlanEntry)
                 .where(DialPlanEntry.exten == self.exten)
                 .where(DialPlanEntry.context == self.context)
             )
             if autocommit:
-                self.session.commit()
+                session_asterisk.commit()
         except:
             if autocommit:
-                self.session.rollback()
+                session_asterisk.rollback()
             raise
 
-    def store(self, autocommit=True):
+    def store(self, session_asterisk: Session, autocommit=True):
         """
         Deletes this dialplan and stores it again in the database
         """
-        self.delete(autocommit)
+        self.delete(session_asterisk, autocommit)
 
         try:
             for prio, entry in self.get_ordered_entries():
@@ -90,15 +92,15 @@ class Dialplan:
                     app=app,
                     appdata=appdata,
                 )
-                self.session.add(db_obj)
+                session_asterisk.add(db_obj)
             if autocommit:
-                self.session.commit()
+                session_asterisk.commit()
         except:
             if autocommit:
-                self.session.rollback()
+                session_asterisk.rollback()
             raise
 
-        self._load()
+        self._load(session_asterisk)
 
     def add(self, app: BaseDialplanApp, prio: int | Literal["n"] = "n"):
         if prio == "n":

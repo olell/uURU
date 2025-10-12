@@ -167,7 +167,7 @@ def create_or_update_callgroup(
             "You may only create callgroups with extension you've created!"
         )
 
-    plan = Dialplan(session_asterisk, extension.extension)
+    plan = Dialplan.from_db(session_asterisk, extension.extension)
     plan.add(
         Dial(
             devices=[f"${{PJSIP_DIAL_CONTACTS({e.extension})}}" for e in extensions],
@@ -175,7 +175,7 @@ def create_or_update_callgroup(
         ),
         1,
     )
-    plan.store()
+    plan.store(session_asterisk)
 
     logger.info(
         f"Created callgroup at {extension.extension} with participants: {participants}"
@@ -197,7 +197,7 @@ def create_iax_peer(session_asterisk: Session, peer: Peer, autocommit=True):
     try:
         session_asterisk.add(friend)
 
-        plan = Dialplan(
+        plan = Dialplan.from_db(
             session_asterisk,
             exten=f"_{peer.prefix}{'X'*peer.partner_extension_length}",
         )
@@ -209,7 +209,7 @@ def create_iax_peer(session_asterisk: Session, peer: Peer, autocommit=True):
             ),
             1,
         )
-        plan.store(autocommit)
+        plan.store(session_asterisk, autocommit)
 
         if autocommit:
             session_asterisk.commit()
@@ -237,14 +237,14 @@ def delete_iax_peer(
     if friend is None:
         raise CRUDNotAllowedException("Unkown IAX2Friend")
 
-    plan = Dialplan(
+    plan = Dialplan.from_db(
         session_asterisk,
         exten=f"_{peer.prefix}{'X'*peer.partner_extension_length}",
     )
 
     try:
         session_asterisk.delete(friend)
-        plan.delete(autocommit)
+        plan.delete(session_asterisk, autocommit)
 
         logger.info(
             f"Deleted IAX2Friend for {peer.name} and dialplan {plan.exten} from asterisk DB"

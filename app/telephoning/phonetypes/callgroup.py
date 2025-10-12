@@ -72,4 +72,4 @@ class CallGroup(PhoneFlavor):
 
     def on_extension_delete(self, session, asterisk_session, user, extension):
         delete_music_on_hold(asterisk_session, extension, autocommit=False)
-        Dialplan(asterisk_session, extension.extension).delete()
+        Dialplan.from_db(asterisk_session, extension.extension).delete(asterisk_session)

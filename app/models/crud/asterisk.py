@@ -7,10 +7,11 @@ Licensed under the MIT license. See LICENSE file in the project root for details
 
 from logging import getLogger
 from pydantic import BaseModel
-from sqlmodel import Session, delete, func, select
+from sqlmodel import Session, delete, distinct, func, select
 
 from app.core.config import settings
 from app.models.asterisk import (
+    DialPlanEntry,
     IAXFriend,
     MusicOnHold,
     PSAor,
@@ -374,3 +375,12 @@ def get_extensions_with_contacts(
     extensions = list(session.exec(statement).all())
 
     return extensions
+
+
+def get_known_dialplan_extensions(session_asterisk: Session, user: User) -> list[str]:
+    if user.role != UserRole.ADMIN:
+        raise CRUDNotAllowedException("This is admin only!")
+
+    extensions = session_asterisk.exec(select(distinct(DialPlanEntry.exten))).all()
+
+    return list(extensions)

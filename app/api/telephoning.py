@@ -5,30 +5,30 @@ Copyright (c) Ole Lange, Gregor Michels and contributors. All rights reserved.
 Licensed under the MIT license. See LICENSE file in the project root for details.
 """
 
-from asterisk.ami.response import FutureResponse
-from logging import getLogger
-from asterisk.ami.client import AMIClientAdapter
-from app.models.crud.asterisk import get_contact
-from app.core.db import SessionDep
-from app.models.crud.extension import get_extension_by_id
 from datetime import datetime
+from logging import getLogger
 from typing import Optional
-from fastapi import APIRouter, HTTPException
-from fastapi import status
+
+from asterisk.ami.client import AMIClientAdapter
+from asterisk.ami.response import FutureResponse
+from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel
 
 from app.api.deps import CurrentUser, OptionalCurrentUser
-from app.core.db import SessionAsteriskDep
+from app.core.config import settings
+from app.core.db import SessionAsteriskDep, SessionDep
+from app.models.crud.asterisk import get_contact
+from app.models.crud.extension import get_extension_by_id
 from app.models.user import UserRole
+from app.telephoning.dialplan import Dialplan
 from app.telephoning.flavor import MediaDescriptor
 from app.telephoning.main import Telephoning
-from app.core.config import settings
 from app.telephoning.websip import WebSIPExtension, WebSIPManager
-
 
 router = APIRouter(prefix="/telephoning", tags=["telephoning"])
 
 logger = getLogger(__name__)
+
 
 class PhoneType(BaseModel):
     schema: Optional[dict] = None
@@ -107,33 +107,77 @@ def put_websip(extension: str):
 
 
 @router.get("/originate", status_code=status.HTTP_204_NO_CONTENT)
-def originate_call(session: SessionDep, session_asterisk: SessionAsteriskDep, user: CurrentUser, source: str, dest: str):
+def originate_call(
+    session: SessionDep,
+    session_asterisk: SessionAsteriskDep,
+    user: CurrentUser,
+    source: str,
+    dest: str,
+):
     source_extension = get_extension_by_id(session, source, public=False)
     if source_extension is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Source extension unknown")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Source extension unknown"
+        )
     if source_extension.user_id != user.id and not user.role == UserRole.ADMIN:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You may not originate calls from this extension")
-    
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You may not originate calls from this extension",
+        )
+
     contact = get_contact(session_asterisk, source_extension, user)
     if contact is None:
-        raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail="The source extension is offline")
+        raise HTTPException(
+            status_code=status.HTTP_406_NOT_ACCEPTABLE,
+            detail="The source extension is offline",
+        )
 
     if not dest.isnumeric():
-        raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail="Destination must be a number!")
+        raise HTTPException(
+            status_code=status.HTTP_406_NOT_ACCEPTABLE,
+            detail="Destination must be a number!",
+        )
 
     client = Telephoning.instance().get_ami_client()
     adapter = AMIClientAdapter(client)
     response: FutureResponse = adapter.Originate(
-        Channel=f"PJSIP/{source}",
-        Exten=dest,
-        Priority=1,
-        Context="pjsip_internal"
+        Channel=f"PJSIP/{source}", Exten=dest, Priority=1, Context="pjsip_internal"
     )
 
     logger.info(f"Originated call from {source} to {dest}")
     logger.debug(f"Received AMI response:\n{response.response}")
 
     if response.response is not None:
-        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="unable to originate call due to error from AMI")
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="unable to originate call due to error from AMI",
+        )
 
     return {}
+
+
+@router.get("/dialplan/schemas")
+def get_dialplan_application_schemas(user: CurrentUser) -> dict[str, dict]:
+    if user.role != UserRole.ADMIN:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only admins are permitted to request this!",
+        )
+    schemas = {}
+    for app in Dialplan.get_known_apps():
+        schemas.update({app.COMPATIBLE_APP: app.model_json_schema()})
+        schemas[app.COMPATIBLE_APP].update({"doc_url": app.DOC_URL})
+    return schemas
+
+
+@router.get("/dialplan/{exten}")
+def get_dialplan(
+    session_asterisk: SessionAsteriskDep, user: CurrentUser, exten: str
+) -> Dialplan | None:
+    if user.role != UserRole.ADMIN:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only admins are permitted to request dialplans!",
+        )
+    plan = Dialplan.from_db(session_asterisk, exten)
+    return plan

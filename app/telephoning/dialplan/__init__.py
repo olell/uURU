@@ -13,7 +13,8 @@ Licensed under the MIT license. See LICENSE file in the project root for details
 """
 
 
-from typing import Literal
+from typing import Literal, TypeVar, Union
+from pydantic import Field
 from sqlmodel import Session, delete, select
 
 from app.models.asterisk import DialPlanEntry
@@ -21,12 +22,14 @@ from app.models.asterisk import DialPlanEntry
 # Import all applications here:
 from app.telephoning.dialplan.applications import *
 
+T = TypeVar("T", bound="BaseDialplanApp")
+
 
 class Dialplan(BaseModel):
 
     exten: str
     context: str
-    entries: dict[int, BaseDialplanApp] = {}
+    entries: dict[int, Union[BaseDialplanApp, T]] = Field(default_factory=dict)
 
     @staticmethod
     def from_db(session_asterisk: Session, exten: str, context="pjsip_internal"):
@@ -34,12 +37,16 @@ class Dialplan(BaseModel):
         plan._load(session_asterisk)
         return plan
 
+    @staticmethod
+    def get_known_apps():
+        return BaseDialplanApp.__subclasses__()
+
     def _parse(self, app: str, appdata: str) -> BaseDialplanApp:
         """
         Searches for a matching Dialplan App class and calls it's parse function
         if no match is found a BaseDialplanApp is returned
         """
-        for subcls in BaseDialplanApp.__subclasses__():
+        for subcls in Dialplan.get_known_apps():
             if subcls.COMPATIBLE_APP == app:
                 return subcls.parse(app, appdata)
         return BaseDialplanApp.parse(app, appdata)

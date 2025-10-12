@@ -175,6 +175,8 @@ class ConfBridge(BaseDialplanApp):
 
     conference: str
     # TODO: There are more options: https://docs.asterisk.org/Latest_API/API_Documentation/Dialplan_Applications/ConfBridge/#description
+    # Note: There are more options but they all refer to objects created in the confbridge.conf
+    # file which is not dynamically doable. So those options are not implemented
 
     @staticmethod
     def parse(_, appdata):

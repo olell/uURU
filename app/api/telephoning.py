@@ -13,6 +13,8 @@ from pydantic import BaseModel
 
 from app.api.deps import CurrentUser, OptionalCurrentUser
 from app.core.db import SessionAsteriskDep
+from app.models.crud import CRUDNotAllowedException
+from app.models.crud.asterisk import get_known_dialplan_extensions
 from app.models.user import UserRole
 from app.telephoning.dialplan import Dialplan
 from app.telephoning.flavor import MediaDescriptor
@@ -125,3 +127,13 @@ def get_dialplan(
         )
     plan = Dialplan.from_db(session_asterisk, exten)
     return plan
+
+
+@router.get("/dialplans")
+def get_dialplan_extensions(
+    session_asterisk: SessionAsteriskDep, user: CurrentUser
+) -> list[str]:
+    try:
+        return get_known_dialplan_extensions(session_asterisk, user)
+    except CRUDNotAllowedException as e:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))

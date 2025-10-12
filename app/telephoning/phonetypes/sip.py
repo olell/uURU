@@ -17,7 +17,7 @@ from app.models.crud.asterisk import (
     update_music_on_hold,
     update_sip_account,
 )
-from app.models.crud.dialplan import Dial, Dialplan
+from app.telephoning.dialplan import Dial, Dialplan
 from app.models.media import AudioFormat, MediaType
 from app.telephoning.flavor import CODEC, MediaDescriptor, PhoneFlavor
 

@@ -19,7 +19,7 @@ from app.models.asterisk import (
     PSEndpoint,
 )
 from app.models.crud import CRUDNotAllowedException
-from app.models.crud.dialplan import Dial, Dialplan
+from app.telephoning.dialplan import Dial, Dialplan
 from app.models.extension import Extension
 from app.models.federation import Peer
 from app.models.user import User, UserRole

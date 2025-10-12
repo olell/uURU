@@ -36,15 +36,29 @@ class BaseDialplanApp(BaseModel):
 
 
 class Answer(BaseDialplanApp):
-    # TODO: Answer has options https://docs.asterisk.org/Latest_API/API_Documentation/Dialplan_Applications/Answer/#synopsis
+    DOC_URL = "https://docs.asterisk.org/Latest_API/API_Documentation/Dialplan_Applications/Answer/"
     COMPATIBLE_APP: ClassVar = "Answer"
 
+    delay: Optional[int] = None
+    options: Optional[str] = None
+
     @staticmethod
-    def parse(_, appdata):
-        return Answer()
+    def parse(_, appdata: str):
+        if len(appdata) > 0:
+            params = appdata.split(",")
+            if len(params) >= 1 and params[0].isdigit():
+                delay = int(params[0])
+            if len(params) == 2:
+                options = params[1]
+        return Answer(delay=delay, options=options)
 
     def assemble(self):
-        return self.COMPATIBLE_APP, ""
+        appdata = ""
+        if self.delay is not None:
+            appdata += str(self.delay)
+            if self.options is not None:
+                appdata += f",{self.options}"
+        return self.COMPATIBLE_APP, appdata
 
 
 class Hangup(BaseDialplanApp):

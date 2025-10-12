@@ -62,7 +62,7 @@ class Answer(BaseDialplanApp):
 
 
 class Hangup(BaseDialplanApp):
-    COMPATIBLE_APP: ClassVar = "Dial"
+    COMPATIBLE_APP: ClassVar = "Hangup"
     causecode: Optional[str] = None
 
     @staticmethod

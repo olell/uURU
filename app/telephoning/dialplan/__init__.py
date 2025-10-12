@@ -129,3 +129,8 @@ class Dialplan(BaseModel):
             app, appdata = entry.assemble()
             result += f"exten => {self.exten},{prio},{app}({appdata})\n"
         return result[:-1]
+
+    @computed_field
+    @property
+    def asterisk_config(self) -> str:
+        return self.__repr__()

@@ -172,14 +172,14 @@ class MitelDECT(SIP):
             self.ommclient.detach_user_device(uid=user_id, ppn=device_ppn)
             self.ommclient.delete_pp_user(id=user_id)
 
-    def on_extension_delete(self, session, asterisk_session, _, extension):
+    def on_extension_delete(self, session, asterisk_session, user, extension):
         super().on_extension_delete(session, asterisk_session, user, extension)
         user = self.get_user_by_extension(extension.extension)
         with self.lock:
             self.ommclient.detach_user_device_by_user(user.uid)
             self.ommclient.delete_pp_user(user.uid)
 
-    def on_extension_update(self, session, asterisk_session, _, extension):
+    def on_extension_update(self, session, asterisk_session, user, extension):
         super().on_extension_update(session, asterisk_session, user, extension)
         user = self.get_user_by_extension(extension.extension)
         with self.lock:

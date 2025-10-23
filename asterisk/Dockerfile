@@ -1,6 +1,6 @@
 FROM ubuntu:24.04
 
-ARG ASTERISK_SOURCE_VERSION=20.15.2
+ARG ASTERISK_SOURCE_VERSION=20.16.0
 
 # download needed packages
 RUN apt-get update && apt-get install -y --no-install-recommends \

@@ -30,7 +30,7 @@ raises an `NotImplementedError`, if it does _not_, the job is scheduled with the
 Your class should be called like the phone type or brand your implementing
 features for. The class must inherit `PhoneType`
 
-```python filename="/app/telephoning/phonetypes/mitel_dect.py"
+```python
 class DECT(PhoneFlavor):
     ...
 ```

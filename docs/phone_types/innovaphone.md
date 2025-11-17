@@ -1,4 +1,4 @@
-# Innovaphone Autoprovisioning
+# Innovaphone
 
 ## Enable flavor
 

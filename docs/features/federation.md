@@ -1,4 +1,4 @@
-# µURU instance federation
+# Instance Federation
 
 µURU supports federation between instances using asterisks IAX2 protocol and
 some inter-instance communication between µURU instances.

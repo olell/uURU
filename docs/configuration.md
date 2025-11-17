@@ -1,4 +1,4 @@
-# uURU Configuration
+# Configuration
 
 uURU is configured via environment variables or an .env file. This should
 give you an overview about the supported config keys.
@@ -21,7 +21,7 @@ The credentials for the first created account are configured by
 
 ### HTTP routing
 
-> [!IMPORTANT]  
+> [!IMPORTANT]
 > Do not change those values, currently uURU contains some hardcoded links
 > which will break otherwise!
 

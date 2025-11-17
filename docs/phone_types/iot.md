@@ -1,4 +1,4 @@
-# IoT Phone Type
+# IoT
 
 To enable autoprovisioning of IoT SIP devices you can exchange a secret for
 information about the extension. To do so you can create an extension with type

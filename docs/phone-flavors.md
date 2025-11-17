@@ -1,4 +1,4 @@
-# How to Implement Phone Flavors
+# Implement custom phone flavors
 
 uURU has a pluggable phone flavor system which can be used to implement
 autoprovisioning or other functions for custom phone types.
@@ -33,78 +33,78 @@ features for. The class must inherit `PhoneType`
 ```python
 class DECT(PhoneFlavor):
     ...
-        ```
+```
 
-            you can implement a constructor if you want to.
+you can implement a constructor if you want to.
 
-            now your class can implement a variety of fields and functions to define its
-            behavor:
+now your class can implement a variety of fields and functions to define its
+behavor:
 
-                ```python
+```python
 # A list of strings which are used to identify a phone type, those strings
 # are also used to display the user a dropdown selection when creating a new
 # extension
-                PHONE_TYPES: list[str] = []
+PHONE_TYPES: list[str] = []
 # PhoneFlavors are ordered by this value before displayed to the user, the
 # higher the more on top
-                DISPLAY_INDEX: int = 0
+DISPLAY_INDEX: int = 0
 
 # A pydantic model which describes which fields need to be configured by
 # the user when creating a new extension with this phone type
-                EXTRA_FIELDS: BaseModel | None = None
+EXTRA_FIELDS: BaseModel | None = None
 
 # Special types may only be created by admin users, this behavior
 # can be overwritten by configuring ALL_EXTENSION_TYPES_PUBLIC as true
-                IS_SPECIAL: bool = False
+IS_SPECIAL: bool = False
 
 # Job interval in seconds
-                JOB_INTERVAL: int = 60
+JOB_INTERVAL: int = 60
 
 # When extensions are created the asterisk phonetype is configured based
 # on this value. If its a string, the value is applied for all phone types
 # in this flavor class. If it is a dict, it has to configure values for
 # all phone types from this class.
 # Supported codecs: "g722", "alaw", "ulaw", "g726", "gsm", "lpc10"
-                SUPPORTED_CODEC: CODEC | dict[str, CODEC] = "g722"
+SUPPORTED_CODEC: CODEC | dict[str, CODEC] = "g722"
 
 # If this flag is set to true, on creation of such a phone type no SIP
 # account is created in the asterisk database
-                PREVENT_SIP_CREATION = False
+PREVENT_SIP_CREATION = False
 
 # This limits the maximum amount of characters for the extension name
-                MAX_EXTENSION_NAME_CHARS = 20
-                ```
+MAX_EXTENSION_NAME_CHARS = 20
+```
 
-                And you can override some functions:
+And you can override some functions:
 
-                ```python
-                def on_extension_create(
-                        self,
-                        session: Session,
-                        asterisk_session: Session,
-                        user: "User",
-                        extension: "Extension",
-                        ): ...
+```python
+def on_extension_create(
+    self,
+    session: Session,
+    asterisk_session: Session,
+    user: "User",
+    extension: "Extension",
+): ...
 
-                    def on_extension_update(
-                            self,
-                            session: Session,
-                            asterisk_session: Session,
-                            user: "User",
-                            extension: "Extension",
-                            ): ...
+def on_extension_update(
+    self,
+    session: Session,
+    asterisk_session: Session,
+    user: "User",
+    extension: "Extension",
+): ...
 
-                        def on_extension_delete(
-                                self,
-                                session: Session,
-                                asterisk_session: Session,
-                                user: "User",
-                                extension: "Extension",
-                                ): ...
+def on_extension_delete(
+    self,
+    session: Session,
+    asterisk_session: Session,
+    user: "User",
+    extension: "Extension",
+): ...
 
-                            def generate_routes(self, router: APIRouter)
+def generate_routes(self, router: APIRouter)
 
 def job(self)
 
-    def get_codec(self, extension: "Extension | None")
-    ```
+def get_codec(self, extension: "Extension | None")
+```

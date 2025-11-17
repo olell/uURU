@@ -1,4 +1,4 @@
-# µURU - Pages
+# Pages
 
 You can create custom help / info or other markdown pages by putting markdown
 files called as you want your pages to be called in the `pages/` directory.

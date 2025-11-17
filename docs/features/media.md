@@ -1,4 +1,4 @@
-# µURU Media Management
+# Media Management
 
 µURU has a media management feature where users can upload media and use the
 uploaded media for various purposes (for example as a telephone background image).

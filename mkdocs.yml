@@ -8,6 +8,28 @@ markdown_extensions:
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - pymdownx.superfences
+  - footnotes
+  - abbr
+  - attr_list
+  - admonition
+  - pymdownx.details
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - getting-started.md
+    - configuration.md
+  - Features:
+    - Federation: features/federation.md
+    - Media Management: features/media.md
+    - Pages: features/pages.md
+    - WebSIP: features/websip.md
+  - Phone Types:
+    - Create Custom Flavors: phone-flavors.md
+    - Supported Phones:
+      - Callgroups: phone_types/callgroup.md
+      - Innovaphone: phone_types/innovaphone.md
+      - IoT: phone_types/iot.md
 
 theme:
   name: material

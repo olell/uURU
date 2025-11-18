@@ -29,9 +29,15 @@ nav:
   - Phone Types:
     - Create Custom Flavors: phone-flavors.md
     - Supported Phones:
-      - Callgroups: phone_types/callgroup.md
+      - SIP: phone_types/SIP.md
+      - Mitel DECT: phone_types/mitel_DECT.md
       - Innovaphone: phone_types/innovaphone.md
+      - Grandstream: phone_types/grandstream.md
+      - SNOM: phone_types/snom.md
       - IoT: phone_types/iot.md
+      - Callgroups: phone_types/callgroup.md
+      - Conference: phone_types/conference.md
+      - Dummy: phone_types/dummy.md
 
 theme:
   name: material

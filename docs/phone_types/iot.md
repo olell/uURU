@@ -4,13 +4,21 @@ To enable autoprovisioning of IoT SIP devices you can exchange a secret for
 information about the extension. To do so you can create an extension with type
 `IoT` and set a secret, now you can request the details via http endpoint.
 
+## Prerequesites
+
+Add `iot` to the list of enabled flavors in your config.
+
+## Usage
+
+Create an extension with the IoT type and set a secret.
+
+### Request
+
 The url for this endpoint is `http[s]://{web host}/telephoning/iot/{your secret}`. You can optionally
 append a `?format={format}` to receive the data in `csv` or `xml` it defaults
 to `json`.
 
-## Example response(s):
-
-### json
+#### json
 
 ```json
 {
@@ -31,14 +39,14 @@ to `json`.
 }
 ```
 
-### csv
+#### csv
 
 ```csv
 server,transport,name,location_name,lon,password,public,type,extension,lat,token,info,user_id,extra_fields
 192.168.42.254,udp,Test IoT,,114324760,1895,True,IoT,6562,513765576,0199002940654,,2908dc6a-6658-4379-888b-c72f479221ae,{'secret': 'some-secret-string'}
 ```
 
-### xml
+#### xml
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>

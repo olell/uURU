@@ -18,16 +18,17 @@ The credentials for the first created account are configured by
 | -------------------------------- | -------------------------------------- | ----------------- |
 | UURU_SECRET_KEY                  | Secret key used to sign session tokens | random (32 chars) |
 | UURU_ACCESS_TOKEN_EXPIRE_MINUTES | Minutes until a login expires          | 8 days (11520)    |
+| UURU_BACKEND_CORS_ORIGINS        | A list of allowed CORS origins         | `[]`              |
 
 ### HTTP routing
 
-> [!IMPORTANT]
-> Do not change those values, currently uURU contains some hardcoded links
-> which will break otherwise!
+!!! warning
+    Do not change those values, currently uURU contains some hardcoded links
+    which will break otherwise!
 
 | Key                     | Description                             | Default      |
 | ----------------------- | --------------------------------------- | ------------ |
-| UURU_WEB_PREFX          | Prefix after `/` for web routes         | empty        |
+| UURU_WEB_PREFIX         | Prefix after `/` for web routes         | empty        |
 | UURU_API_V1_STR         | Prefix after `/` for api routes         | /api/v1      |
 | UURU_TELEPHONING_PREFIX | Prefix after `/` for telephoning routes | /telephoning |
 
@@ -70,12 +71,15 @@ The database must be a mariadb / mysql db
 
 ### LDAP
 
-| Key                | Description                   | Default              |
-| ------------------ | ----------------------------- | -------------------- |
-| UURU_LDAP_SERVER   | LDAP server connection string | ldap://localhost:389 |
-| UURU_LDAP_BASE_DN  | Base DN of the ldap server    | dc=uuru              |
-| UURU_LDAP_USER     | Admin user of the ldap server | cn=admin,dc=uuru     |
-| UURU_LDAP_PASSWORD | Password of the admin user    |                      |
+| Key                            | Description                       | Default              |
+| ------------------------------ | --------------------------------- | -------------------- |
+| UURU_LDAP_SERVER               | LDAP server connection string     | ldap://localhost:389 |
+| UURU_LDAP_BASE_DN              | Base DN of the ldap server        | dc=uuru              |
+| UURU_LDAP_USER                 | Admin user of the ldap server     | cn=admin,dc=uuru     |
+| UURU_LDAP_PASSWORD             | Password of the admin user        |                      |
+| UURU_LDAP_PUBLIC_HOST          | IP or Hostname of the LDAP server | 127.0.0.1            |
+| UURU_LDAP_PUBLIC_BIND_USER     | User for public connections       | cn=public,dc=uuru    |
+| UURU_LDAP_PUBLIC_BIND_PASSWORD | Password for public connections   | public               |
 
 ### Application Behavior
 
@@ -117,9 +121,23 @@ The database must be a mariadb / mysql db
 
 ### WebSIP
 
+!!! note
+    The `UURU_WEBSIP_EXTENSION_RANGE` should be reserved via the `UURU_RESERVED_EXTENSIONS` key.
+
 | Key                         | Description                                            | Default                |
 | --------------------------- | ------------------------------------------------------ | ---------------------- |
 | UURU_ENABLE_WEBSIP          | Enable websip                                          | True                   |
-| UURU_WEBSIP_PUBLIC          | If true yo don't need an account to use websip         | True                   |
+| UURU_WEBSIP_PUBLIC          | If true you don't need an account to use websip        | True                   |
 | UURU_WEBSIP_WS_HOST         | External url where the asterisk websocket is reachable | ws://127.0.0.1:8088/ws |
 | UURU_WEBSIP_EXTENSION_RANGE | Tuple of start and end of the range                    | [9900, 9999]           |
+
+### Media
+
+| Key                             | Description                                            | Default         |
+| ------------------------------- | ------------------------------------------------------ | --------------- |
+| UURU_MEDIA_PATH                 | Path to a directory where media files should be stored | ./uploads/      |
+| UURU_MEDIA_MAX_SIZE_USER        | Maximum amount of bytes a user might upload            | 2097152 (2 MiB) |
+| UURU_MEDIA_LIMIT_SIZE_ADMIN     | Apply the limit also for admin users                   | 0               |
+| UURU_MEDIA_ALLOW_RAW            | Allow upload of raw files                              | 0               |
+| UURU_MEDIA_IMAGE_STORAGE_FORMAT | Format in which images should be stored on disk        | png             |
+| UURU_MEDIA_AUDIO_STORAGE_FORMAT | Format in which audio files should be stored on disk   | mp3             |

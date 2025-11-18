@@ -1,4 +1,6 @@
 site_name: µURU Docs
+repo_url: https://github.com/olell/uURU
+repo_name: olell/uURU
 
 markdown_extensions:
   - pymdownx.highlight:

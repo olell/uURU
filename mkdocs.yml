@@ -1,4 +1,6 @@
 site_name: µURU Docs
+repo_url: https://github.com/olell/uURU
+repo_name: olell/uURU
 
 markdown_extensions:
   - pymdownx.highlight:
@@ -8,6 +10,34 @@ markdown_extensions:
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - pymdownx.superfences
+  - footnotes
+  - abbr
+  - attr_list
+  - admonition
+  - pymdownx.details
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - getting-started.md
+    - configuration.md
+  - Features:
+    - Federation: features/federation.md
+    - Media Management: features/media.md
+    - Pages: features/pages.md
+    - WebSIP: features/websip.md
+  - Phone Types:
+    - Create Custom Flavors: phone-flavors.md
+    - Supported Phones:
+      - SIP: phone_types/SIP.md
+      - Mitel DECT: phone_types/mitel_DECT.md
+      - Innovaphone: phone_types/innovaphone.md
+      - Grandstream: phone_types/grandstream.md
+      - SNOM: phone_types/snom.md
+      - IoT: phone_types/iot.md
+      - Callgroups: phone_types/callgroup.md
+      - Conference: phone_types/conference.md
+      - Dummy: phone_types/dummy.md
 
 theme:
   name: material
@@ -24,3 +54,6 @@ theme:
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
+
+extra_css:
+  - stylesheets/extra.css

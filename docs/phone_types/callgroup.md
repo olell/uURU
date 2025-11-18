@@ -1,11 +1,13 @@
 # Callgroups
 
-## Enable flavor
+A group of numbers that will ring if the callgroup's extension is dialed.
+
+## Prerequesites
 
 Add `callgroup` to the list of enabled flavors in your config to enable the
 callgroup feature.
 
-## Use Callgroups
+## Usage
 
 You can add callgroups as any other extension in the webapp, the participants
 of the callgroup are expressed as a comma-seperated list of the extensions.

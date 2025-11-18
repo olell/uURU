@@ -60,26 +60,24 @@ class ExamplePhone(PhoneFlavor):
 ```
 
 - `MediaDescriptor` attributes:
-
-  - `media_type`: one of `MediaType.AUDIO`, `MediaType.IMAGE`, `MediaType.RAW`
-  - `required`: `True` / `False`
-  - `label`: `str` used as form label in the frontend
-  - `endpoint_filename`: optional `str` that is used to build the request endpoint (see below)
-  - `out_format`: one of `ImageFormat`, `AudioFormat` or `None` depending on the `media_type`
+    - `media_type`: one of `MediaType.AUDIO`, `MediaType.IMAGE`, `MediaType.RAW`
+    - `required`: `True` / `False`
+    - `label`: `str` used as form label in the frontend
+    - `endpoint_filename`: optional `str` that is used to build the request endpoint (see below)
+    - `out_format`: one of `ImageFormat`, `AudioFormat` or `None` depending on the `media_type`
 
 - `ImageFormat` attributes:
-
-  - `out_type`: one of `avif`, `bmp`, `gif`, `jpeg`, `png`, `tiff`, `webp`
-  - `samplerate`: `int` defaults to 44100
-  - `channels`: `int` defaults to 2
-  - `bitdepth`: `int` defaults to 16
+    - `out_type`: one of `avif`, `bmp`, `gif`, `jpeg`, `png`, `tiff`, `webp`
+    - `samplerate`: `int` defaults to 44100
+    - `channels`: `int` defaults to 2
+    - `bitdepth`: `int` defaults to 16
 
 - `AudioFormat` attributes:
-  - `out_type`: one of `gsm`, `wav`, `ogg`, `mp3`, `flac`
-  - `colormode`: one of `1` (monochrome), `L` (grayscale), `RGB` (default)
-  - `width`: optional `int`
-  - `height`: optional `int`
-    - if only one of `width` or `height` is set, the aspect ratio is maintained
+    - `out_type`: one of `gsm`, `wav`, `ogg`, `mp3`, `flac`
+    - `colormode`: one of `1` (monochrome), `L` (grayscale), `RGB` (default)
+    - `width`: optional `int`
+    - `height`: optional `int`
+        - if only one of `width` or `height` is set, the aspect ratio is maintained
 
 ### Endpoints
 

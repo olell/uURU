@@ -270,10 +270,12 @@
 					Send call to Phone
 					<select class="form-select" bind:value={selectedSourceExtension}>
 						{#each onlineExtensions as extension (extension.extension)}
+							{#if extension.extension != target.extension}
 							<option
 								selected={extension.extension == selectedSourceExtension}
 								value={extension.extension}>{extension.name} &lt;{extension.extension}&gt;</option
 							>
+							{/if}
 						{/each}
 					</select>
 					<Button onclick={originateCall} class="ms-2" size="lg" color="info"

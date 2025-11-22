@@ -26,6 +26,7 @@ nav:
     - Media Management: features/media.md
     - Pages: features/pages.md
     - WebSIP: features/websip.md
+    - Call Origination: features/originate.md
   - Phone Types:
     - Create Custom Flavors: phone-flavors.md
     - Supported Phones:

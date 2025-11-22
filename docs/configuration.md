@@ -23,8 +23,8 @@ The credentials for the first created account are configured by
 ### HTTP routing
 
 !!! warning
-    Do not change those values, currently uURU contains some hardcoded links
-    which will break otherwise!
+Do not change those values, currently uURU contains some hardcoded links
+which will break otherwise!
 
 | Key                     | Description                             | Default      |
 | ----------------------- | --------------------------------------- | ------------ |
@@ -122,7 +122,7 @@ The database must be a mariadb / mysql db
 ### WebSIP
 
 !!! note
-    The `UURU_WEBSIP_EXTENSION_RANGE` should be reserved via the `UURU_RESERVED_EXTENSIONS` key.
+The `UURU_WEBSIP_EXTENSION_RANGE` should be reserved via the `UURU_RESERVED_EXTENSIONS` key.
 
 | Key                         | Description                                            | Default                |
 | --------------------------- | ------------------------------------------------------ | ---------------------- |
@@ -141,3 +141,22 @@ The database must be a mariadb / mysql db
 | UURU_MEDIA_ALLOW_RAW            | Allow upload of raw files                              | 0               |
 | UURU_MEDIA_IMAGE_STORAGE_FORMAT | Format in which images should be stored on disk        | png             |
 | UURU_MEDIA_AUDIO_STORAGE_FORMAT | Format in which audio files should be stored on disk   | mp3             |
+
+### Asterisk Manager Interface
+
+!!! info
+    Because the `asterisk` container is exposed via `--network=host` we have to bind the AMI interface to a specific (non 127.0.0.0/8) ip.
+    We assume that your docker installation ships with `docker0` on `172.17.0.1` - change to your setup if needed.
+
+!!! danger
+    By default all other containers/processes on your machine can talk via `AMI` to the `asterisk`.
+    We assume a trusted environment.
+    Please generate a secure `UURU_ASTERISK_AMI_PASS` for production setups.
+
+
+| Key                    | Description                                 | Default                    |
+| ---------------------- | ------------------------------------------- | -------------------------- |
+| UURU_ASTERISK_AMI_USER | Username for the asterisk manager interface | uuru_ami_user              |
+| UURU_ASTERISK_AMI_PASS | Secret for the asterisk manager interface   | uuru_ami_secret            |
+| UURU_ASTERISK_AMI_ADDR | Host of the asterisk manager interface      | 172.17.0.1 (Docker bridge) |
+| UURU_ASTERSIK_AMI_PORT | Port of the asterisk manager interface      | 5038                       |

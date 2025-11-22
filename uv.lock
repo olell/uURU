@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.13"
 
 [[package]]
@@ -46,6 +46,7 @@ dependencies = [
     { name = "alembic" },
     { name = "apscheduler" },
     { name = "argon2-cffi" },
+    { name = "asterisk-ami" },
     { name = "coverage" },
     { name = "dicttoxml" },
     { name = "fastapi", extra = ["standard"] },
@@ -74,6 +75,7 @@ requires-dist = [
     { name = "alembic", specifier = ">=1.16.5" },
     { name = "apscheduler", specifier = ">=3.11.0" },
     { name = "argon2-cffi", specifier = ">=25.1.0" },
+    { name = "asterisk-ami", specifier = ">=0.1.7" },
     { name = "coverage", specifier = ">=7.9.2" },
     { name = "dicttoxml", specifier = ">=1.7.16" },
     { name = "fastapi", extras = ["standard"], specifier = ">=0.116.1" },
@@ -140,6 +142,15 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/8b/95/143cd64feb24a15fa4b189a3e1e7efbaeeb00f39a51e99b26fc62fbacabd/argon2_cffi_bindings-21.2.0-cp36-abi3-win32.whl", hash = "sha256:603ca0aba86b1349b147cab91ae970c63118a0f30444d4bc80355937c950c082", size = 27698, upload-time = "2021-12-01T09:09:27.87Z" },
     { url = "https://files.pythonhosted.org/packages/37/2c/e34e47c7dee97ba6f01a6203e0383e15b60fb85d78ac9a15cd066f6fe28b/argon2_cffi_bindings-21.2.0-cp36-abi3-win_amd64.whl", hash = "sha256:b2ef1c30440dbbcba7a5dc3e319408b59676e2e039e2ae11a8775ecf482b192f", size = 30817, upload-time = "2021-12-01T09:09:30.267Z" },
     { url = "https://files.pythonhosted.org/packages/5a/e4/bf8034d25edaa495da3c8a3405627d2e35758e44ff6eaa7948092646fdcc/argon2_cffi_bindings-21.2.0-cp38-abi3-macosx_10_9_universal2.whl", hash = "sha256:e415e3f62c8d124ee16018e491a009937f8cf7ebf5eb430ffc5de21b900dad93", size = 53104, upload-time = "2021-12-01T09:09:31.335Z" },
+]
+
+[[package]]
+name = "asterisk-ami"
+version = "0.1.7"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/46/01/ae378a9b0ae4516bc2eee7332e2296a3574bb42feae5ccf2bd8cf7f1968c/asterisk-ami-0.1.7.tar.gz", hash = "sha256:de954116b7b03fb1b5420d9d83d847a3ba0d4cf1449847eada88b4bfde080136", size = 33440, upload-time = "2024-01-05T12:16:17.945Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/37/98/a29af5201e7a2c9c948debe134def3a636f73fb884710e6afb30771e487f/asterisk_ami-0.1.7-py3-none-any.whl", hash = "sha256:b94baabc1107214f3369a804fd1efda0649ba6afcb21095c6b438b6245fef7ff", size = 9745, upload-time = "2024-01-05T12:16:16.387Z" },
 ]
 
 [[package]]

@@ -8,12 +8,12 @@
 		putWebsipApiV1TelephoningWebsipPut,
 		getExtensionsOnlineApiV1ExtensionOnlineGet,
 		type Extension,
-
-		originateCallApiV1TelephoningOriginateGet
-
+		originateCallApiV1TelephoningOriginateGet,
+		adminPhonebookApiV1ExtensionAllGet,
+		getOwnApiV1ExtensionOwnGet
 	} from '../client';
 	import { Web } from 'sip.js';
-	import { settings, user_info } from '../sharedState.svelte';
+	import { adminMode, settings, user_info } from '../sharedState.svelte';
 	import { push_api_error } from '../messageService.svelte';
 
 	let { isOpen = $bindable<boolean>(), target = $bindable<ExtensionBase | null>() } = $props();
@@ -57,6 +57,7 @@
 
 			if (user_info.val !== undefined) {
 				refreshOnlineExtensions();
+				refreshExtensions();
 			}
 			originateCallRequested = false;
 			originateCallFailed = false;
@@ -64,6 +65,7 @@
 	});
 
 	let onlineExtensions = $state<ExtensionBase[]>([]);
+	let extensions = $state<Extension[]>([]);
 	let selectedSourceExtension = $state<string | null>(null);
 	let originateCallRequested = $state(false);
 	let originateCallFailed = $state(false);
@@ -80,6 +82,16 @@
 		if (data!.length > 0) {
 			selectedSourceExtension = data![0].extension;
 		}
+	}
+
+	async function refreshExtensions() {
+		let handler = adminMode.val ? adminPhonebookApiV1ExtensionAllGet : getOwnApiV1ExtensionOwnGet;
+		const { data, error } = await handler({ credentials: 'include' });
+		if (error) {
+			push_api_error(error, 'Failed to load extensions');
+			return;
+		}
+		extensions = data!;
 	}
 
 	// SimpleUser delegate
@@ -126,7 +138,7 @@
 
 		try {
 			let result = await originateCallApiV1TelephoningOriginateGet({
-				"credentials": "include",
+				credentials: 'include',
 				query: {
 					source: selectedSourceExtension,
 					dest: target.extension
@@ -134,8 +146,7 @@
 			});
 			if (result.response.status == 204) {
 				isOpen = false;
-			}
-			else {
+			} else {
 				originateCallFailed = true;
 			}
 		} catch {
@@ -270,11 +281,11 @@
 					Send call to Phone
 					<select class="form-select" bind:value={selectedSourceExtension}>
 						{#each onlineExtensions as extension (extension.extension)}
-							{#if extension.extension != target.extension}
-							<option
-								selected={extension.extension == selectedSourceExtension}
-								value={extension.extension}>{extension.name} &lt;{extension.extension}&gt;</option
-							>
+							{#if extension.extension != target.extension && extensions.find((e) => e.extension == extension.extension)}
+								<option
+									selected={extension.extension == selectedSourceExtension}
+									value={extension.extension}>{extension.name} &lt;{extension.extension}&gt;</option
+								>
 							{/if}
 						{/each}
 					</select>
@@ -283,14 +294,14 @@
 					>
 				</div>
 				{#if originateCallRequested && !originateCallFailed}
-				<div class="d-flex justify-content-center text-success mt-1">
-					Requested! The selected phone will ring soon...
-				</div>
+					<div class="d-flex justify-content-center text-success mt-1">
+						Requested! The selected phone will ring soon...
+					</div>
 				{/if}
 				{#if originateCallFailed}
-				<div class="d-flex justify-content-center text-danger mt-1">
-					Failed to send call to the selected phone!
-				</div>
+					<div class="d-flex justify-content-center text-danger mt-1">
+						Failed to send call to the selected phone!
+					</div>
 				{/if}
 			{/if}
 		</ModalBody>

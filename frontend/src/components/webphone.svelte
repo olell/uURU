@@ -58,11 +58,15 @@
 			if (user_info.val !== undefined) {
 				refreshOnlineExtensions();
 			}
+			originateCallRequested = false;
+			originateCallFailed = false;
 		}
 	});
 
 	let onlineExtensions = $state<ExtensionBase[]>([]);
 	let selectedSourceExtension = $state<string | null>(null);
+	let originateCallRequested = $state(false);
+	let originateCallFailed = $state(false);
 
 	async function refreshOnlineExtensions() {
 		let { data, error } = await getExtensionsOnlineApiV1ExtensionOnlineGet({
@@ -118,16 +122,24 @@
 
 	const originateCall = async () => {
 		if (!selectedSourceExtension) return;
+		originateCallRequested = true;
 
-		let result = await originateCallApiV1TelephoningOriginateGet({
-			"credentials": "include",
-			query: {
-				source: selectedSourceExtension,
-				dest: target.extension
+		try {
+			let result = await originateCallApiV1TelephoningOriginateGet({
+				"credentials": "include",
+				query: {
+					source: selectedSourceExtension,
+					dest: target.extension
+				}
+			});
+			if (result.response.status == 204) {
+				isOpen = false;
 			}
-		});
-		if (result.response.status == 204) {
-			isOpen = false;
+			else {
+				originateCallFailed = true;
+			}
+		} catch {
+			originateCallFailed = true;
 		}
 	};
 
@@ -268,6 +280,16 @@
 						><Icon name="telephone-forward-fill" /></Button
 					>
 				</div>
+				{#if originateCallRequested && !originateCallFailed}
+				<div class="d-flex justify-content-center text-success mt-1">
+					Requested! The selected phone will ring soon...
+				</div>
+				{/if}
+				{#if originateCallFailed}
+				<div class="d-flex justify-content-center text-danger mt-1">
+					Failed to send call to the selected phone!
+				</div>
+				{/if}
 			{/if}
 		</ModalBody>
 	</Modal>

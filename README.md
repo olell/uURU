@@ -25,6 +25,7 @@ it take a look at the
 - Conferences
 - Federation between µURU instances
 - WebSIP to initiate calls directly from the browser
+- Originate calls via physical phones from the browser
 - LDAP Phonebook
 - Rendering of Markdown for (Help-)Pages
 - Managing of images, audio files and other media

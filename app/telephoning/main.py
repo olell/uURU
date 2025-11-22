@@ -5,12 +5,15 @@ Copyright (c) Ole Lange, Gregor Michels and contributors. All rights reserved.
 Licensed under the MIT license. See LICENSE file in the project root for details.
 """
 
+from typing import Self
 import importlib
 import pkgutil
 from fastapi import APIRouter, FastAPI
 from apscheduler.schedulers.background import BackgroundScheduler
 import json
 from logging import getLogger
+
+from asterisk.ami import AMIClient
 
 from app.core.config import settings
 from app.telephoning.flavor import PhoneFlavor
@@ -47,7 +50,7 @@ def load_phone_flavors() -> list[PhoneFlavor]:
 
 
 class Telephoning(object):
-    _instance = None
+    _instance: Self | None = None
 
     @staticmethod
     def instance():
@@ -65,7 +68,11 @@ class Telephoning(object):
         self.flavor_by_type = {}
         self.all_types = []
 
+        self.ami_client = AMIClient(settings.ASTERISK_AMI_ADDR, settings.ASTERSIK_AMI_PORT)
+
     def start(self, app: FastAPI, scheduler: BackgroundScheduler):
+
+        self.setup_ami()
 
         for cls in self.flavor_classes:
             # 1st: create instance
@@ -109,7 +116,14 @@ class Telephoning(object):
         # include router
         app.include_router(self.router)
 
-    def stop(self): ...
+    def stop(self):
+        self.ami_client.logoff()
+
+    def setup_ami(self):
+        self.ami_client.login(settings.ASTERISK_AMI_USER, settings.ASTERISK_AMI_PASS)
+
+    def get_ami_client(self):
+        return self.ami_client
 
     @staticmethod
     def get_flavor_by_type(phone_type: str) -> PhoneFlavor | None:

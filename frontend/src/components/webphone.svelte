@@ -5,10 +5,16 @@
 		deleteWebsipApiV1TelephoningWebsipDelete,
 		type WebSipExtension,
 		type ExtensionBase,
-		putWebsipApiV1TelephoningWebsipPut
+		putWebsipApiV1TelephoningWebsipPut,
+		getExtensionsOnlineApiV1ExtensionOnlineGet,
+		type Extension,
+		originateCallApiV1TelephoningOriginateGet,
+		adminPhonebookApiV1ExtensionAllGet,
+		getOwnApiV1ExtensionOwnGet
 	} from '../client';
 	import { Web } from 'sip.js';
-	import { settings } from '../sharedState.svelte';
+	import { adminMode, settings, user_info } from '../sharedState.svelte';
+	import { push_api_error } from '../messageService.svelte';
 
 	let { isOpen = $bindable<boolean>(), target = $bindable<ExtensionBase | null>() } = $props();
 
@@ -48,8 +54,45 @@
 		if (isOpen) {
 			statusText = 'Start the call using the button below!';
 			statusColor = 'info';
+
+			if (user_info.val !== undefined) {
+				refreshOnlineExtensions();
+				refreshExtensions();
+			}
+			originateCallRequested = false;
+			originateCallFailed = false;
 		}
 	});
+
+	let onlineExtensions = $state<ExtensionBase[]>([]);
+	let extensions = $state<Extension[]>([]);
+	let selectedSourceExtension = $state<string | null>(null);
+	let originateCallRequested = $state(false);
+	let originateCallFailed = $state(false);
+
+	async function refreshOnlineExtensions() {
+		let { data, error } = await getExtensionsOnlineApiV1ExtensionOnlineGet({
+			credentials: 'include'
+		});
+		if (error) {
+			push_api_error(error, 'Failed to load online extensions');
+			return;
+		}
+		onlineExtensions = data!;
+		if (data!.length > 0) {
+			selectedSourceExtension = data![0].extension;
+		}
+	}
+
+	async function refreshExtensions() {
+		let handler = adminMode.val ? adminPhonebookApiV1ExtensionAllGet : getOwnApiV1ExtensionOwnGet;
+		const { data, error } = await handler({ credentials: 'include' });
+		if (error) {
+			push_api_error(error, 'Failed to load extensions');
+			return;
+		}
+		extensions = data!;
+	}
 
 	// SimpleUser delegate
 	const simpleUserDelegate: Web.SimpleUserDelegate = {
@@ -88,6 +131,28 @@
 	let extension = $state<WebSipExtension | undefined>(undefined);
 
 	let refreshInterval = $state<ReturnType<typeof setInterval> | undefined>(undefined);
+
+	const originateCall = async () => {
+		if (!selectedSourceExtension) return;
+		originateCallRequested = true;
+
+		try {
+			let result = await originateCallApiV1TelephoningOriginateGet({
+				credentials: 'include',
+				query: {
+					source: selectedSourceExtension,
+					dest: target.extension
+				}
+			});
+			if (result.response.status == 204) {
+				isOpen = false;
+			} else {
+				originateCallFailed = true;
+			}
+		} catch {
+			originateCallFailed = true;
+		}
+	};
 
 	const startCall = async () => {
 		statusText = 'Creating temporary extension...';
@@ -181,7 +246,7 @@
 	<Modal
 		centered
 		backdrop="static"
-		header="Call from your Browser: {target.name}"
+		header="Call: {target.name} <{target.extension}>"
 		{isOpen}
 		toggle={close}
 	>
@@ -209,6 +274,36 @@
 					>
 				{/if}
 			</div>
+			{#if user_info.val !== undefined && status == 'prepare'}
+				<!-- check for any online extensions -->
+				<hr />
+				<div class="d-flex justify-content-center text-info">
+					Send call to Phone
+					<select class="form-select" bind:value={selectedSourceExtension}>
+						{#each onlineExtensions as extension (extension.extension)}
+							{#if extension.extension != target.extension && extensions.find((e) => e.extension == extension.extension)}
+								<option
+									selected={extension.extension == selectedSourceExtension}
+									value={extension.extension}>{extension.name} &lt;{extension.extension}&gt;</option
+								>
+							{/if}
+						{/each}
+					</select>
+					<Button onclick={originateCall} class="ms-2" size="lg" color="info"
+						><Icon name="telephone-forward-fill" /></Button
+					>
+				</div>
+				{#if originateCallRequested && !originateCallFailed}
+					<div class="d-flex justify-content-center text-success mt-1">
+						Requested! The selected phone will ring soon...
+					</div>
+				{/if}
+				{#if originateCallFailed}
+					<div class="d-flex justify-content-center text-danger mt-1">
+						Failed to send call to the selected phone!
+					</div>
+				{/if}
+			{/if}
 		</ModalBody>
 	</Modal>
 

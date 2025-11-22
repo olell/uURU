@@ -1567,6 +1567,40 @@ export type PutWebsipApiV1TelephoningWebsipPutResponses = {
 
 export type PutWebsipApiV1TelephoningWebsipPutResponse = PutWebsipApiV1TelephoningWebsipPutResponses[keyof PutWebsipApiV1TelephoningWebsipPutResponses];
 
+export type OriginateCallApiV1TelephoningOriginateGetData = {
+    body?: never;
+    path?: never;
+    query: {
+        /**
+         * Source
+         */
+        source: string;
+        /**
+         * Dest
+         */
+        dest: string;
+    };
+    url: '/api/v1/telephoning/originate';
+};
+
+export type OriginateCallApiV1TelephoningOriginateGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type OriginateCallApiV1TelephoningOriginateGetError = OriginateCallApiV1TelephoningOriginateGetErrors[keyof OriginateCallApiV1TelephoningOriginateGetErrors];
+
+export type OriginateCallApiV1TelephoningOriginateGetResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type OriginateCallApiV1TelephoningOriginateGetResponse = OriginateCallApiV1TelephoningOriginateGetResponses[keyof OriginateCallApiV1TelephoningOriginateGetResponses];
+
 export type GetPagesApiV1PagesGetData = {
     body?: never;
     path?: never;

@@ -133,7 +133,7 @@ def originate_call(session: SessionDep, session_asterisk: SessionAsteriskDep, us
     logger.info(f"Originated call from {source} to {dest}")
     logger.debug(f"Received AMI response:\n{response.response}")
 
-    if response is not None:
+    if response.response is not None:
         raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="unable to originate call due to error from AMI")
 
     return {}

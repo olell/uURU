@@ -72,7 +72,11 @@ def update_user(
     if executing_user.id != target_user.id and executing_user.role != UserRole.ADMIN:
         raise CRUDNotAllowedException("You're not allowed to update this user")
 
-    if target_user.role != update_data.role and executing_user.role != UserRole.ADMIN:
+    if (
+        update_data.role is not None
+        and target_user.role != update_data.role
+        and executing_user.role != UserRole.ADMIN
+    ):
         raise CRUDNotAllowedException("You're not allowed to change this users role!")
 
     data = update_data.model_dump(exclude_unset=True)

@@ -5,11 +5,14 @@ Copyright (c) Ole Lange, Gregor Michels and contributors. All rights reserved.
 Licensed under the MIT license. See LICENSE file in the project root for details.
 """
 
-from logging import getLogger
-from sqlmodel import Session, col, select
 import uuid
+from logging import getLogger
+
+from sqlmodel import Session, col, select
 
 from app.core.config import settings
+from app.core.security import get_password_hash, verify_password
+from app.models.crud import CRUDNotAllowedException
 from app.models.user import (
     Invite,
     PasswordChange,
@@ -18,9 +21,6 @@ from app.models.user import (
     UserRole,
     UserUpdate,
 )
-from app.models.crud import CRUDNotAllowedException
-
-from app.core.security import get_password_hash, verify_password
 
 logger = getLogger(__name__)
 
@@ -32,7 +32,6 @@ def create_user(
     created_by_system=False,
     autocommit=True,
 ) -> User:
-
     if not created_by_system and settings.LIMIT_REGISTRATION:
         if new_user.invite is None:
             raise CRUDNotAllowedException(
@@ -70,9 +69,11 @@ def update_user(
     update_data: UserUpdate,
     autocommit=True,
 ) -> User:
-
     if executing_user.id != target_user.id and executing_user.role != UserRole.ADMIN:
         raise CRUDNotAllowedException("You're not allowed to update this user")
+
+    if target_user.role != update_data.role and executing_user.role != UserRole.ADMIN:
+        raise CRUDNotAllowedException("You're not allowed to change this users role!")
 
     data = update_data.model_dump(exclude_unset=True)
     extra_data = {}

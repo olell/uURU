@@ -13,6 +13,9 @@ cd /etc/alembic
 envsubst < config.ini.tmpl > config.ini
 alembic -c config.ini upgrade head
 
+envsubst < voicemail.ini.tmpl > voicemail.ini
+alembic -c voicemail.ini upgrade head
+
 # execute asterisk
 cd /
 envsubst < /etc/odbc.ini.tmpl > /etc/odbc.ini

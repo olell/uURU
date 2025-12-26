@@ -34,7 +34,7 @@ def create_sip_account(
     extension: str,
     extension_name: str,
     password: str,
-    codec: CODEC = "g722",
+    codec: CODEC | tuple[CODEC] = "g722",
     context="pjsip_internal",
     set_websip_fields: bool = False,
     autocommit=True,
@@ -48,6 +48,11 @@ def create_sip_account(
             password=password,
         )
 
+        if isinstance(codec, tuple):
+            codec_string = ','.join(codec)
+        else:
+            codec_string = codec
+
         # TODO: fix hard coded transport
         ps_endpoint = PSEndpoint(
             id=extension,
@@ -56,7 +61,7 @@ def create_sip_account(
             auth=ps_auth.id,
             context=context,
             disallow="all",
-            allow=codec,
+            allow=codec_string,
             callerid=f"{extension_name} <{extension}>",
             dtls_auto_generate_cert="1" if set_websip_fields else None,
             webrtc="1" if set_websip_fields else None,
@@ -91,14 +96,19 @@ def update_sip_account(
         raise ValueError("no such endpoint in asterisk db")
 
     flavor = Telephoning.get_flavor_by_type(extension.type)
-    codec = None
+    codec, codec_string = None
     if flavor is not None:
         codec = flavor.get_codec(extension)
+
+        if isinstance(codec, tuple):
+            codec_string = ','.join(codec)
+        else:
+            codec_string = codec
 
     try:
         ps_endpoint.callerid = f"{extension.name} <{extension.extension}>"
         if codec is not None:
-            ps_endpoint.allow = codec
+            ps_endpoint.allow = codec_string
         session_asterisk.add(ps_endpoint)
     except Exception as e:
         logger.exception("Couldn't update extension in asterisk DB")

@@ -90,8 +90,9 @@ class PhoneFlavor:
     # on this value. If its a string, the value is applied for all phone types
     # in this flavor class. If it is a dict, it has to configure values for
     # all phone types from this class.
+    # If multiple codecs are supported, they can be declared as a tuple.
     # Supported codecs: "g722", "alaw", "ulaw", "g726", "gsm", "lpc10"
-    SUPPORTED_CODEC: CODEC | dict[str, CODEC] = "g722"
+    SUPPORTED_CODEC: CODEC | tuple[CODEC] | dict[str, CODEC] | dict[str, tuple[CODEC]] = "g722"
 
     # This limits the maximum amount of characters for the extension name
     MAX_EXTENSION_NAME_CHARS = 20
@@ -155,8 +156,11 @@ class PhoneFlavor:
         """
         raise NotImplementedError
 
-    def get_codec(self, extension: "Extension | None"):
+    def get_codec(self, extension: "Extension | None") -> CODEC | tuple[CODEC]:
         if isinstance(self.SUPPORTED_CODEC, str):
+            return self.SUPPORTED_CODEC
+        
+        if isinstance(self.SUPPORTED_CODEC, tuple):
             return self.SUPPORTED_CODEC
 
         if extension is None:

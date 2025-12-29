@@ -6,7 +6,7 @@ Licensed under the MIT license. See LICENSE file in the project root for details
 """
 
 from typing import Literal
-from pydantic import BaseModel
+from pydantic import BaseModel, Field as PDField
 from sqlmodel import SQLModel, Field, String
 import uuid
 
@@ -32,7 +32,7 @@ class OutgoingRequestStatus(BaseModel):
 
 
 class PeerTeardownData(BaseModel):
-    name: str
+    name: str = PDField(pattern=r"^\w+$")
     secret: str
 
 
@@ -40,7 +40,7 @@ class PeerBase(SQLModel):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
 
     # iaxfriend
-    name: str
+    name: str = PDField(pattern=r"^\w+$")
     codec: Literal["g722", "alaw", "ulaw", "g726", "gsm", "lpc10"] = Field(
         "g722", sa_type=String
     )
@@ -60,7 +60,7 @@ class Peer(PeerBase, table=True):
 
 
 class OutgoingPeeringRequestBase(SQLModel):
-    name: str
+    name: str = PDField(pattern=r"^\w+$")
     partner_uuru_host: str
     prefix: str
     codec: Literal["g722", "alaw", "ulaw", "g726", "gsm", "lpc10"] = Field(
@@ -78,7 +78,7 @@ class OutgoingPeeringRequest(OutgoingPeeringRequestPublic, table=True):
 
 class IncomingPeeringRequestBase(SQLModel):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    name: str
+    name: str = PDField(pattern=r"^\w+$")
     codec: Literal["g722", "alaw", "ulaw", "g726", "gsm", "lpc10"] = Field(
         "g722", sa_type=String
     )

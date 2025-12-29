@@ -423,7 +423,8 @@
 		<Form onsubmit={sendRequest}>
 			<FormGroup>
 				<Label>Name</Label>
-				<Input bind:value={requestName} required />
+				<Input pattern="^\w+$" bind:value={requestName} required/>
+                <FormText>Only alphanumeric characters and underscores are allowed</FormText>
 			</FormGroup>
 			<FormGroup>
 				<Label>Host</Label>

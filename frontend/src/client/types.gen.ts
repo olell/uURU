@@ -75,6 +75,10 @@ export type Dialplan = {
     entries?: {
         [key: string]: BaseDialplanApp;
     };
+    /**
+     * Asterisk Config
+     */
+    readonly asterisk_config: string;
 };
 
 /**
@@ -1598,7 +1602,6 @@ export type PutWebsipApiV1TelephoningWebsipPutResponses = {
 
 export type PutWebsipApiV1TelephoningWebsipPutResponse = PutWebsipApiV1TelephoningWebsipPutResponses[keyof PutWebsipApiV1TelephoningWebsipPutResponses];
 
-<<<<<<< HEAD
 export type OriginateCallApiV1TelephoningOriginateGetData = {
     body?: never;
     path?: never;
@@ -1616,7 +1619,23 @@ export type OriginateCallApiV1TelephoningOriginateGetData = {
 };
 
 export type OriginateCallApiV1TelephoningOriginateGetErrors = {
-=======
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type OriginateCallApiV1TelephoningOriginateGetError = OriginateCallApiV1TelephoningOriginateGetErrors[keyof OriginateCallApiV1TelephoningOriginateGetErrors];
+
+export type OriginateCallApiV1TelephoningOriginateGetResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type OriginateCallApiV1TelephoningOriginateGetResponse = OriginateCallApiV1TelephoningOriginateGetResponses[keyof OriginateCallApiV1TelephoningOriginateGetResponses];
+
 export type GetDialplanApplicationSchemasApiV1TelephoningDialplanSchemasGetData = {
     body?: never;
     path?: never;
@@ -1651,25 +1670,12 @@ export type GetDialplanApiV1TelephoningDialplanExtenGetData = {
 };
 
 export type GetDialplanApiV1TelephoningDialplanExtenGetErrors = {
->>>>>>> cc2e452 (👽️ update api client)
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-<<<<<<< HEAD
-export type OriginateCallApiV1TelephoningOriginateGetError = OriginateCallApiV1TelephoningOriginateGetErrors[keyof OriginateCallApiV1TelephoningOriginateGetErrors];
-
-export type OriginateCallApiV1TelephoningOriginateGetResponses = {
-    /**
-     * Successful Response
-     */
-    204: void;
-};
-
-export type OriginateCallApiV1TelephoningOriginateGetResponse = OriginateCallApiV1TelephoningOriginateGetResponses[keyof OriginateCallApiV1TelephoningOriginateGetResponses];
-=======
 export type GetDialplanApiV1TelephoningDialplanExtenGetError = GetDialplanApiV1TelephoningDialplanExtenGetErrors[keyof GetDialplanApiV1TelephoningDialplanExtenGetErrors];
 
 export type GetDialplanApiV1TelephoningDialplanExtenGetResponses = {
@@ -1698,7 +1704,6 @@ export type GetDialplanExtensionsApiV1TelephoningDialplansGetResponses = {
 };
 
 export type GetDialplanExtensionsApiV1TelephoningDialplansGetResponse = GetDialplanExtensionsApiV1TelephoningDialplansGetResponses[keyof GetDialplanExtensionsApiV1TelephoningDialplansGetResponses];
->>>>>>> cc2e452 (👽️ update api client)
 
 export type GetPagesApiV1PagesGetData = {
     body?: never;

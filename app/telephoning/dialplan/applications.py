@@ -66,6 +66,7 @@ class Answer(BaseDialplanApp):
 
     @staticmethod
     def parse(_, appdata: str):
+        delay = options = None
         if len(appdata) > 0:
             params = appdata.split(",")
             if len(params) >= 1 and params[0].isdigit():

@@ -10,6 +10,7 @@ from typing import Literal, TypeVar, Union
 
 from pydantic import Field
 from pydantic.fields import computed_field
+from pydantic.functional_validators import field_validator
 from pydantic.main import BaseModel
 from sqlmodel import Session, delete, select
 
@@ -25,6 +26,32 @@ class Dialplan(BaseModel):
     exten: str
     context: str
     entries: dict[int, Union[BaseDialplanApp, T]] = Field(default_factory=dict)
+
+    @field_validator("entries", mode="before")
+    def load_entries(cls, v: dict[str, dict]):
+        """
+        This function loads the entries from a dict/json representation into
+        their corresponding classes (if no class available it panics).
+        """
+        result: dict[int, Union[BaseDialplanApp, T]] = {}
+        known_apps = {a.COMPATIBLE_APP: a for a in Dialplan.get_known_apps()}
+        prio = 1
+        for k in v.keys():
+            if k.isdigit():
+                prio = int(k)
+            elif k == "n":
+                prio += 1
+            else:
+                raise ValueError("priority (key) must be a integer or 'n'")
+
+            app = known_apps.get(v[k].get("app"))
+            if app is None:
+                raise ValueError(
+                    f"couldn't find a suitable app class for {v[k].get('app')}"
+                )
+            result.update({prio: app.model_validate(v[k])})
+
+        return result
 
     @staticmethod
     def from_db(session_asterisk: Session, exten: str, context="pjsip_internal"):

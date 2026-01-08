@@ -30,12 +30,23 @@ class BaseDialplanApp(BaseModel):
     def app(self) -> str:
         return self.COMPATIBLE_APP
 
+    @computed_field
+    @property
+    def assembled(self) -> str:
+        try:
+            app, appdata = self.assemble()
+            return f"{app}({appdata})"
+        except NotImplementedError:
+            return ""
+
 
 class Dummy(BaseDialplanApp):
     """
     This is a dummy application to support dialplan applications that are not
     available directly. You directly set the app name and appdata content.
     """
+
+    COMPATIBLE_APP: ClassVar = "_DUMMY_"
 
     application: str
     appdata: str

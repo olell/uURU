@@ -39,6 +39,10 @@ export type BaseDialplanAppOutput = {
      * App
      */
     readonly app: string;
+    /**
+     * Assembled
+     */
+    readonly assembled: string;
 };
 
 /**

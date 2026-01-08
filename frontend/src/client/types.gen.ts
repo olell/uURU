@@ -26,7 +26,15 @@ export type AudioFormat = {
  * BaseDialplanApp
  * This is a baseclass for dialplan apps
  */
-export type BaseDialplanApp = {
+export type BaseDialplanAppInput = {
+    [key: string]: unknown;
+};
+
+/**
+ * BaseDialplanApp
+ * This is a baseclass for dialplan apps
+ */
+export type BaseDialplanAppOutput = {
     /**
      * App
      */
@@ -60,7 +68,7 @@ export type Credentials = {
 /**
  * Dialplan
  */
-export type Dialplan = {
+export type DialplanInput = {
     /**
      * Exten
      */
@@ -73,7 +81,27 @@ export type Dialplan = {
      * Entries
      */
     entries?: {
-        [key: string]: BaseDialplanApp;
+        [key: string]: BaseDialplanAppInput;
+    };
+};
+
+/**
+ * Dialplan
+ */
+export type DialplanOutput = {
+    /**
+     * Exten
+     */
+    exten: string;
+    /**
+     * Context
+     */
+    context: string;
+    /**
+     * Entries
+     */
+    entries?: {
+        [key: string]: BaseDialplanAppOutput;
     };
     /**
      * Asterisk Config
@@ -1657,6 +1685,29 @@ export type GetDialplanApplicationSchemasApiV1TelephoningDialplanSchemasGetRespo
 
 export type GetDialplanApplicationSchemasApiV1TelephoningDialplanSchemasGetResponse = GetDialplanApplicationSchemasApiV1TelephoningDialplanSchemasGetResponses[keyof GetDialplanApplicationSchemasApiV1TelephoningDialplanSchemasGetResponses];
 
+export type StoreDialplanApiV1TelephoningDialplanStorePostData = {
+    body: DialplanInput;
+    path?: never;
+    query?: never;
+    url: '/api/v1/telephoning/dialplan/store';
+};
+
+export type StoreDialplanApiV1TelephoningDialplanStorePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type StoreDialplanApiV1TelephoningDialplanStorePostError = StoreDialplanApiV1TelephoningDialplanStorePostErrors[keyof StoreDialplanApiV1TelephoningDialplanStorePostErrors];
+
+export type StoreDialplanApiV1TelephoningDialplanStorePostResponses = {
+    /**
+     * Successful Response
+     */
+    200: unknown;
+};
+
 export type GetDialplanApiV1TelephoningDialplanExtenGetData = {
     body?: never;
     path: {
@@ -1683,7 +1734,7 @@ export type GetDialplanApiV1TelephoningDialplanExtenGetResponses = {
      * Response Get Dialplan Api V1 Telephoning Dialplan  Exten  Get
      * Successful Response
      */
-    200: Dialplan | null;
+    200: DialplanOutput | null;
 };
 
 export type GetDialplanApiV1TelephoningDialplanExtenGetResponse = GetDialplanApiV1TelephoningDialplanExtenGetResponses[keyof GetDialplanApiV1TelephoningDialplanExtenGetResponses];

@@ -171,6 +171,19 @@ def get_dialplan_application_schemas(user: CurrentUser) -> dict[str, dict]:
     return schemas
 
 
+@router.post("/dialplan/store")
+def store_dialplan(
+    session_asterisk: SessionAsteriskDep, user: CurrentUser, plan: Dialplan
+):
+    if user.role != UserRole.ADMIN:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only admins are permitted to store dialplans!",
+        )
+    plan.store(session_asterisk)
+    return plan
+
+
 @router.get("/dialplan/{exten}")
 def get_dialplan(
     session_asterisk: SessionAsteriskDep, user: CurrentUser, exten: str

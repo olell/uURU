@@ -4,17 +4,13 @@ uURU - Micro User Registration Utility
 Copyright (c) Ole Lange, Gregor Michels and contributors. All rights reserved.
 Licensed under the MIT license. See LICENSE file in the project root for details.
 """
-
-"""
-uURU - Micro User Registration Utility
-
-Copyright (c) Ole Lange, Gregor Michels and contributors. All rights reserved.
-Licensed under the MIT license. See LICENSE file in the project root for details.
-"""
-
+# ruff: noqa: F403, F405
 
 from typing import Literal, TypeVar, Union
+
 from pydantic import Field
+from pydantic.fields import computed_field
+from pydantic.main import BaseModel
 from sqlmodel import Session, delete, select
 
 from app.models.asterisk import DialPlanEntry
@@ -26,7 +22,6 @@ T = TypeVar("T", bound="BaseDialplanApp")
 
 
 class Dialplan(BaseModel):
-
     exten: str
     context: str
     entries: dict[int, Union[BaseDialplanApp, T]] = Field(default_factory=dict)

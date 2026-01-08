@@ -7,7 +7,7 @@ Licensed under the MIT license. See LICENSE file in the project root for details
 
 from typing import ClassVar, Literal, Optional, Self
 
-from pydantic import BaseModel, PrivateAttr, computed_field
+from pydantic import BaseModel, computed_field
 
 
 class BaseDialplanApp(BaseModel):
@@ -169,7 +169,9 @@ class Set(BaseDialplanApp):
         prefix = (
             "_"
             if self.inherit_mode == "inherit"
-            else "__" if self.inherit_mode == "inherit_children" else ""
+            else "__"
+            if self.inherit_mode == "inherit_children"
+            else ""
         )
         return self.COMPATIBLE_APP, f"{prefix}{self.name}={self.value}"
 

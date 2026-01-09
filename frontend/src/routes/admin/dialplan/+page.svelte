@@ -18,7 +18,9 @@
 		type Extension,
 		getDialplanApiV1TelephoningDialplanExtenGet,
 		getDialplanApplicationSchemasApiV1TelephoningDialplanSchemasGet,
-		getDialplanExtensionsApiV1TelephoningDialplansGet
+		getDialplanExtensionsApiV1TelephoningDialplansGet,
+
+		storeDialplanApiV1TelephoningDialplanStorePost
 	} from '../../../client';
 	import SchemaForm from '../../../components/schemaForm.svelte';
 	import { push_api_error, push_message } from '../../../messageService.svelte';
@@ -216,13 +218,36 @@
 		data['app'] = newEntry;
 		dialplan.entries[prio.toString()] = data;
 
-		console.log('Adding', data, 'at', prio, 'based on', schema);
 	};
 
 	const removeEntry = (prio: string) => {
 		delete dialplan.entries[prio];
 		selectedEntry = undefined;
 	};
+
+	const storeDialplan = () => {
+		storeDialplanApiV1TelephoningDialplanStorePost({credentials: "include", body: dialplan})
+			.then(({data, error}) => {
+				if (error) {
+					push_api_error(error, 'Failed to save dialplan!');
+					return;
+				}
+				dialplan = data!;
+				selectedEntry = undefined;
+				push_message({
+					color: 'success',
+					title: 'Saved!',
+					message: 'Stored dialplan!'
+				});
+			})
+			.catch(() => {
+				push_message({
+					color: 'danger',
+					title: 'Error!',
+					message: 'Failed to save dialplan!'
+				});
+			})
+	}
 </script>
 
 <div class="row d-flex align-items-center">
@@ -317,9 +342,13 @@
 								{/each}
 							</select>
 						</td>
+						<td></td>
+						<td></td>
+						<td></td>
 					</tr>
 				</tbody>
 			</Table>
+			<Button color="success" onclick={storeDialplan}>Apply</Button>
 		</div>
 		<div class="col">
 			{#if selectedEntry && selectedSchema}

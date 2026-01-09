@@ -1,15 +1,15 @@
 <script lang="ts">
-	import { Input, InputGroup } from "@sveltestrap/sveltestrap";
+	import { Icon, Input, InputGroup } from "@sveltestrap/sveltestrap";
 	import SchemaFormInput from "./schemaFormInput.svelte";
 
-    let { prop, value = $bindable(), required } = $props();
+    let { prop, value = $bindable(), required, onEnter = () => {} } = $props();
 
 
     let selectedType = $state<string>("");
 
     
-    $inspect(selectedType);
-    //$inspect(value);
+    //$inspect(selectedType);
+    $inspect(value);
 
     $effect(() => {
         if (prop.anyOf) {
@@ -29,6 +29,27 @@
             value = null;
         }
     })
+
+    const keydown = (e: any) => {
+        console.log("Received keypress", e.keyCode);
+        if (e.keyCode == 13) {
+            onEnter()
+        }
+    }
+
+    const addElement = () => {
+        if (prop.type !== 'array') return;
+        if (prop.items.type === 'string') value.push("");
+        if (prop.items.type === 'integer' || prop.items.type === 'number') value.push(0);
+
+
+    }
+
+    const removeElement = (idx: number) => {
+        if (prop.type !== 'array') return;
+        if (idx < 0 || idx >= value.length) return;
+        value.splice(idx, 1)
+    }
 </script>
 
 {#if prop.enum}
@@ -38,24 +59,34 @@
         {/each}
     </select>
 {:else if prop.anyOf}
-    <InputGroup class="mb-1">
-        <span class="input-group-text">Type</span>
-        <select class="form-select" bind:value={selectedType} required={required}>
+    <InputGroup>
+        <select class="form-select" style="max-width: 30%" bind:value={selectedType} required={required}>
             {#each prop.anyOf as sub}
                 <option>{sub.type}</option>
             {/each}
         </select>
-    </InputGroup>
-    <InputGroup>
-        <span class="input-group-text">Value</span>
         <SchemaFormInput bind:value={value} prop={{type: selectedType}} required={required}></SchemaFormInput>
     </InputGroup>
+{:else if prop.type == 'array'}
+    <a href={'#'} class="text-success ms-2" onclick={addElement}><Icon name="plus-circle" /></a>
+    {#if value.length > 0}
+        {#each value as _, idx}
+        <InputGroup class="mb-2">
+            <span class="input-group-text" style="min-width: 2.5rem;">{idx+1}.</span>
+            <SchemaFormInput bind:value={value[idx]} prop={prop.items} onEnter={addElement} required={required}></SchemaFormInput>
+            <span class="input-group-text">
+                <a href={'#'} class="text-danger" onclick={() => removeElement(idx)}><Icon name="trash3" /></a>
+            </span>
+        </InputGroup>
+        {/each}
+    {/if}
+    
 {:else if prop.type == 'string'}
-    <Input bind:value={value} pattern={prop.pattern} required={required} />
+    <Input bind:value={value} pattern={prop.pattern} onkeydown={keydown} required={required} />
 {:else if prop.type == 'integer'}
-    <Input type="number" bind:value={value} required={required} />
+    <Input type="number" bind:value={value} onkeydown={keydown} required={required} />
 {:else if prop.type == 'number'}
-    <Input type="number" step="any" bind:value={value} required={required} />
+    <Input type="number" step="any" bind:value={value} onkeydown={keydown} required={required} />
 {:else if prop.type == 'null'}
-    <Input type="text" value="<null>" required readonly />
+    <Input type="text" value="<null>" required disabled readonly />
 {/if}

@@ -6,10 +6,9 @@
 
 
     let selectedType = $state<string>("");
+    let selectedSubProp = $state<any>(null);
+    $inspect(selectedSubProp);
 
-    
-    //$inspect(selectedType);
-    $inspect(value);
 
     $effect(() => {
         if (prop.anyOf) {
@@ -19,8 +18,12 @@
             if (allowedTypes.includes(t)) selectedType = t;
             else if (value === null && allowedTypes.includes('null')) selectedType = 'null';
             else if (t == 'number' && allowedTypes.includes('integer')) selectedType = 'integer';
-            console.log(t, allowedTypes);
-            
+        }
+    })
+
+    $effect(() => {
+        if (selectedType !== "" && prop.anyOf) {
+            selectedSubProp = prop.anyOf.find((x:any) => x.type == selectedType);
         }
     })
 
@@ -31,7 +34,6 @@
     })
 
     const keydown = (e: any) => {
-        console.log("Received keypress", e.keyCode);
         if (e.keyCode == 13) {
             onEnter()
         }
@@ -65,7 +67,7 @@
                 <option>{sub.type}</option>
             {/each}
         </select>
-        <SchemaFormInput bind:value={value} prop={{type: selectedType}} required={required}></SchemaFormInput>
+        <SchemaFormInput bind:value={value} prop={selectedSubProp || {type: selectedType}} required={required}></SchemaFormInput>
     </InputGroup>
 {:else if prop.type == 'array'}
     <a href={'#'} class="text-success ms-2" onclick={addElement}><Icon name="plus-circle" /></a>

@@ -182,8 +182,9 @@
 		selectedEntry = dialplan?.entries![prio];
 	};
 
-	const moveEntryUp = (prio: string) => {
-		const prios = Object.keys(dialplan?.entries!);
+	const moveEntryUp = (p: string) => {
+		const prio = parseInt(p);
+		const prios = Object.keys(dialplan?.entries!).map(x => parseInt(x));
 		const s = prios.sort();
 		const idx = s.indexOf(prio);
 		if (idx == prios.length - 1) return;
@@ -191,10 +192,11 @@
 		const tmp = dialplan!.entries![prio];
 		dialplan!.entries![prio] = dialplan!.entries![s[idx + 1]];
 		dialplan!.entries![s[idx + 1]] = tmp;
-		selectEntry(s[idx + 1]);
+		selectEntry(s[idx + 1].toString());
 	};
-	const moveEntryDown = (prio: string) => {
-		const prios = Object.keys(dialplan?.entries!);
+	const moveEntryDown = (p: string) => {
+		const prio = parseInt(p);
+		const prios = Object.keys(dialplan?.entries!).map(x => parseInt(x));
 		const s = prios.sort();
 		const idx = s.indexOf(prio);
 		if (idx == 0) return;
@@ -202,7 +204,7 @@
 		const tmp = dialplan!.entries![prio];
 		dialplan!.entries![prio] = dialplan!.entries![s[idx - 1]];
 		dialplan!.entries![s[idx - 1]] = tmp;
-		selectEntry(s[idx - 1]);
+		selectEntry(s[idx - 1].toString());
 	};
 
 	let newEntry = $state<string | undefined>(undefined);
@@ -210,9 +212,9 @@
 		if (!newEntry || !Object.keys(applicationSchemas).includes(newEntry)) return;
 		let schema = applicationSchemas[newEntry!];
 
-		const prios = Object.keys(dialplan?.entries!);
-		const s = prios.sort();
-		const prio = (parseInt(s[prios.length - 1]) || 0) + 1;
+		const prios = Object.keys(dialplan!.entries!).map(x => parseInt(x));
+		console.log(prios);
+		const prio = Math.max(0, ...prios) + 1;
 
 		const data = generateFromSchema(schema);
 		data['app'] = newEntry;
@@ -223,6 +225,7 @@
 	const removeEntry = (prio: string) => {
 		delete dialplan.entries[prio];
 		selectedEntry = undefined;
+		// todo: slide up
 	};
 
 	const storeDialplan = () => {

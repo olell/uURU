@@ -225,7 +225,13 @@
 	const removeEntry = (prio: string) => {
 		delete dialplan.entries[prio];
 		selectedEntry = undefined;
-		// todo: slide up
+
+		const prios = Object.keys(dialplan!.entries!).map(x => parseInt(x)).filter(x => x > parseInt(prio));
+		prios.forEach((p) => {
+			dialplan!.entries![(p-1).toString()] = dialplan!.entries![p.toString()];
+			delete dialplan!.entries![p.toString()];
+		});
+
 	};
 
 	const storeDialplan = () => {

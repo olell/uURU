@@ -69,6 +69,7 @@
 		items?: JSONSchema;
 		default?: any;
 		enum?: any[];
+		doc_url?: string;
 	};
 
 	function generateFromSchema(schema: JSONSchema): any {
@@ -357,11 +358,15 @@
 					</tr>
 				</tbody>
 			</Table>
-			<Button color="success" onclick={storeDialplan}>Apply</Button>
+			<Button color="success" onclick={storeDialplan}>Store Changes!</Button>
 		</div>
-		<div class="col">
+		<div class="col col-md-8">
 			{#if selectedEntry && selectedSchema}
+				{#if !!selectedSchema?.doc_url}
+				<h4>Edit <a href="{selectedSchema.doc_url}" target="_blank">{selectedEntry.app}</a></h4>
+				{:else}
 				<h4>Edit {selectedEntry.app}</h4>
+				{/if}
 				<SchemaForm bind:value={selectedEntry} schema={selectedSchema}></SchemaForm>
 			{/if}
 		</div>

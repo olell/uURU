@@ -212,7 +212,7 @@
 
 		const prios = Object.keys(dialplan?.entries!);
 		const s = prios.sort();
-		const prio = parseInt(s[prios.length - 1]) + 1;
+		const prio = (parseInt(s[prios.length - 1]) || 0) + 1;
 
 		const data = generateFromSchema(schema);
 		data['app'] = newEntry;

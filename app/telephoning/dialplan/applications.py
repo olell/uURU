@@ -265,6 +265,53 @@ class ConfBridge(BaseDialplanApp):
         return self.COMPATIBLE_APP, self.conference
 
 
+DIAL_OPTION = Literal[
+    "A",
+    "a",
+    "b",
+    "B",
+    "C",
+    "c",
+    "d",
+    "D",
+    "E",
+    "e",
+    "f",
+    "F",
+    "g",
+    "G",
+    "h",
+    "H",
+    "i",
+    "I",
+    "j",
+    "k",
+    "K",
+    "L",
+    "m",
+    "n",
+    "N",
+    "o",
+    "O",
+    "p",
+    "P",
+    "Q",
+    "r",
+    "R",
+    "S",
+    "s",
+    "t",
+    "T",
+    "U",
+    "u",
+    "w",
+    "W",
+    "x",
+    "X",
+    "z",
+]
+
+
 class Dial(BaseDialplanApp):
     """
     Attempt to connect to another device or endpoint and bridge the call.
@@ -277,7 +324,7 @@ class Dial(BaseDialplanApp):
 
     devices: list[str]
     timeout: Optional[int] = None
-    options: dict[str, str] = {}
+    options: dict[DIAL_OPTION, str | None] = {}
 
     @staticmethod
     def parse(_, appdata):

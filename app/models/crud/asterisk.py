@@ -7,10 +7,11 @@ Licensed under the MIT license. See LICENSE file in the project root for details
 
 from logging import getLogger
 from pydantic import BaseModel
-from sqlmodel import Session, delete, func, select
+from sqlmodel import Session, delete, distinct, func, select
 
 from app.core.config import settings
 from app.models.asterisk import (
+    DialPlanEntry,
     IAXFriend,
     MusicOnHold,
     PSAor,
@@ -19,7 +20,7 @@ from app.models.asterisk import (
     PSEndpoint,
 )
 from app.models.crud import CRUDNotAllowedException
-from app.models.crud.dialplan import Dial, Dialplan
+from app.telephoning.dialplan import Dial, Dialplan
 from app.models.extension import Extension
 from app.models.federation import Peer
 from app.models.user import User, UserRole
@@ -167,7 +168,7 @@ def create_or_update_callgroup(
             "You may only create callgroups with extension you've created!"
         )
 
-    plan = Dialplan(session_asterisk, extension.extension)
+    plan = Dialplan.from_db(session_asterisk, extension.extension)
     plan.add(
         Dial(
             devices=[f"${{PJSIP_DIAL_CONTACTS({e.extension})}}" for e in extensions],
@@ -175,7 +176,7 @@ def create_or_update_callgroup(
         ),
         1,
     )
-    plan.store()
+    plan.store(session_asterisk)
 
     logger.info(
         f"Created callgroup at {extension.extension} with participants: {participants}"
@@ -197,7 +198,7 @@ def create_iax_peer(session_asterisk: Session, peer: Peer, autocommit=True):
     try:
         session_asterisk.add(friend)
 
-        plan = Dialplan(
+        plan = Dialplan.from_db(
             session_asterisk,
             exten=f"_{peer.prefix}{'X'*peer.partner_extension_length}",
         )
@@ -209,7 +210,7 @@ def create_iax_peer(session_asterisk: Session, peer: Peer, autocommit=True):
             ),
             1,
         )
-        plan.store(autocommit)
+        plan.store(session_asterisk, autocommit)
 
         if autocommit:
             session_asterisk.commit()
@@ -237,14 +238,14 @@ def delete_iax_peer(
     if friend is None:
         raise CRUDNotAllowedException("Unkown IAX2Friend")
 
-    plan = Dialplan(
+    plan = Dialplan.from_db(
         session_asterisk,
         exten=f"_{peer.prefix}{'X'*peer.partner_extension_length}",
     )
 
     try:
         session_asterisk.delete(friend)
-        plan.delete(autocommit)
+        plan.delete(session_asterisk, autocommit)
 
         logger.info(
             f"Deleted IAX2Friend for {peer.name} and dialplan {plan.exten} from asterisk DB"
@@ -374,3 +375,12 @@ def get_extensions_with_contacts(
     extensions = list(session.exec(statement).all())
 
     return extensions
+
+
+def get_known_dialplan_extensions(session_asterisk: Session, user: User) -> list[str]:
+    if user.role != UserRole.ADMIN:
+        raise CRUDNotAllowedException("This is admin only!")
+
+    extensions = session_asterisk.exec(select(distinct(DialPlanEntry.exten))).all()
+
+    return list(extensions)

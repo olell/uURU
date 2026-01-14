@@ -23,6 +23,29 @@ export type AudioFormat = {
 };
 
 /**
+ * BaseDialplanApp
+ * This is a baseclass for dialplan apps
+ */
+export type BaseDialplanAppInput = {
+    [key: string]: unknown;
+};
+
+/**
+ * BaseDialplanApp
+ * This is a baseclass for dialplan apps
+ */
+export type BaseDialplanAppOutput = {
+    /**
+     * App
+     */
+    readonly app: string;
+    /**
+     * Assembled
+     */
+    readonly assembled: string;
+};
+
+/**
  * Body_create_media_api_v1_media__post
  */
 export type BodyCreateMediaApiV1MediaPost = {
@@ -44,6 +67,50 @@ export type Credentials = {
      * Password
      */
     password: string;
+};
+
+/**
+ * Dialplan
+ */
+export type DialplanInput = {
+    /**
+     * Exten
+     */
+    exten: string;
+    /**
+     * Context
+     */
+    context: string;
+    /**
+     * Entries
+     */
+    entries?: {
+        [key: string]: BaseDialplanAppInput;
+    };
+};
+
+/**
+ * Dialplan
+ */
+export type DialplanOutput = {
+    /**
+     * Exten
+     */
+    exten: string;
+    /**
+     * Context
+     */
+    context: string;
+    /**
+     * Entries
+     */
+    entries?: {
+        [key: string]: BaseDialplanAppOutput;
+    };
+    /**
+     * Asterisk Config
+     */
+    readonly asterisk_config: string;
 };
 
 /**
@@ -1600,6 +1667,98 @@ export type OriginateCallApiV1TelephoningOriginateGetResponses = {
 };
 
 export type OriginateCallApiV1TelephoningOriginateGetResponse = OriginateCallApiV1TelephoningOriginateGetResponses[keyof OriginateCallApiV1TelephoningOriginateGetResponses];
+
+export type GetDialplanApplicationSchemasApiV1TelephoningDialplanSchemasGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/telephoning/dialplan/schemas';
+};
+
+export type GetDialplanApplicationSchemasApiV1TelephoningDialplanSchemasGetResponses = {
+    /**
+     * Response Get Dialplan Application Schemas Api V1 Telephoning Dialplan Schemas Get
+     * Successful Response
+     */
+    200: {
+        [key: string]: {
+            [key: string]: unknown;
+        };
+    };
+};
+
+export type GetDialplanApplicationSchemasApiV1TelephoningDialplanSchemasGetResponse = GetDialplanApplicationSchemasApiV1TelephoningDialplanSchemasGetResponses[keyof GetDialplanApplicationSchemasApiV1TelephoningDialplanSchemasGetResponses];
+
+export type StoreDialplanApiV1TelephoningDialplanStorePostData = {
+    body: DialplanInput;
+    path?: never;
+    query?: never;
+    url: '/api/v1/telephoning/dialplan/store';
+};
+
+export type StoreDialplanApiV1TelephoningDialplanStorePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type StoreDialplanApiV1TelephoningDialplanStorePostError = StoreDialplanApiV1TelephoningDialplanStorePostErrors[keyof StoreDialplanApiV1TelephoningDialplanStorePostErrors];
+
+export type StoreDialplanApiV1TelephoningDialplanStorePostResponses = {
+    /**
+     * Successful Response
+     */
+    200: unknown;
+};
+
+export type GetDialplanApiV1TelephoningDialplanExtenGetData = {
+    body?: never;
+    path: {
+        /**
+         * Exten
+         */
+        exten: string;
+    };
+    query?: never;
+    url: '/api/v1/telephoning/dialplan/{exten}';
+};
+
+export type GetDialplanApiV1TelephoningDialplanExtenGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetDialplanApiV1TelephoningDialplanExtenGetError = GetDialplanApiV1TelephoningDialplanExtenGetErrors[keyof GetDialplanApiV1TelephoningDialplanExtenGetErrors];
+
+export type GetDialplanApiV1TelephoningDialplanExtenGetResponses = {
+    /**
+     * Response Get Dialplan Api V1 Telephoning Dialplan  Exten  Get
+     * Successful Response
+     */
+    200: DialplanOutput | null;
+};
+
+export type GetDialplanApiV1TelephoningDialplanExtenGetResponse = GetDialplanApiV1TelephoningDialplanExtenGetResponses[keyof GetDialplanApiV1TelephoningDialplanExtenGetResponses];
+
+export type GetDialplanExtensionsApiV1TelephoningDialplansGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/telephoning/dialplans';
+};
+
+export type GetDialplanExtensionsApiV1TelephoningDialplansGetResponses = {
+    /**
+     * Response Get Dialplan Extensions Api V1 Telephoning Dialplans Get
+     * Successful Response
+     */
+    200: Array<string>;
+};
+
+export type GetDialplanExtensionsApiV1TelephoningDialplansGetResponse = GetDialplanExtensionsApiV1TelephoningDialplansGetResponses[keyof GetDialplanExtensionsApiV1TelephoningDialplansGetResponses];
 
 export type GetPagesApiV1PagesGetData = {
     body?: never;

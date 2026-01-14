@@ -13,8 +13,9 @@ from sqlmodel import Session, create_engine, SQLModel, func, select
 from app.core.config import settings
 
 from app.models import *
-from app.models.asterisk import DialPlanEntry
-from app.models.crud.dialplan import Dial, Dialplan
+
+from app.telephoning.dialplan import Dialplan, Dial
+
 from app.models.user import User
 from app.models.crud.user import create_user
 from app.models.user import UserCreate, UserRole
@@ -33,9 +34,11 @@ def init_asterisk_db(session_asterisk: Session) -> None:
 
     # TODO: Figure out if we want to keep this when every SIP extension creates
     # its own dialplan (as fallback maybe?)
-    dialplan = Dialplan(session_asterisk, exten="_" + ("X" * settings.EXTENSION_DIGITS))
+    dialplan = Dialplan.from_db(
+        session_asterisk, exten="_" + ("X" * settings.EXTENSION_DIGITS)
+    )
     dialplan.add(Dial(devices=["${PJSIP_DIAL_CONTACTS(${EXTEN})}"]), prio=1)
-    dialplan.store()
+    dialplan.store(session_asterisk)
 
 
 def init_db(session: Session) -> None:

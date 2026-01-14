@@ -1,0 +1,158 @@
+"""
+uURU - Micro User Registration Utility
+
+Copyright (c) Ole Lange, Gregor Michels and contributors. All rights reserved.
+Licensed under the MIT license. See LICENSE file in the project root for details.
+"""
+# ruff: noqa: F403, F405
+
+from typing import Literal, TypeVar, Union
+
+from pydantic import Field
+from pydantic.fields import computed_field
+from pydantic.functional_validators import field_validator
+from pydantic.main import BaseModel
+from sqlmodel import Session, delete, select
+
+from app.models.asterisk import DialPlanEntry
+
+# Import all applications here:
+from app.telephoning.dialplan.applications import *
+
+T = TypeVar("T", bound="BaseDialplanApp")
+
+
+class Dialplan(BaseModel):
+    exten: str
+    context: str
+    entries: dict[int, Union[BaseDialplanApp, T]] = Field(default_factory=dict)
+
+    @field_validator("entries", mode="before")
+    def load_entries(cls, v: dict[str, dict]):
+        """
+        This function loads the entries from a dict/json representation into
+        their corresponding classes (if no class available it panics).
+        """
+        result: dict[int, Union[BaseDialplanApp, T]] = {}
+        known_apps = {a.COMPATIBLE_APP: a for a in Dialplan.get_known_apps()}
+        prio = 1
+        for k in v.keys():
+            if k.isdigit():
+                prio = int(k)
+            elif k == "n":
+                prio += 1
+            else:
+                raise ValueError("priority (key) must be a integer or 'n'")
+
+            app = known_apps.get(v[k].get("app"))
+            if app is None:
+                raise ValueError(
+                    f"couldn't find a suitable app class for {v[k].get('app')}"
+                )
+            result.update({prio: app.model_validate(v[k])})
+
+        return result
+
+    @staticmethod
+    def from_db(session_asterisk: Session, exten: str, context="pjsip_internal"):
+        plan = Dialplan(exten=exten, context=context)
+        plan._load(session_asterisk)
+        return plan
+
+    @staticmethod
+    def get_known_apps():
+        return BaseDialplanApp.__subclasses__()
+
+    def _parse(self, app: str, appdata: str) -> BaseDialplanApp:
+        """
+        Searches for a matching Dialplan App class and calls it's parse function
+        if no match is found a BaseDialplanApp is returned
+        """
+        for subcls in Dialplan.get_known_apps():
+            if subcls.COMPATIBLE_APP == app:
+                return subcls.parse(app, appdata)
+        return Dummy.parse(app, appdata)
+
+    def _load(self, session_asterisk: Session):
+        """
+        Loads existing dialplan entries from the database
+        """
+
+        entries = session_asterisk.exec(
+            select(DialPlanEntry)
+            .where(DialPlanEntry.exten == self.exten)
+            .where(DialPlanEntry.context == self.context)
+        ).all()
+
+        self.entries = {}
+        for entry in entries:
+            self.entries.update({entry.priority: self._parse(entry.app, entry.appdata)})
+
+    def delete(self, session_asterisk: Session, autocommit=True):
+        """
+        Deletes the complete dialplan from the database
+        """
+        try:
+            session_asterisk.exec(
+                delete(DialPlanEntry)
+                .where(DialPlanEntry.exten == self.exten)
+                .where(DialPlanEntry.context == self.context)
+            )
+            if autocommit:
+                session_asterisk.commit()
+        except:
+            if autocommit:
+                session_asterisk.rollback()
+            raise
+
+    def store(self, session_asterisk: Session, autocommit=True):
+        """
+        Deletes this dialplan and stores it again in the database
+        """
+        self.delete(session_asterisk, autocommit)
+
+        try:
+            for prio, entry in self.get_ordered_entries():
+                app, appdata = entry.assemble()
+                db_obj = DialPlanEntry(
+                    context=self.context,
+                    exten=self.exten,
+                    priority=prio,
+                    app=app,
+                    appdata=appdata,
+                )
+                session_asterisk.add(db_obj)
+            if autocommit:
+                session_asterisk.commit()
+        except:
+            if autocommit:
+                session_asterisk.rollback()
+            raise
+
+        self._load(session_asterisk)
+
+    def add(self, app: BaseDialplanApp, prio: int | Literal["n"] = "n"):
+        if prio == "n":
+            prio = max(list(self.entries.keys()), default=0) + 1
+        self.entries.update({prio: app})
+
+    def remove(self, prio: int):
+        if prio in self.entries.keys():
+            del self.entries[prio]
+
+    def get_ordered_entries(self) -> list[tuple[int, BaseDialplanApp]]:
+        keys = list(self.entries.keys())
+        keys.sort()
+        return [(key, self.entries[key]) for key in keys]
+
+    def __repr__(self):
+        result = f"[{self.context}]\n"
+        for prio, entry in self.get_ordered_entries():
+            app, appdata = entry.assemble()
+            result += f"exten => {self.exten},{prio},{app}({appdata})\n"
+        return result[:-1]
+
+    @computed_field
+    @property
+    def asterisk_config(self) -> str:
+        return self.__repr__()

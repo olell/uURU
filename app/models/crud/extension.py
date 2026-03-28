@@ -5,29 +5,27 @@ Copyright (c) Ole Lange, Gregor Michels and contributors. All rights reserved.
 Licensed under the MIT license. See LICENSE file in the project root for details.
 """
 
-from logging import getLogger
 import random
+from logging import getLogger
 from typing import Literal, Optional
-from ldap3 import MODIFY_DELETE, MODIFY_REPLACE, Connection
-from sqlmodel import Session, select, col, or_
+
 import sqlalchemy
+from ldap3 import MODIFY_DELETE, MODIFY_REPLACE, Connection
+from sqlmodel import Session, col, or_, select
 
-from pydantic_extra_types.mac_address import MacAddress
-
+from app.core.config import settings
 from app.core.security import generate_extension_password, generate_extension_token
-
 from app.models.crud import CRUDNotAllowedException
 from app.models.crud.asterisk import delete_sip_account
 from app.models.crud.media import get_media_by_id
-from app.models.media import ExtensionMedia
-from app.models.user import User, UserRole
 from app.models.extension import (
-    ExtensionCreate,
     Extension,
+    ExtensionCreate,
     ExtensionUpdate,
     TemporaryExtensions,
 )
-from app.core.config import settings
+from app.models.media import ExtensionMedia
+from app.models.user import User, UserRole
 from app.telephoning.main import Telephoning
 
 logger = getLogger(__name__)
@@ -219,7 +217,7 @@ def update_extension(
         assigned_media: dict[str, ExtensionMedia] = {
             e.name: e for e in extension.assigned_media
         }
-        print(update_data.media)
+
         for name in update_data.media.keys():
             current = assigned_media.get(name)
             descr = flavor.MEDIA.get(name)
@@ -257,7 +255,12 @@ def update_extension(
 
         data = update_data.model_dump(exclude_unset=True)
         del data["media"]
+        del data["unset_coordinates"]
         extension.sqlmodel_update(data)
+
+        if update_data.unset_coordinates:
+            extension.lat = None
+            extension.lon = None
 
         if len(extension.name) > flavor.MAX_EXTENSION_NAME_CHARS:
             raise CRUDNotAllowedException("Extension name too long!")

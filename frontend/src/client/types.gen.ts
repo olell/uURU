@@ -312,6 +312,10 @@ export type ExtensionUpdate = {
      */
     lon?: number | null;
     /**
+     * Unset Coordinates
+     */
+    unset_coordinates?: boolean | null;
+    /**
      * Extra Fields
      */
     extra_fields?: {

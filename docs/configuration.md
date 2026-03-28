@@ -14,11 +14,12 @@ The credentials for the first created account are configured by
 
 ### Security
 
-| Key                              | Description                            | Default           |
-| -------------------------------- | -------------------------------------- | ----------------- |
-| UURU_SECRET_KEY                  | Secret key used to sign session tokens | random (32 chars) |
-| UURU_ACCESS_TOKEN_EXPIRE_MINUTES | Minutes until a login expires          | 8 days (11520)    |
-| UURU_BACKEND_CORS_ORIGINS        | A list of allowed CORS origins         | `[]`              |
+| Key                              | Description                                         | Default           |
+| -------------------------------- | --------------------------------------------------- | ----------------- |
+| UURU_SECRET_KEY                  | Secret key used to sign session tokens              | random (32 chars) |
+| UURU_ACCESS_TOKEN_EXPIRE_MINUTES | Minutes until a login expires                       | 8 days (11520)    |
+| UURU_BACKEND_CORS_ORIGINS        | A list of allowed CORS origins                      | `[]`              |
+| UURU_ALLOWED_USERNAME_CHARS      | A set of characters which are allowed for usernames | `A-Z,a-z,0-9`     |
 
 ### HTTP routing
 
@@ -145,14 +146,13 @@ The `UURU_WEBSIP_EXTENSION_RANGE` should be reserved via the `UURU_RESERVED_EXTE
 ### Asterisk Manager Interface
 
 !!! info
-    Because the `asterisk` container is exposed via `--network=host` we have to bind the AMI interface to a specific (non 127.0.0.0/8) ip.
-    We assume that your docker installation ships with `docker0` on `172.17.0.1` - change to your setup if needed.
+Because the `asterisk` container is exposed via `--network=host` we have to bind the AMI interface to a specific (non 127.0.0.0/8) ip.
+We assume that your docker installation ships with `docker0` on `172.17.0.1` - change to your setup if needed.
 
 !!! danger
-    By default all other containers/processes on your machine can talk via `AMI` to the `asterisk`.
-    We assume a trusted environment.
-    Please generate a secure `UURU_ASTERISK_AMI_PASS` for production setups.
-
+By default all other containers/processes on your machine can talk via `AMI` to the `asterisk`.
+We assume a trusted environment.
+Please generate a secure `UURU_ASTERISK_AMI_PASS` for production setups.
 
 | Key                    | Description                                 | Default                    |
 | ---------------------- | ------------------------------------------- | -------------------------- |

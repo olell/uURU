@@ -5,13 +5,14 @@ Copyright (c) Ole Lange, Gregor Michels and contributors. All rights reserved.
 Licensed under the MIT license. See LICENSE file in the project root for details.
 """
 
-from datetime import datetime, timedelta, timezone
-from typing import Any
-from argon2 import PasswordHasher
-from argon2.exceptions import VerifyMismatchError
-import jwt
 import random
 import string
+from datetime import datetime, timedelta, timezone
+from typing import Any
+
+import jwt
+from argon2 import PasswordHasher
+from argon2.exceptions import VerifyMismatchError
 
 from app.core.config import settings
 
@@ -58,3 +59,7 @@ def generate_peer_secret():
     return "".join(
         random.choice(string.ascii_letters + string.digits) for _ in range(32)
     )
+
+
+def check_username(name: str) -> bool:
+    return set(name) <= set(settings.ALLOWED_USERNAME_CHARS)

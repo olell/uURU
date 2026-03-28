@@ -9,9 +9,8 @@
 		ModalBody,
 		ModalFooter
 	} from '@sveltestrap/sveltestrap';
-	import { tick } from 'svelte';
-	import { push_api_error, push_message } from '../messageService.svelte';
 	import { registerApiV1UserRegisterPost } from '../client';
+	import { push_api_error, push_message } from '../messageService.svelte';
 	import { settings } from '../sharedState.svelte';
 
 	let { isOpen = $bindable() } = $props();
@@ -81,7 +80,7 @@
 	<Form validated={passwords_match} onsubmit={handleRegister}>
 		<ModalBody>
 			<FormGroup floating label="Username">
-				<Input bind:value={username} required />
+				<Input bind:value={username} pattern={`[${settings.val!.ALLOWED_USERNAME_CHARS}]+`} required />
 			</FormGroup>
 			<FormGroup floating label="Password">
 				<Input bind:value={password} type="password" required minlength={10} />

@@ -5,8 +5,9 @@ Copyright (c) Ole Lange, Gregor Michels and contributors. All rights reserved.
 Licensed under the MIT license. See LICENSE file in the project root for details.
 """
 
-from logging import INFO, getLevelNamesMapping
 import secrets
+import string
+from logging import INFO, getLevelNamesMapping
 from typing import Annotated, Any, Literal
 
 from pydantic import (
@@ -17,9 +18,6 @@ from pydantic import (
 )
 from pydantic_core import MultiHostUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic_extra_types.color import Color
-
-import string
 
 
 def parse_cors(v: Any) -> list[str] | str:
@@ -46,6 +44,7 @@ class PublicSettings(BaseModel):
     ENABLE_PAGES: bool
     PAGES_TITLE: str
     LIMIT_REGISTRATION: bool
+    ALLOWED_USERNAME_CHARS: str
     ENABLE_WEBSIP: bool
     WEBSIP_PUBLIC: bool
     WEBSIP_EXTENSION_RANGE: tuple[int, int]
@@ -73,6 +72,8 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 11520  # 8 days
     LIMIT_REGISTRATION: bool = False
 
+    ALLOWED_USERNAME_CHARS: str = string.ascii_letters + string.digits
+
     ## NETWORK
     WEB_PREFIX: str = ""
     API_V1_STR: str = "/api/v1"
@@ -81,9 +82,9 @@ class Settings(BaseSettings):
     WEB_HOST: str = "127.0.0.1:8000"
     ASTERISK_HOST: str = "127.0.0.1"
 
-    BACKEND_CORS_ORIGINS: Annotated[list[AnyUrl] | str, BeforeValidator(parse_cors)] = (
-        []
-    )
+    BACKEND_CORS_ORIGINS: Annotated[
+        list[AnyUrl] | str, BeforeValidator(parse_cors)
+    ] = []
 
     @computed_field  # type: ignore[prop-decorator]
     @property

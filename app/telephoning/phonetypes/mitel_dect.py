@@ -41,7 +41,7 @@ class MitelDECT(SIP):
     DISPLAY_INDEX = 1001
     IS_SPECIAL = False
 
-    SUPPORTED_CODEC = "alaw"
+    SUPPORTED_CODEC = ("g722", "alaw")
     EXTRA_FIELDS = None
 
     JOB_INTERVAL = 10

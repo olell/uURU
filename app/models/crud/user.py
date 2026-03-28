@@ -11,7 +11,7 @@ from logging import getLogger
 from sqlmodel import Session, col, select
 
 from app.core.config import settings
-from app.core.security import get_password_hash, verify_password
+from app.core.security import check_username, get_password_hash, verify_password
 from app.models.crud import CRUDNotAllowedException
 from app.models.user import (
     Invite,
@@ -51,6 +51,9 @@ def create_user(
         if creating_user is None or creating_user.role != UserRole.ADMIN:
             raise CRUDNotAllowedException("You may not register an admin account")
 
+    if not check_username(new_user.username):
+        raise CRUDNotAllowedException("Username contains invalid characters!")
+
     db_obj = User.model_validate(
         new_user, update={"password_hash": get_password_hash(new_user.password)}
     )
@@ -78,6 +81,9 @@ def update_user(
         and executing_user.role != UserRole.ADMIN
     ):
         raise CRUDNotAllowedException("You're not allowed to change this users role!")
+
+    if update_data.username is not None and not check_username(update_data.username):
+        raise CRUDNotAllowedException("Username contains invalid characters!")
 
     data = update_data.model_dump(exclude_unset=True)
     extra_data = {}

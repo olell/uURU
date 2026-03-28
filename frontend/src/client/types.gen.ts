@@ -830,6 +830,10 @@ export type PublicSettings = {
      */
     LIMIT_REGISTRATION: boolean;
     /**
+     * Allowed Username Chars
+     */
+    ALLOWED_USERNAME_CHARS: string;
+    /**
      * Enable Websip
      */
     ENABLE_WEBSIP: boolean;

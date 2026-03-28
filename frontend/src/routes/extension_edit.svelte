@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import {
 		Button,
 		Form,
@@ -10,25 +12,22 @@
 		Modal,
 		ModalBody
 	} from '@sveltestrap/sveltestrap';
+	import Ajv from 'ajv';
+	import { Map, Marker, TileLayer } from 'sveaflet';
 	import {
 		createApiV1ExtensionPost,
+		getExtensionContactApiV1ExtensionContactExtensionGet,
 		getMediaApiV1MediaGet,
 		getPhoneTypesApiV1TelephoningTypesGet,
-		type Media,
 		updateApiV1ExtensionExtensionPatch,
 		type Extension,
+		type Media,
 		type PhoneType,
-		getExtensionContactApiV1ExtensionContactExtensionGet,
 		type PsContact
 	} from '../client';
+	import SchemaForm from '../components/schemaForm.svelte';
 	import { push_api_error, push_message } from '../messageService.svelte';
 	import { adminMode, isMobile, settings, user_info } from '../sharedState.svelte';
-	import { Map, Marker, TileLayer } from 'sveaflet';
-	import SchemaForm from '../components/schemaForm.svelte';
-	import Ajv from 'ajv';
-	import { goto } from '$app/navigation';
-	import { resolve } from '$app/paths';
-	import { json } from '@sveltejs/kit';
 
 	const { extension }: { extension?: Extension } = $props();
 
@@ -239,7 +238,7 @@
 			// update
 			const { error } = await updateApiV1ExtensionExtensionPatch({
 				credentials: 'include',
-				body: data,
+				body: {...data, unset_coordinates: (markerLat === undefined || markerLon === undefined)},
 				path: { extension: extension.extension }
 			});
 			if (!!error) {

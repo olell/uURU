@@ -5,28 +5,27 @@ Copyright (c) Ole Lange, Gregor Michels and contributors. All rights reserved.
 Licensed under the MIT license. See LICENSE file in the project root for details.
 """
 
-from enum import Enum
+import json
 import random
 import string
-from typing import Optional, TYPE_CHECKING, Self, Any
+import uuid
+from typing import TYPE_CHECKING, Any, Optional, Self
+from urllib.parse import unquote
 
-from sqlmodel import JSON, Column, Relationship, SQLModel, Field
 from pydantic import (
     BaseModel,
     ValidationError,
     computed_field,
-    model_validator,
     field_validator,
+    model_validator,
+)
+from pydantic import (
     Field as PydanticField,
 )
-import json
-import uuid
-from urllib.parse import unquote
-
-from app.telephoning.main import Telephoning
-
+from sqlmodel import JSON, Column, Field, Relationship, SQLModel
 
 from app.models.media import ExtensionMedia, Media
+from app.telephoning.main import Telephoning
 
 if TYPE_CHECKING:
     from app.models.user import User
@@ -98,7 +97,7 @@ class Extension(ExtensionBase, table=True):
 
     @model_validator(mode="after")
     def check_phone_flavor(self) -> Self:
-        if not self.type in Telephoning.get_all_phone_types():
+        if self.type not in Telephoning.get_all_phone_types():
             raise ValidationError(f"Unknown phone type: {self.type}")
 
         flavor = Telephoning.get_flavor_by_type(self.type)
@@ -184,6 +183,8 @@ class ExtensionUpdate(BaseModel):
     location_name: Optional[str] = None
     lat: Optional[float] = None
     lon: Optional[float] = None
+
+    unset_coordinates: Optional[bool] = None
 
     extra_fields: dict = {}
 

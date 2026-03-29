@@ -20,6 +20,8 @@ services:
       UURU_DATABASE_SERVER: mariadb-app
       UURU_ASTERISK_DATABASE_SERVER: mariadb-asterisk
       UURU_MEDIA_PATH: /media
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
       - 8000:8000
 

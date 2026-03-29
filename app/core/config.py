@@ -248,7 +248,7 @@ class Settings(BaseSettings):
     ## AMI
     ASTERISK_AMI_USER: str = "uuru_ami_user"
     ASTERISK_AMI_PASS: str = "uuru_ami_secret"
-    ASTERISK_AMI_ADDR: str = "172.17.0.1"
+    ASTERISK_AMI_ADDR: str = "host.docker.internal"
     ASTERSIK_AMI_PORT: int = 5038
 
 

@@ -64,8 +64,8 @@ def create_sip_account(
             disallow="all",
             allow=codec_string,
             callerid=f"{extension_name} <{extension}>",
-            dtls_auto_generate_cert="1" if set_websip_fields else None,
-            webrtc="1" if set_websip_fields else None,
+            dtls_auto_generate_cert="yes" if set_websip_fields else None,
+            webrtc="yes" if set_websip_fields else None,
         )
         session_asterisk.add(ps_aor)
         session_asterisk.add(ps_auth)

@@ -31,13 +31,13 @@ class PSEndpoint(SQLModel, table=True):
     context: str
     disallow: str
     allow: str
-    direct_media: str = "0"
+    direct_media: str = "no"
     callerid: str
-    send_pai: str = "1"
+    send_pai: str = "yes"
 
     # Fields required for websip
-    dtls_auto_generate_cert: str = "0"
-    webrtc: str = "0"
+    dtls_auto_generate_cert: str = "no"
+    webrtc: str = "no"
 
 
 class PSAor(SQLModel, table=True):

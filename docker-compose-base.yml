@@ -1,6 +1,6 @@
 services:
   mariadb-app:
-    image: mariadb
+    image: mariadb:12.3.2-noble
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       start_period: 300s
@@ -9,11 +9,14 @@ services:
       MARIADB_USER: uuru
       MARIADB_DATABASE: uuru
       MARIADB_PASSWORD: uurupassword
+      MARIADB_AUTO_UPGRADE: True
+    volumes:
+      - mariadb_app_data:/var/lib/mysql
     ports:
       - 127.0.0.1:3307:3306
 
   mariadb-asterisk:
-    image: mariadb
+    image: mariadb:12.3.2-noble
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       start_period: 300s
@@ -22,6 +25,9 @@ services:
       MARIADB_USER: asterisk
       MARIADB_DATABASE: asterisk
       MARIADB_PASSWORD: asteriskpassword
+      MARIADB_AUTO_UPGRADE: True
+    volumes:
+      - mariadb_asterisk_data:/var/lib/mysql
     ports:
       - 127.0.0.1:3306:3306
 
@@ -58,3 +64,7 @@ services:
     ports:
       - 389:389
       - 636:636
+
+volumes:
+  mariadb_app_data:
+  mariadb_asterisk_data:

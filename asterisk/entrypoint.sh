@@ -16,9 +16,11 @@ cd /usr/share/doc/asterisk-doc/ast-db-manage/
 find -L . -mindepth 2 -name "*.gz" -type f -exec gunzip -f "{}" \;
 find -L . -maxdepth 1 -name "*.gz" -type f -exec gunzip -f "{}" \;
 # template config file
-envsubst < config.ini.tmpl > config.ini
+ALEMBIC_SCRIPT_LOCATION=config envsubst < config.ini.tmpl > config.ini
+ALEMBIC_SCRIPT_LOCATION=cdr envsubst < config.ini.tmpl > cdr.ini
 # execute migratons
 alembic -c config.ini upgrade head
+alembic -c cdr.ini upgrade head
 
 ## execute asterisk
 #

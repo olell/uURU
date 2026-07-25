@@ -24,6 +24,7 @@ from pydantic import (
 )
 from sqlmodel import JSON, Column, Field, Relationship, SQLModel
 
+from app.models.device import Device
 from app.models.media import ExtensionMedia, Media
 from app.telephoning.main import Telephoning
 
@@ -87,6 +88,7 @@ class Extension(ExtensionBase, table=True):
 
     extra_fields: dict = Field(default_factory=dict, sa_column=Column(JSON))
     assigned_media: list[ExtensionMedia] = Relationship(back_populates="extension")
+    devices: list[Device] = Relationship(back_populates="extension")
 
     def get_flavor_model(self) -> BaseModel:
         flavor = Telephoning.get_flavor_by_type(self.type)

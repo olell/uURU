@@ -97,7 +97,8 @@ def update_sip_account(
         raise ValueError("no such endpoint in asterisk db")
 
     flavor = Telephoning.get_flavor_by_type(extension.type)
-    codec, codec_string = None
+    codec = None
+    codec_string = ""
     if flavor is not None:
         codec = flavor.get_codec(extension)
 

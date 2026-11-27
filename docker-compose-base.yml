@@ -31,6 +31,7 @@ services:
     depends_on:
       mariadb-asterisk:
         condition: service_healthy
+    env_file: .env
     environment:
       MARIADB_DATABASE: asterisk
       MARIADB_HOST: 127.0.0.1

@@ -317,7 +317,7 @@ def update_music_on_hold(
                 session_asterisk.commit()
                 session_asterisk.refresh(moh)
         if assigned is None and ex:  # removed
-            session_asterisk.delete(moh)
+            session_asterisk.delete(ex)
             if autocommit:
                 session_asterisk.commit()
 

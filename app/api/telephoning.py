@@ -7,7 +7,6 @@ Licensed under the MIT license. See LICENSE file in the project root for details
 
 from datetime import datetime
 from logging import getLogger
-from typing import Optional
 
 from asterisk.ami.client import AMIClientAdapter
 from asterisk.ami.response import FutureResponse
@@ -32,7 +31,7 @@ logger = getLogger(__name__)
 
 
 class PhoneType(BaseModel):
-    schema: Optional[dict] = None
+    schema: dict | None = None
     display_index: int
     name: str
     max_extension_name_chars: int
@@ -124,6 +123,12 @@ def originate_call(
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="You may not originate calls from this extension",
+        )
+
+    if not settings.ASTERISK_AMI_ENABLED:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="AMI is not enabled, cannot originate calls",
         )
 
     contact = get_contact(session_asterisk, source_extension, user)

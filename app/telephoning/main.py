@@ -5,15 +5,15 @@ Copyright (c) Ole Lange, Gregor Michels and contributors. All rights reserved.
 Licensed under the MIT license. See LICENSE file in the project root for details.
 """
 
-from typing import Self
 import importlib
-import pkgutil
-from fastapi import APIRouter, FastAPI
-from apscheduler.schedulers.background import BackgroundScheduler
 import json
+import pkgutil
 from logging import getLogger
+from typing import Self
 
+from apscheduler.schedulers.background import BackgroundScheduler
 from asterisk.ami import AMIClient
+from fastapi import APIRouter, FastAPI
 
 from app.core.config import settings
 from app.telephoning.flavor import PhoneFlavor
@@ -49,7 +49,7 @@ def load_phone_flavors() -> list[PhoneFlavor]:
     return phone_flavors
 
 
-class Telephoning(object):
+class Telephoning:
     _instance: Self | None = None
 
     @staticmethod
@@ -68,11 +68,14 @@ class Telephoning(object):
         self.flavor_by_type = {}
         self.all_types = []
 
-        self.ami_client = AMIClient(settings.ASTERISK_AMI_ADDR, settings.ASTERSIK_AMI_PORT)
+        self.ami_client = AMIClient(
+            settings.ASTERISK_AMI_ADDR, settings.ASTERSIK_AMI_PORT
+        )
 
     def start(self, app: FastAPI, scheduler: BackgroundScheduler):
 
-        self.setup_ami()
+        if settings.ASTERISK_AMI_ENABLED:
+            self.setup_ami()
 
         for cls in self.flavor_classes:
             # 1st: create instance
@@ -123,7 +126,10 @@ class Telephoning(object):
         self.ami_client.login(settings.ASTERISK_AMI_USER, settings.ASTERISK_AMI_PASS)
 
     def get_ami_client(self):
-        return self.ami_client
+        if settings.ASTERISK_AMI_ENABLED:
+            return self.ami_client
+        else:
+            return None
 
     @staticmethod
     def get_flavor_by_type(phone_type: str) -> PhoneFlavor | None:

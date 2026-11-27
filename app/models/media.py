@@ -5,11 +5,12 @@ Copyright (c) Ole Lange, Gregor Michels and contributors. All rights reserved.
 Licensed under the MIT license. See LICENSE file in the project root for details.
 """
 
+import uuid
 from datetime import datetime
 from enum import Enum
-from typing import Literal, Optional, TYPE_CHECKING
-import uuid
-from pydantic import BaseModel, computed_field
+from typing import TYPE_CHECKING, Literal, Optional
+
+from pydantic import BaseModel
 from sqlmodel import Field, Relationship, SQLModel
 
 if TYPE_CHECKING:
@@ -27,8 +28,8 @@ class ImageFormat(BaseModel):
     # please note: the out_type literal format must match util.media.SUPPORTED_IMAGE_FORMATS
     out_type: Literal["avif", "bmp", "gif", "jpeg", "png", "tiff", "webp"] = "png"
     colormode: Literal["1", "L", "RGB"] = "RGB"
-    width: Optional[int] = None
-    height: Optional[int] = None
+    width: int | None = None
+    height: int | None = None
 
 
 class AudioFormat(BaseModel):
@@ -45,7 +46,7 @@ class Media(SQLModel, table=True):
     name: str
     type: MediaType
 
-    created_by_id: Optional[uuid.UUID] = Field(default=None, foreign_key="user.id")
+    created_by_id: uuid.UUID | None = Field(default=None, foreign_key="user.id")
     created_by: Optional["User"] = Relationship(back_populates="media")
 
     uploaded_at: datetime = Field(default_factory=datetime.now)
@@ -61,8 +62,8 @@ class ExtensionMedia(SQLModel, table=True):
     # this refers to the key of the MEDIA dict in the phoneflavor of the extension
     name: str
 
-    media_id: Optional[uuid.UUID] = Field(default=None, foreign_key="media.id")
-    media: Optional[Media] = Relationship(back_populates="assigned_extensions")
+    media_id: uuid.UUID | None = Field(default=None, foreign_key="media.id")
+    media: Media | None = Relationship(back_populates="assigned_extensions")
 
-    extension_id: Optional[str] = Field(default=None, foreign_key="extension.extension")
+    extension_id: str | None = Field(default=None, foreign_key="extension.extension")
     extension: Optional["Extension"] = Relationship(back_populates="assigned_media")

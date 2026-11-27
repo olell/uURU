@@ -5,8 +5,8 @@ Copyright (c) Ole Lange, Gregor Michels and contributors. All rights reserved.
 Licensed under the MIT license. See LICENSE file in the project root for details.
 """
 
-from typing import Annotated, Literal
 from pydantic import BaseModel, Field, computed_field
+
 from app.core.config import settings
 from app.models.crud.asterisk import (
     create_music_on_hold,
@@ -14,8 +14,8 @@ from app.models.crud.asterisk import (
     delete_music_on_hold,
     update_music_on_hold,
 )
-from app.telephoning.dialplan import Dialplan
 from app.models.media import AudioFormat, MediaType
+from app.telephoning.dialplan import Dialplan
 from app.telephoning.flavor import MediaDescriptor, PhoneFlavor
 
 

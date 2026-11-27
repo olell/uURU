@@ -6,6 +6,7 @@ Licensed under the MIT license. See LICENSE file in the project root for details
 """
 
 from pydantic import BaseModel
+
 from app.telephoning.flavor import PhoneFlavor
 
 

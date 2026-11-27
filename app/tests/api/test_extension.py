@@ -5,8 +5,8 @@ Copyright (c) Ole Lange, Gregor Michels and contributors. All rights reserved.
 Licensed under the MIT license. See LICENSE file in the project root for details.
 """
 
-from fastapi.testclient import TestClient
 from fastapi import status
+from fastapi.testclient import TestClient
 
 from app.core.config import settings
 
@@ -36,7 +36,7 @@ def test_create_update_delete(
     # update
     update_data = {"name": "foobar"}
     r = client.patch(
-        f"{settings.API_V1_STR}/extension/{create_response["extension"]}",
+        f"{settings.API_V1_STR}/extension/{create_response['extension']}",
         json=update_data,
         headers=root_token_headers,
     )
@@ -46,7 +46,7 @@ def test_create_update_delete(
 
     # delete
     r = client.delete(
-        f"{settings.API_V1_STR}/extension/{create_response["extension"]}",
+        f"{settings.API_V1_STR}/extension/{create_response['extension']}",
         headers=root_token_headers,
     )
 
@@ -85,7 +85,7 @@ def test_own(client: TestClient, root_token_headers: dict[str, str]) -> None:
 
     # then delete it again
     r = client.delete(
-        f"{settings.API_V1_STR}/extension/{create_response["extension"]}",
+        f"{settings.API_V1_STR}/extension/{create_response['extension']}",
         headers=root_token_headers,
     )
 
@@ -114,7 +114,7 @@ def test_phonebook(client: TestClient, root_token_headers: dict[str, str]) -> No
 
     # then delete it again
     r = client.delete(
-        f"{settings.API_V1_STR}/extension/{create_response["extension"]}",
+        f"{settings.API_V1_STR}/extension/{create_response['extension']}",
         headers=root_token_headers,
     )
 
@@ -165,6 +165,6 @@ def test_private_not_in_phonebook(
 
     # then delete it again
     r = client.delete(
-        f"{settings.API_V1_STR}/extension/{create_response["extension"]}",
+        f"{settings.API_V1_STR}/extension/{create_response['extension']}",
         headers=root_token_headers,
     )

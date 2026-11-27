@@ -10,8 +10,8 @@ from typing import TYPE_CHECKING, Literal
 from app.models.media import AudioFormat, ImageFormat, MediaType
 
 if TYPE_CHECKING:
-    from app.models.user import User
     from app.models.extension import Extension
+    from app.models.user import User
 
 from fastapi import APIRouter
 from pydantic import BaseModel
@@ -92,7 +92,9 @@ class PhoneFlavor:
     # all phone types from this class.
     # If multiple codecs are supported, they can be declared as a tuple.
     # Supported codecs: "g722", "alaw", "ulaw", "g726", "gsm", "lpc10"
-    SUPPORTED_CODEC: CODEC | tuple[CODEC] | dict[str, CODEC] | dict[str, tuple[CODEC]] = "g722"
+    SUPPORTED_CODEC: (
+        CODEC | tuple[CODEC] | dict[str, CODEC] | dict[str, tuple[CODEC]]
+    ) = "g722"
 
     # This limits the maximum amount of characters for the extension name
     MAX_EXTENSION_NAME_CHARS = 20
@@ -145,7 +147,6 @@ class PhoneFlavor:
             pass
         ```
         """
-        pass
 
     def job(self) -> None:
         """
@@ -159,7 +160,7 @@ class PhoneFlavor:
     def get_codec(self, extension: "Extension | None") -> CODEC | tuple[CODEC]:
         if isinstance(self.SUPPORTED_CODEC, str):
             return self.SUPPORTED_CODEC
-        
+
         if isinstance(self.SUPPORTED_CODEC, tuple):
             return self.SUPPORTED_CODEC
 

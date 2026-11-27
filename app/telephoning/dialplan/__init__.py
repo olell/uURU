@@ -4,7 +4,6 @@ uURU - Micro User Registration Utility
 Copyright (c) Ole Lange, Gregor Michels and contributors. All rights reserved.
 Licensed under the MIT license. See LICENSE file in the project root for details.
 """
-# ruff: noqa: F403, F405
 
 from typing import Literal, TypeVar, Union
 
@@ -25,7 +24,7 @@ T = TypeVar("T", bound="BaseDialplanApp")
 class Dialplan(BaseModel):
     exten: str
     context: str
-    entries: dict[int, Union[BaseDialplanApp, T]] = Field(default_factory=dict)
+    entries: dict[int, BaseDialplanApp | T] = Field(default_factory=dict)
 
     @field_validator("entries", mode="before")
     def load_entries(cls, v: dict[str, dict]):
@@ -33,10 +32,10 @@ class Dialplan(BaseModel):
         This function loads the entries from a dict/json representation into
         their corresponding classes (if no class available it panics).
         """
-        result: dict[int, Union[BaseDialplanApp, T]] = {}
+        result: dict[int, BaseDialplanApp | T] = {}
         known_apps = {a.COMPATIBLE_APP: a for a in Dialplan.get_known_apps()}
         prio = 1
-        for k in v.keys():
+        for k in v:
             if k.isdigit():
                 prio = int(k)
             elif k == "n":

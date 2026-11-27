@@ -1,20 +1,20 @@
 <script lang="ts">
 	import { Button, Icon, Modal, ModalBody } from '@sveltestrap/sveltestrap';
+	import { Web } from 'sip.js';
 	import {
+		adminPhonebookApiV1ExtensionAllGet,
 		createWebsipApiV1TelephoningWebsipGet,
 		deleteWebsipApiV1TelephoningWebsipDelete,
-		type WebSipExtension,
-		type ExtensionBase,
-		putWebsipApiV1TelephoningWebsipPut,
-		getExtensionsOnlineApiV1ExtensionOnlineGet,
 		type Extension,
+		type ExtensionBase,
+		getExtensionsOnlineApiV1ExtensionOnlineGet,
+		getOwnApiV1ExtensionOwnGet,
 		originateCallApiV1TelephoningOriginateGet,
-		adminPhonebookApiV1ExtensionAllGet,
-		getOwnApiV1ExtensionOwnGet
+		putWebsipApiV1TelephoningWebsipPut,
+		type WebSipExtension
 	} from '../client';
-	import { Web } from 'sip.js';
-	import { adminMode, settings, user_info } from '../sharedState.svelte';
 	import { push_api_error } from '../messageService.svelte';
+	import { adminMode, settings, user_info } from '../sharedState.svelte';
 
 	let { isOpen = $bindable<boolean>(), target = $bindable<ExtensionBase | null>() } = $props();
 
@@ -274,7 +274,7 @@
 					>
 				{/if}
 			</div>
-			{#if user_info.val !== undefined && status == 'prepare'}
+			{#if user_info.val !== undefined && status == 'prepare' && settings.val.ASTERISK_AMI_ENABLED}
 				<!-- check for any online extensions -->
 				<hr />
 				<div class="d-flex justify-content-center text-info">

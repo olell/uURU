@@ -7,8 +7,6 @@ Licensed under the MIT license. See LICENSE file in the project root for details
 
 from pydantic import BaseModel
 
-from app.core.config import settings
-from app.models.asterisk import MusicOnHold
 from app.models.crud.asterisk import (
     create_music_on_hold,
     create_sip_account,
@@ -17,8 +15,8 @@ from app.models.crud.asterisk import (
     update_music_on_hold,
     update_sip_account,
 )
-from app.telephoning.dialplan import Dial, Dialplan
 from app.models.media import AudioFormat, MediaType
+from app.telephoning.dialplan import Dial, Dialplan
 from app.telephoning.flavor import CODEC, MediaDescriptor, PhoneFlavor
 
 

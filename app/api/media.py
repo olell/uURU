@@ -5,19 +5,20 @@ Copyright (c) Ole Lange, Gregor Michels and contributors. All rights reserved.
 Licensed under the MIT license. See LICENSE file in the project root for details.
 """
 
-from logging import getLogger
 import os
-from typing import Optional
+from logging import getLogger
+
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, status
 from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel
 
 from app.api.deps import CurrentUser
-from app.core.db import SessionDep
 from app.core.config import settings
+from app.core.db import SessionDep
+from app.models.crud import CRUDNotAllowedException
+from app.models.crud import media as media_crud
 from app.models.crud.extension import get_extension_by_id
 from app.models.media import AudioFormat, ImageFormat, Media, MediaType
-from app.models.crud import CRUDNotAllowedException, media as media_crud
 from app.models.user import UserRole
 from app.telephoning.main import Telephoning
 from app.util.media import get_converted_stream
@@ -134,7 +135,7 @@ def update_media(
 # TODO: Decide if this endpoint should be login only
 @router.get("/byid/{media_id}", response_class=FileResponse)
 @router.get("/byid/{media_id}.{ext}", response_class=FileResponse)
-def get_media_content(session: SessionDep, media_id: str, ext: Optional[str] = None):
+def get_media_content(session: SessionDep, media_id: str, ext: str | None = None):
     media = media_crud.get_media_by_id(session, media_id)
     if media is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not found!")

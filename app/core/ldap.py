@@ -6,6 +6,7 @@ Licensed under the MIT license. See LICENSE file in the project root for details
 """
 
 from typing import Annotated
+
 from fastapi import Depends
 from ldap3 import Connection, Server
 

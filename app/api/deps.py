@@ -6,17 +6,18 @@ Licensed under the MIT license. See LICENSE file in the project root for details
 """
 
 from typing import Annotated
-from fastapi import HTTPException, Depends, status, Header
-from fastapi.security import APIKeyCookie
+
 import jwt
+from fastapi import Depends, HTTPException, status
+from fastapi.security import APIKeyCookie
 from jwt import InvalidTokenError
 from pydantic import ValidationError
 
 from app.core.config import settings
 from app.core.db import SessionDep
 from app.core.security import JWT_ALGORITHM
-from app.models.user import TokenPayload, User, UserRole
 from app.models.crud.user import get_user_by_id
+from app.models.user import TokenPayload, User
 
 
 def get_current_user_optional(

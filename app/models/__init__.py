@@ -6,17 +6,17 @@ Licensed under the MIT license. See LICENSE file in the project root for details
 """
 
 from app.models.asterisk import (
+    IAXFriend,
     MusicOnHold,
     PSAor,
     PSAuth,
-    PSEndpoint,
-    IAXFriend,
     PSContact,
+    PSEndpoint,
 )
-from app.models.user import Invite, User
 from app.models.extension import Extension, TemporaryExtensions
-from app.models.federation import Peer, IncomingPeeringRequest, OutgoingPeeringRequest
+from app.models.federation import IncomingPeeringRequest, OutgoingPeeringRequest, Peer
 from app.models.media import ExtensionMedia, Media
+from app.models.user import Invite, User
 
 tables = [
     User,

@@ -6,8 +6,6 @@ Licensed under the MIT license. See LICENSE file in the project root for details
 """
 
 from fastapi import APIRouter
-from pydantic import BaseModel
-from pydantic_extra_types.color import Color
 
 from app.core.config import PublicSettings, settings
 

@@ -37,10 +37,10 @@ class ExtensionBase(SQLModel):
     extension: str = Field(unique=True, primary_key=True)
     name: str
 
-    location_name: Optional[str] = None
+    location_name: str | None = None
     # stored as lat/lon * 10000000 ## todo: validator
-    lat: Optional[int] = Field(default=None, ge=-900000000, le=900000000)
-    lon: Optional[int] = Field(default=None, ge=-1800000000, le=1800000000)
+    lat: int | None = Field(default=None, ge=-900000000, le=900000000)
+    lon: int | None = Field(default=None, ge=-1800000000, le=1800000000)
 
     public: bool = False
     type: str
@@ -82,7 +82,7 @@ class Extension(ExtensionBase, table=True):
     password: str
     info: str
 
-    user_id: Optional[uuid.UUID] = Field(default=None, foreign_key="user.id")
+    user_id: uuid.UUID | None = Field(default=None, foreign_key="user.id")
     user: Optional["User"] = Relationship(back_populates="extensions")
 
     extra_fields: dict = Field(default_factory=dict, sa_column=Column(JSON))
@@ -148,9 +148,9 @@ class ExtensionCreate(BaseModel):
     type: str
     extra_fields: dict = {}
 
-    location_name: Optional[str] = None
-    lat: Optional[float] = None
-    lon: Optional[float] = None
+    location_name: str | None = None
+    lat: float | None = None
+    lon: float | None = None
 
     media: dict[str, str] = {}
 
@@ -176,15 +176,15 @@ class ExtensionCreate(BaseModel):
 
 
 class ExtensionUpdate(BaseModel):
-    name: Optional[str] = None
-    info: Optional[str] = None
-    public: Optional[bool] = False
+    name: str | None = None
+    info: str | None = None
+    public: bool | None = False
 
-    location_name: Optional[str] = None
-    lat: Optional[float] = None
-    lon: Optional[float] = None
+    location_name: str | None = None
+    lat: float | None = None
+    lon: float | None = None
 
-    unset_coordinates: Optional[bool] = None
+    unset_coordinates: bool | None = None
 
     extra_fields: dict = {}
 

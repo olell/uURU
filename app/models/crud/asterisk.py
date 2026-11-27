@@ -6,7 +6,7 @@ Licensed under the MIT license. See LICENSE file in the project root for details
 """
 
 from logging import getLogger
-from pydantic import BaseModel
+
 from sqlmodel import Session, delete, distinct, func, select
 
 from app.core.config import settings
@@ -20,10 +20,10 @@ from app.models.asterisk import (
     PSEndpoint,
 )
 from app.models.crud import CRUDNotAllowedException
-from app.telephoning.dialplan import Dial, Dialplan
 from app.models.extension import Extension
 from app.models.federation import Peer
 from app.models.user import User, UserRole
+from app.telephoning.dialplan import Dial, Dialplan
 from app.telephoning.flavor import CODEC
 from app.telephoning.main import Telephoning
 
@@ -50,7 +50,7 @@ def create_sip_account(
         )
 
         if isinstance(codec, tuple):
-            codec_string = ','.join(codec)
+            codec_string = ",".join(codec)
         else:
             codec_string = codec
 
@@ -97,12 +97,12 @@ def update_sip_account(
         raise ValueError("no such endpoint in asterisk db")
 
     flavor = Telephoning.get_flavor_by_type(extension.type)
-    codec, codec_string = None
+    codec = codec_string = None
     if flavor is not None:
         codec = flavor.get_codec(extension)
 
         if isinstance(codec, tuple):
-            codec_string = ','.join(codec)
+            codec_string = ",".join(codec)
         else:
             codec_string = codec
 
@@ -210,7 +210,7 @@ def create_iax_peer(session_asterisk: Session, peer: Peer, autocommit=True):
 
         plan = Dialplan.from_db(
             session_asterisk,
-            exten=f"_{peer.prefix}{'X'*peer.partner_extension_length}",
+            exten=f"_{peer.prefix}{'X' * peer.partner_extension_length}",
         )
         plan.add(
             Dial(
@@ -250,7 +250,7 @@ def delete_iax_peer(
 
     plan = Dialplan.from_db(
         session_asterisk,
-        exten=f"_{peer.prefix}{'X'*peer.partner_extension_length}",
+        exten=f"_{peer.prefix}{'X' * peer.partner_extension_length}",
     )
 
     try:
@@ -317,7 +317,7 @@ def update_music_on_hold(
                 session_asterisk.commit()
                 session_asterisk.refresh(moh)
         if assigned is None and ex:  # removed
-            session_asterisk.delete(moh)
+            session_asterisk.delete(ex)
             if autocommit:
                 session_asterisk.commit()
 

@@ -6,16 +6,15 @@ Licensed under the MIT license. See LICENSE file in the project root for details
 """
 
 import os
-from typing import Generator
-import filetype
-
-from PIL import Image
-import sox
 import tempfile
+from collections.abc import Generator
+
+import filetype
+import sox
+from PIL import Image
 
 from app.core.config import settings
 from app.models.media import AudioFormat, ImageFormat, Media, MediaType
-
 
 SUPPORTED_IMAGE_FORMATS = ["avif", "bmp", "gif", "jpeg", "png", "tiff", "webp"]
 SUPPORTED_AUDIO_FORMATS = ["gsm", "wav", "ogg", "mp3", "flac"]

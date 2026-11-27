@@ -6,18 +6,19 @@ Licensed under the MIT license. See LICENSE file in the project root for details
 """
 
 from collections.abc import Generator
-from fastapi.testclient import TestClient
+
 import pytest
+from fastapi.testclient import TestClient
 from sqlmodel import Session, create_engine
 
 from app.core.config import settings
-from app.core.db import get_session, init_db, drop_db
+from app.core.db import drop_db, get_session, init_db
 from app.main import app as fastapi_app
 from app.tests.util.user import user_authentication_headers
 
 
 @pytest.fixture(scope="session", autouse=True)
-def db() -> Generator[Session, None, None]:
+def db() -> Generator[Session]:
 
     engine = create_engine(str(settings.SQLALCHEMY_TEST_DATABASE_URI))
 
@@ -37,7 +38,7 @@ def db() -> Generator[Session, None, None]:
 
 
 @pytest.fixture(scope="module")
-def client() -> Generator[TestClient, None, None]:
+def client() -> Generator[TestClient]:
     with TestClient(fastapi_app) as c:
         yield c
 

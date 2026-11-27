@@ -7,18 +7,15 @@ Licensed under the MIT license. See LICENSE file in the project root for details
 
 from logging import getLogger
 from typing import Annotated
+
 from fastapi import Depends
-from sqlmodel import Session, create_engine, SQLModel, func, select
+from sqlmodel import Session, SQLModel, create_engine, func, select
 
 from app.core.config import settings
-
 from app.models import *
-
-from app.telephoning.dialplan import Dialplan, Dial
-
-from app.models.user import User
 from app.models.crud.user import create_user
-from app.models.user import UserCreate, UserRole
+from app.models.user import User, UserCreate, UserRole
+from app.telephoning.dialplan import Dial, Dialplan
 
 logger = getLogger(__name__)
 
@@ -30,7 +27,7 @@ def init_asterisk_db(session_asterisk: Session) -> None:
     SQLModel.metadata.create_all(
         engine_asterisk, tables=[x.__table__ for x in asterisk_tables]
     )
-    logger.info(f"Created asterisk tables")
+    logger.info("Created asterisk tables")
 
     # TODO: Figure out if we want to keep this when every SIP extension creates
     # its own dialplan (as fallback maybe?)
@@ -43,7 +40,7 @@ def init_asterisk_db(session_asterisk: Session) -> None:
 
 def init_db(session: Session) -> None:
     SQLModel.metadata.create_all(engine, tables=[x.__table__ for x in tables])
-    logger.info(f"Created tables")
+    logger.info("Created tables")
 
     # check if there are any users in the DB, if not create a root user with
     # configured default credentials

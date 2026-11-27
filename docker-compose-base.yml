@@ -31,6 +31,7 @@ services:
     depends_on:
       mariadb-asterisk:
         condition: service_healthy
+    env_file: .env
     environment:
       MARIADB_DATABASE: asterisk
       MARIADB_HOST: 127.0.0.1
@@ -39,13 +40,13 @@ services:
     network_mode: host
 
   ldap:
-    image: osixia/openldap:latest
+    image: osixia/openldap:1.5.0
     healthcheck:
-      test: ["CMD", "ldapsearch", "-x", "-s", "base"]
-      interval: 60s
+      test: ["CMD", "ldapsearch", "-x", "-H", "ldapi:///", "-b", "", "-s", "base"]
+      interval: 10s
       start_period: 30s
       timeout: 5s
-      retries: 1
+      retries: 3
     environment:
       - LDAP_ORGANISATION=uuru
       - LDAP_DOMAIN=uuru
@@ -56,5 +57,5 @@ services:
       - LDAP_READONLY_USER_USERNAME=public
       - LDAP_READONLY_USER_PASSWORD=public
     ports:
-      - 389:389
-      - 636:636
+      - 0.0.0.0:389:3890
+      - 0.0.0.0:636:6360

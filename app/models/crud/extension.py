@@ -7,7 +7,7 @@ Licensed under the MIT license. See LICENSE file in the project root for details
 
 import random
 from logging import getLogger
-from typing import Literal, Optional
+from typing import Literal
 
 import sqlalchemy
 from ldap3 import MODIFY_DELETE, MODIFY_REPLACE, Connection
@@ -142,7 +142,7 @@ def create_extension(
         )
         session.add(db_obj)
 
-        for name in assigned_media.keys():
+        for name in assigned_media:
             ext_media = ExtensionMedia(
                 name=name,
                 media_id=assigned_media[name].id,
@@ -401,8 +401,8 @@ def get_tmp_extension_by_id(
 
 def filter_extensions_by_name(
     session: Session,
-    user: Optional[User] = None,
-    name: Optional[str] = None,
+    user: User | None = None,
+    name: str | None = None,
     public=True,
     order=True,
 ) -> list[Extension]:
@@ -422,7 +422,7 @@ def filter_extensions_by_name(
 
 def generate_free_extension(
     session: Session,
-    user: Optional[User] = None,
+    user: User | None = None,
     approach: Literal["first", "random"] = "random",
 ):
     if user and user.role == UserRole.USER:
@@ -447,7 +447,7 @@ def generate_free_extension(
         raise ValueError("No free extension available!")
 
     selected_number = None
-    all_numbers = set(range(0, maximum_number)) - expanded_block
+    all_numbers = set(range(maximum_number)) - expanded_block
     if approach == "first":
         selected_number = all_numbers[0]
     else:

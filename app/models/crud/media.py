@@ -5,10 +5,10 @@ Copyright (c) Ole Lange, Gregor Michels and contributors. All rights reserved.
 Licensed under the MIT license. See LICENSE file in the project root for details.
 """
 
-from logging import getLogger
 import os
 import tempfile
 import uuid
+from logging import getLogger
 
 from fastapi import UploadFile
 from sqlmodel import Session, select
@@ -18,7 +18,6 @@ from app.models.crud import CRUDNotAllowedException
 from app.models.media import AudioFormat, ImageFormat, Media, MediaType
 from app.models.user import User, UserRole
 from app.util import media as media_utils
-
 
 logger = getLogger(__name__)
 

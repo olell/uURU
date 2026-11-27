@@ -876,6 +876,10 @@ export type PublicSettings = {
      * Media Allow Raw
      */
     MEDIA_ALLOW_RAW: boolean;
+    /**
+     * Asterisk Ami Enabled
+     */
+    ASTERISK_AMI_ENABLED: boolean;
 };
 
 /**

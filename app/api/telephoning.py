@@ -125,6 +125,12 @@ def originate_call(
             detail="You may not originate calls from this extension",
         )
 
+    if not settings.ASTERISK_AMI_ENABLED:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="AMI is not enabled, cannot originate calls",
+        )
+
     contact = get_contact(session_asterisk, source_extension, user)
     if contact is None:
         raise HTTPException(

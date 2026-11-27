@@ -74,7 +74,8 @@ class Telephoning:
 
     def start(self, app: FastAPI, scheduler: BackgroundScheduler):
 
-        self.setup_ami()
+        if settings.ASTERISK_AMI_ENABLED:
+            self.setup_ami()
 
         for cls in self.flavor_classes:
             # 1st: create instance
@@ -125,7 +126,10 @@ class Telephoning:
         self.ami_client.login(settings.ASTERISK_AMI_USER, settings.ASTERISK_AMI_PASS)
 
     def get_ami_client(self):
-        return self.ami_client
+        if settings.ASTERISK_AMI_ENABLED:
+            return self.ami_client
+        else:
+            return None
 
     @staticmethod
     def get_flavor_by_type(phone_type: str) -> PhoneFlavor | None:

@@ -6,12 +6,12 @@ Licensed under the MIT license. See LICENSE file in the project root for details
 """
 
 from logging import getLogger
+
 from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel
-from requests import HTTPError
 
 from app.api.client.extension import call_get_phonebook
-from app.api.deps import CurrentUser, OptionalCurrentUser
+from app.api.deps import CurrentUser
 from app.core.db import SessionAsteriskDep, SessionDep
 from app.models.crud import CRUDNotAllowedException, federation
 from app.models.extension import ExtensionBase
@@ -22,7 +22,6 @@ from app.models.federation import (
     OutgoingPeeringRequestBase,
     OutgoingPeeringRequestPublic,
     OutgoingRequestStatus,
-    Peer,
     PeerBase,
     PeerTeardownData,
 )
@@ -264,7 +263,7 @@ def get_peer_phonebooks(session: SessionDep) -> list[PeerPhonebook]:
     for peer in peers:
         try:
             phonebook = call_get_phonebook(peer.partner_uuru_host)
-            for i in range(0, len(phonebook)):
+            for i in range(len(phonebook)):
                 phonebook[i].extension = peer.prefix + phonebook[i].extension
         except Exception as e:
             logger.warning(

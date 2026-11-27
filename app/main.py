@@ -5,24 +5,22 @@ Copyright (c) Ole Lange, Gregor Michels and contributors. All rights reserved.
 Licensed under the MIT license. See LICENSE file in the project root for details.
 """
 
-from contextlib import asynccontextmanager
 import logging
+from contextlib import asynccontextmanager
 from pathlib import Path
 
+from apscheduler.schedulers.background import BackgroundScheduler
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
-from fastapi.exception_handlers import http_exception_handler
 from sqlmodel import Session
-from apscheduler.schedulers.background import BackgroundScheduler
-
-from app.core.db import engine, engine_asterisk, init_asterisk_db, init_db, drop_db
-from app.core.config import settings
 
 from app.api.main import router as api_router
-from app.telephoning.websip import WebSIPManager
+from app.core.config import settings
+from app.core.db import drop_db, engine, engine_asterisk, init_asterisk_db, init_db
 from app.telephoning.main import Telephoning
+from app.telephoning.websip import WebSIPManager
 
 background_scheduler = BackgroundScheduler()
 

@@ -10,15 +10,15 @@ from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel, Field, IPvAnyAddress
 from pydantic_extra_types.mac_address import MacAddress
 
-from app.models.crud.extension import get_extension_by_extra_field
-from app.models.media import ImageFormat, MediaType
-from app.telephoning.phonetypes.sip import SIP
-from app.telephoning.templates import templates
 from app.core.config import settings
 from app.core.db import SessionDep
+from app.models.crud.extension import get_extension_by_extra_field
+from app.models.media import ImageFormat, MediaType
 
 # from app.models.crud.extension import get_extension_by_mac
 from app.telephoning.flavor import MediaDescriptor
+from app.telephoning.phonetypes.sip import SIP
+from app.telephoning.templates import templates
 
 
 class InnovaphoneFields(BaseModel):
@@ -26,7 +26,6 @@ class InnovaphoneFields(BaseModel):
 
 
 class Innovaphone(SIP):
-
     PHONE_TYPES = ["Innovaphone 112", "Innovaphone 241", "Innovaphone 200a"]
     SUPPORTED_CODEC = {
         "Innovaphone 112": "g722",
@@ -101,10 +100,10 @@ class Innovaphone(SIP):
 
             for _, extension in self.prometheus_sd_target.items():
                 target = {
-                    "targets": [f"{extension.get("last_ip")}"],
+                    "targets": [f"{extension.get('last_ip')}"],
                     "labels": {
-                        "instance": f"{extension.get("name")} <{extension.get("extension")}>",
-                        "__meta_model": f"{extension.get("type")}",
+                        "instance": f"{extension.get('name')} <{extension.get('extension')}>",
+                        "__meta_model": f"{extension.get('type')}",
                     },
                 }
 

@@ -5,17 +5,19 @@ Copyright (c) Ole Lange, Gregor Michels and contributors. All rights reserved.
 Licensed under the MIT license. See LICENSE file in the project root for details.
 """
 
-from typing import Annotated
-from fastapi import APIRouter, Body, HTTPException, status
 from datetime import datetime, timedelta
+from typing import Annotated
+
+import sqlalchemy
+from fastapi import APIRouter, Body, HTTPException, status
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
-import sqlalchemy
-from sqlmodel import select, delete as sql_delete
+from sqlmodel import delete as sql_delete
+from sqlmodel import select
 
 from app.api.deps import CurrentUser, OptionalCurrentUser
-from app.core.db import SessionDep
 from app.core.config import settings
+from app.core.db import SessionDep
 from app.core.security import create_access_token, generate_invite_code
 from app.models.crud import CRUDNotAllowedException
 from app.models.crud.user import (
@@ -33,8 +35,8 @@ from app.models.user import (
     InviteVariant,
     PasswordChange,
     Token,
-    UserPublic,
     UserCreate,
+    UserPublic,
     UserRole,
     UserUpdate,
 )
@@ -118,7 +120,7 @@ def register(
     except CRUDNotAllowedException as e:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail=f"You're not allowed to create this user ({str(e)})",
+            detail=f"You're not allowed to create this user ({e!s})",
         )
     except sqlalchemy.exc.IntegrityError:
         raise HTTPException(

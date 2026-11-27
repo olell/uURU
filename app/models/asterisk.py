@@ -5,7 +5,6 @@ Copyright (c) Ole Lange, Gregor Michels and contributors. All rights reserved.
 Licensed under the MIT license. See LICENSE file in the project root for details.
 """
 
-from typing import Optional
 from sqlmodel import Field, SQLModel
 
 
@@ -21,7 +20,6 @@ class DialPlanEntry(SQLModel, table=True):
 
 
 class PSEndpoint(SQLModel, table=True):
-
     __tablename__ = "ps_endpoints"
 
     id: str = Field(primary_key=True)
@@ -41,7 +39,6 @@ class PSEndpoint(SQLModel, table=True):
 
 
 class PSAor(SQLModel, table=True):
-
     __tablename__ = "ps_aors"
 
     id: str = Field(primary_key=True)
@@ -49,7 +46,6 @@ class PSAor(SQLModel, table=True):
 
 
 class PSAuth(SQLModel, table=True):
-
     __tablename__ = "ps_auths"
 
     id: str = Field(primary_key=True)
@@ -59,7 +55,6 @@ class PSAuth(SQLModel, table=True):
 
 
 class PSContact(SQLModel, table=True):
-
     __tablename__ = "ps_contacts"
 
     id: str = Field(primary_key=True)
@@ -72,7 +67,6 @@ class PSContact(SQLModel, table=True):
 
 
 class IAXFriend(SQLModel, table=True):
-
     __tablename__ = "iaxfriends"
 
     id: int = Field(
@@ -93,7 +87,6 @@ class IAXFriend(SQLModel, table=True):
 
 
 class MusicOnHold(SQLModel, table=True):
-
     __tablename__ = "musiconhold"
 
     name: str = Field(primary_key=True, nullable=False)

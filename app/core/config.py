@@ -93,7 +93,7 @@ class Settings(BaseSettings):
 
     ## DATABASE
 
-    DATABASE_TYPE: Literal["mysql"] | Literal["postgres"] = "postgres"
+    DATABASE_TYPE: Literal["mysql", "postgres"] = "postgres"
     DATABASE_SERVER: str
     DATABASE_PORT: int = 5432
     DATABASE_USER: str

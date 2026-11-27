@@ -1,16 +1,16 @@
-from logging import getLogger
-from pydantic import BaseModel
 from datetime import datetime
+from logging import getLogger
 
+from pydantic import BaseModel
 from sqlmodel import Session
 
+from app.core.config import settings
 from app.core.security import generate_extension_password
 from app.models.crud.asterisk import (
     create_sip_account,
     delete_sip_account,
 )
 from app.models.user import User
-from app.core.config import settings
 
 logger = getLogger(__name__)
 
@@ -24,7 +24,7 @@ class WebSIPExtension(BaseModel):
     last_seen: datetime
 
 
-class WebSIPManager(object):
+class WebSIPManager:
     _instance = None
 
     @staticmethod
@@ -53,9 +53,7 @@ class WebSIPManager(object):
             delete_sip_account(session_asterisk, extension.extension)
             self.active_extensions.pop(self.active_extensions.index(extension))
         except Exception as e:
-            logger.error(
-                f"Failed to delete WebSIP extension from asterisk DB: {str(e)}"
-            )
+            logger.error(f"Failed to delete WebSIP extension from asterisk DB: {e!s}")
             raise
 
     def create_extension(self, session_asterisk: Session, user: User | None = None):
@@ -94,7 +92,7 @@ class WebSIPManager(object):
                 set_websip_fields=True,
             )
         except Exception as e:
-            logger.error(f"Failed to create WebSIP extension in asterisk DB: {str(e)}")
+            logger.error(f"Failed to create WebSIP extension in asterisk DB: {e!s}")
             raise
 
         self.active_extensions.append(ext)

@@ -6,13 +6,14 @@ Licensed under the MIT license. See LICENSE file in the project root for details
 """
 
 from logging import getLogger
+
 from fastapi import HTTPException, Request
-from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel, Field
+
 from app.core.db import SessionDep
 from app.models.crud.extension import (
-    get_extension_by_extra_field,
     filter_extensions_by_name,
+    get_extension_by_extra_field,
 )
 from app.telephoning.phonetypes.sip import SIP
 from app.telephoning.templates import templates
@@ -25,7 +26,6 @@ class GrandstreamExtraFields(BaseModel):
 
 
 class Grandstream(SIP):
-
     PHONE_TYPES = ["Grandstream WP810", "Grandstream GXP2160"]
     IS_SPECIAL = True
     EXTRA_FIELDS = GrandstreamExtraFields

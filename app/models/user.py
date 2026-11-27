@@ -5,17 +5,15 @@ Copyright (c) Ole Lange, Gregor Michels and contributors. All rights reserved.
 Licensed under the MIT license. See LICENSE file in the project root for details.
 """
 
-from typing import TYPE_CHECKING, Literal, Optional
-from sqlmodel import Relationship, SQLModel, Field
-from pydantic import BaseModel
-
-from enum import Enum
-
-from datetime import datetime
 import uuid
+from datetime import datetime
+from enum import Enum
+from typing import TYPE_CHECKING
+
+from pydantic import BaseModel, model_validator
+from sqlmodel import Field, Relationship, SQLModel
 
 from app.models.extension import Extension
-from pydantic import model_validator
 
 if TYPE_CHECKING:
     from app.models.media import Media
@@ -55,9 +53,9 @@ class Invite(SQLModel, table=True):
     invite: str = Field(min_length=10, max_length=10)
     variant: InviteVariant = InviteVariant.COUNT
 
-    use_count: Optional[int] = None
-    max_uses: Optional[int] = None
-    valid_until: Optional[datetime] = None
+    use_count: int | None = None
+    max_uses: int | None = None
+    valid_until: datetime | None = None
 
     @model_validator(mode="after")
     def check_variant_fields(self):
@@ -108,9 +106,9 @@ class Invite(SQLModel, table=True):
 
 class InviteCreate(BaseModel):
     variant: InviteVariant
-    max_uses: Optional[int] = None
-    valid_days: Optional[int] = None
-    valid_hours: Optional[int] = None
+    max_uses: int | None = None
+    valid_days: int | None = None
+    valid_hours: int | None = None
 
     @model_validator(mode="after")
     def check_variant_fields(self):

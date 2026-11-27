@@ -5,9 +5,10 @@ Copyright (c) Ole Lange, Gregor Michels and contributors. All rights reserved.
 Licensed under the MIT license. See LICENSE file in the project root for details.
 """
 
+import uuid
 from logging import getLogger
 from typing import Literal
-import uuid
+
 from requests import HTTPError
 from sqlmodel import Session, or_, select
 
@@ -17,21 +18,21 @@ from app.api.client.federation import (
     call_set_outgoing_peering_request_status,
     call_teardown_request,
 )
+from app.core.config import settings
+from app.core.security import generate_peer_secret
 from app.models.crud import CRUDNotAllowedException
 from app.models.crud.asterisk import (
     create_iax_peer,
     delete_iax_peer,
 )
 from app.models.federation import (
+    IncomingPeeringRequest,
+    OutgoingPeeringRequest,
     OutgoingRequestStatus,
     Peer,
-    OutgoingPeeringRequest,
-    IncomingPeeringRequest,
     PeerTeardownData,
 )
 from app.models.user import User, UserRole
-from app.core.security import generate_peer_secret
-from app.core.config import settings
 
 logger = getLogger(__name__)
 

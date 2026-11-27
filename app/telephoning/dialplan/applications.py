@@ -5,7 +5,7 @@ Copyright (c) Ole Lange, Gregor Michels and contributors. All rights reserved.
 Licensed under the MIT license. See LICENSE file in the project root for details.
 """
 
-from typing import ClassVar, Literal, Optional, Self
+from typing import ClassVar, Literal, Self
 
 from pydantic import BaseModel, computed_field
 
@@ -72,8 +72,8 @@ class Answer(BaseDialplanApp):
     DOC_URL = "https://docs.asterisk.org/Latest_API/API_Documentation/Dialplan_Applications/Answer/"
     COMPATIBLE_APP: ClassVar = "Answer"
 
-    delay: Optional[int] = None
-    options: Optional[str] = None
+    delay: int | None = None
+    options: str | None = None
 
     @staticmethod
     def parse(_, appdata: str):
@@ -181,9 +181,9 @@ class Goto(BaseDialplanApp):
     DOC_URL = "https://docs.asterisk.org/Latest_API/API_Documentation/Dialplan_Applications/Goto/"
     COMPATIBLE_APP: ClassVar = "Goto"
 
-    context: Optional[str] = None
-    extension: Optional[str] = None
-    priority: Optional[str] = None
+    context: str | None = None
+    extension: str | None = None
+    priority: str | None = None
 
     @staticmethod
     def parse(_, appdata):
@@ -323,7 +323,7 @@ class Dial(BaseDialplanApp):
     COMPATIBLE_APP: ClassVar = "Dial"
 
     devices: list[str]
-    timeout: Optional[int] = None
+    timeout: int | None = None
     options: dict[DIAL_OPTION, str | None] = {}
 
     @staticmethod

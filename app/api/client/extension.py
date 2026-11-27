@@ -5,10 +5,11 @@ Copyright (c) Ole Lange, Gregor Michels and contributors. All rights reserved.
 Licensed under the MIT license. See LICENSE file in the project root for details.
 """
 
-import requests
 from logging import getLogger
 
-from app.models.extension import Extension, ExtensionBase
+import requests
+
+from app.models.extension import ExtensionBase
 
 logger = getLogger(__name__)
 

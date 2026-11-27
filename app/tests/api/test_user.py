@@ -5,7 +5,6 @@ Copyright (c) Ole Lange, Gregor Michels and contributors. All rights reserved.
 Licensed under the MIT license. See LICENSE file in the project root for details.
 """
 
-from fastapi import Response
 from fastapi.testclient import TestClient
 
 from app.core.config import settings
@@ -69,7 +68,7 @@ def test_create_read_delete_user(
 
     # get user info
     r = client.get(
-        f"{settings.API_V1_STR}/user?user_id={user_json["id"]}",
+        f"{settings.API_V1_STR}/user?user_id={user_json['id']}",
         headers=root_token_headers,
     )
 
@@ -82,7 +81,7 @@ def test_create_read_delete_user(
 
     # then delete it again
     r = client.delete(
-        f"{settings.API_V1_STR}/user?user_id={info["id"]}", headers=root_token_headers
+        f"{settings.API_V1_STR}/user?user_id={info['id']}", headers=root_token_headers
     )
 
     assert r.status_code == 204

@@ -6,13 +6,20 @@ Licensed under the MIT license. See LICENSE file in the project root for details
 """
 
 from logging import getLogger
-from fastapi import HTTPException
-from fastapi import status
-from fastapi.responses import PlainTextResponse
-import mitel_ommclient2
-from sqlmodel import Session
 from threading import Lock
 
+import mitel_ommclient2
+from fastapi import HTTPException, status
+from fastapi.responses import PlainTextResponse
+from sqlmodel import Session
+
+from app.core.config import settings
+from app.core.db import (
+    SessionAsteriskDep,
+    SessionDep,
+    engine,
+    engine_asterisk,
+)
 from app.core.security import generate_extension_password
 from app.models.crud.asterisk import (
     create_sip_account,
@@ -23,14 +30,6 @@ from app.models.crud.extension import (
     get_tmp_extension_by_id,
 )
 from app.models.extension import TemporaryExtensions
-from app.telephoning.flavor import PhoneFlavor
-from app.core.config import settings
-from app.core.db import (
-    SessionAsteriskDep,
-    SessionDep,
-    engine,
-    engine_asterisk,
-)
 from app.telephoning.phonetypes.sip import SIP
 
 logger = getLogger(__name__)

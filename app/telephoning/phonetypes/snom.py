@@ -6,8 +6,10 @@ Licensed under the MIT license. See LICENSE file in the project root for details
 """
 
 from logging import getLogger
+
 from fastapi import HTTPException, Request
 from pydantic import BaseModel, Field
+
 from app.core.db import SessionDep
 from app.models.crud.extension import get_extension_by_extra_field
 from app.telephoning.phonetypes.sip import SIP

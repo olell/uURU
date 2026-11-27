@@ -5,12 +5,12 @@ Copyright (c) Ole Lange, Gregor Michels and contributors. All rights reserved.
 Licensed under the MIT license. See LICENSE file in the project root for details.
 """
 
-from typing import Literal, Optional
+from typing import Literal
 
-from fastapi import APIRouter, status, HTTPException
 import sqlalchemy
+from fastapi import APIRouter, HTTPException, status
 
-from app.api.deps import OptionalCurrentUser, SessionDep, CurrentUser
+from app.api.deps import CurrentUser, OptionalCurrentUser, SessionDep
 from app.core.db import SessionAsteriskDep
 from app.core.ldap import LDAPDep
 from app.models.asterisk import PSContact
@@ -20,18 +20,18 @@ from app.models.crud.asterisk import (
     get_extensions_with_contacts,
     has_contact,
 )
-from app.models.extension import (
-    Extension,
-    ExtensionCreate,
-    ExtensionBase,
-    ExtensionUpdate,
-)
 from app.models.crud.extension import (
     create_extension,
-    get_extension_by_id,
-    update_extension,
     delete_extension,
     filter_extensions_by_name,
+    get_extension_by_id,
+    update_extension,
+)
+from app.models.extension import (
+    Extension,
+    ExtensionBase,
+    ExtensionCreate,
+    ExtensionUpdate,
 )
 from app.models.user import UserRole
 
@@ -124,7 +124,7 @@ def phonebook(
     *,
     session: SessionDep,
     user: OptionalCurrentUser = None,
-    query: Optional[str] = None,
+    query: str | None = None,
     public: bool = True,
 ):
     if not public and (user is None or user.role != UserRole.ADMIN):
@@ -141,7 +141,7 @@ def admin_phonebook(
     *,
     session: SessionDep,
     user: CurrentUser,
-    query: Optional[str] = None,
+    query: str | None = None,
     public: bool = False,
 ):
     if user.role != UserRole.ADMIN:

@@ -5,10 +5,12 @@ Copyright (c) Ole Lange, Gregor Michels and contributors. All rights reserved.
 Licensed under the MIT license. See LICENSE file in the project root for details.
 """
 
-from typing import Literal
-from pydantic import BaseModel, Field as PDField
-from sqlmodel import SQLModel, Field, String
 import uuid
+from typing import Literal
+
+from pydantic import BaseModel
+from pydantic import Field as PDField
+from sqlmodel import Field, SQLModel, String
 
 
 class IncomingRequestStatus(BaseModel):

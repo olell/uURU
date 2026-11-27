@@ -1,8 +1,9 @@
-from logging import getLogger
 import os
+from logging import getLogger
 from pathlib import Path
-from fastapi import APIRouter
+
 import mistune
+from fastapi import APIRouter
 
 from app.core.config import settings
 
@@ -39,6 +40,6 @@ def get_pages() -> dict[str, str]:
             rendered = mistune.html(content)
             response.update({Path(page).stem: rendered})
         except Exception as e:
-            logger.error(f"Failed to render page {page}: {str(e)}")
+            logger.error(f"Failed to render page {page}: {e!s}")
 
     return response

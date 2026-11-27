@@ -7,7 +7,6 @@ Licensed under the MIT license. See LICENSE file in the project root for details
 
 from datetime import datetime
 from logging import getLogger
-from typing import Optional
 
 from asterisk.ami.client import AMIClientAdapter
 from asterisk.ami.response import FutureResponse
@@ -32,7 +31,7 @@ logger = getLogger(__name__)
 
 
 class PhoneType(BaseModel):
-    schema: Optional[dict] = None
+    schema: dict | None = None
     display_index: int
     name: str
     max_extension_name_chars: int

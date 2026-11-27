@@ -6,14 +6,16 @@ Licensed under the MIT license. See LICENSE file in the project root for details
 """
 
 from typing import Literal
+
+from dicttoxml import dicttoxml
 from fastapi import HTTPException, Response
 from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel
-from dicttoxml import dicttoxml
+
+from app.core.config import settings
 from app.core.db import SessionDep
 from app.models.crud.extension import get_extension_by_extra_field
 from app.telephoning.flavor import PhoneFlavor
-from app.core.config import settings
 
 
 class IoTFields(BaseModel):

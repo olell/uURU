@@ -7,13 +7,7 @@ Licensed under the MIT license. See LICENSE file in the project root for details
 
 from fastapi import APIRouter
 
-from app.api import user
-from app.api import extension
-from app.api import settings
-from app.api import telephoning
-from app.api import pages
-from app.api import federation
-from app.api import media
+from app.api import extension, federation, media, pages, settings, telephoning, user
 
 router = APIRouter()
 router.include_router(user.router)
